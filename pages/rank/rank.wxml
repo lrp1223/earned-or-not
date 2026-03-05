@@ -1,0 +1,12 @@
+<!--pages/rank/rank.wxml-->
+<view class="container">
+  <view class="tab-bar">
+    <view class="tab-item {{currentTab === 'lottery' ? 'active' : ''}}" bindtap="switchTab" data-tab="lottery">彩票</view>
+    <view class="tab-item {{currentTab === 'scratch' ? 'active' : ''}}" bindtap="switchTab" data-tab="scratch">刮刮乐</view>
+    <view class="tab-item {{currentTab === 'mahjong' ? 'active' : ''}}" bindtap="switchTab" data-tab="mahjong">麻将</view>
+  </view>
+  <view class="card" wx:for="{{rankList}}" wx:key="userId">
+    <text>{{item.nickname}}</text>
+    <text class="{{item.net >= 0 ? 'amount-positive' : 'amount-negative'}}">{{item.net >= 0 ? '+' : ''}}{{item.net.toFixed(2)}}</text>
+  </view>
+</view>

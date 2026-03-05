@@ -1,0 +1,22 @@
+<!--pages/record/record.wxml-->
+<view class="container">
+  <view class="card">
+    <view class="title">{{typeText}}记账</view>
+    <view class="form-item">
+      <text class="label">花费金额（元）</text>
+      <input type="digit" value="{{cost}}" bindinput="onCostInput" placeholder="请输入"/>
+    </view>
+    <view class="form-item">
+      <text class="label">中奖金额（元）</text>
+      <input type="digit" value="{{winAmount}}" bindinput="onWinInput" placeholder="未中奖填0"/>
+    </view>
+    <view wx:if="{{type === 'mahjong'}}" class="form-item">
+      <radio-group bindchange="onTypeChange">
+        <label><radio value="win" checked/>赢了</label>
+        <label><radio value="lose"/>输了</label>
+      </radio-group>
+    </view>
+    <view class="preview">本次盈亏：{{previewNet >= 0 ? '+' : ''}}{{previewNet.toFixed(2)}} 元</view>
+    <button class="btn-primary" bindtap="submit">保存</button>
+  </view>
+</view>

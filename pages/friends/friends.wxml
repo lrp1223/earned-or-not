@@ -1,0 +1,10 @@
+<!--pages/friends/friends.wxml-->
+<view class="container">
+  <view class="card">
+    <input placeholder="搜索好友" value="{{keyword}}" bindinput="onInput" bindconfirm="search"/>
+    <button bindtap="search">搜索</button>
+  </view>
+  <view class="card" wx:for="{{friends}}" wx:key="_id">
+    <text>{{item.nickname}}</text>
+  </view>
+</view>

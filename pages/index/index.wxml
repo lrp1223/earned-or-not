@@ -1,0 +1,32 @@
+<!--pages/index/index.wxml-->
+<view class="container">
+  <view class="card user-card">
+    <open-data type="userAvatarUrl" class="avatar"></open-data>
+    <open-data type="userNickName" class="nickname"></open-data>
+    <view class="total-net {{totalNet >= 0 ? 'amount-positive' : 'amount-negative'}}">
+      年度盈亏：{{totalNet >= 0 ? '+' : ''}}{{totalNet.toFixed(2)}} 元
+    </view>
+  </view>
+  <view class="card">
+    <view class="title">快速记账</view>
+    <view class="quick-actions">
+      <view class="action-item" bindtap="goRecord" data-type="lottery">
+        <view class="action-icon lottery">🎰</view><text>彩票</text>
+      </view>
+      <view class="action-item" bindtap="goRecord" data-type="scratch">
+        <view class="action-icon scratch">🎫</view><text>刮刮乐</text>
+      </view>
+      <view class="action-item" bindtap="goRecord" data-type="mahjong">
+        <view class="action-icon mahjong">🀄</view><text>麻将</text>
+      </view>
+    </view>
+  </view>
+  <view class="card">
+    <view class="title">最近记录</view>
+    <view wx:if="{{recentRecords.length === 0}}" class="empty">暂无记录</view>
+    <view wx:for="{{recentRecords}}" wx:key="_id" class="record-item">
+      <text>{{item.typeText}}</text>
+      <text class="{{item.net >= 0 ? 'amount-positive' : 'amount-negative'}}">{{item.net >= 0 ? '+' : ''}}{{item.net.toFixed(2)}}</text>
+    </view>
+  </view>
+</view>

@@ -1,0 +1,43 @@
+/**pages/stats/stats.wxss**/
+.summary-card {
+  text-align: center;
+  padding: 60rpx 40rpx;
+  background: linear-gradient(135deg, #ff6b6b, #ff8e8e);
+  color: white;
+}
+
+.summary-title {
+  font-size: 32rpx;
+  opacity: 0.9;
+}
+
+.summary-amount {
+  font-size: 72rpx;
+  font-weight: bold;
+  margin-top: 20rpx;
+}
+
+.stat-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.stat-title {
+  font-size: 36rpx;
+  font-weight: bold;
+  color: #333;
+}
+
+.stat-net {
+  font-size: 40rpx;
+  font-weight: bold;
+}
+
+.amount-positive {
+  color: #52c41a;
+}
+
+.amount-negative {
+  color: #ff4d4f;
+}

@@ -1,0 +1,23 @@
+# Node.js
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# 微信小程序
+miniprogram_npm/
+project.private.config.json
+
+# 云函数依赖（云端安装）
+cloud/functions/*/node_modules/
+
+# 敏感配置（每个人不同）
+app.js
+project.config.json
+
+# 系统文件
+.DS_Store
+Thumbs.db
+
+# 日志
+*.log

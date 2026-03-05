@@ -1,0 +1,40 @@
+<!--pages/stats/stats.wxml-->
+<view class="container">
+  <!-- 总盈亏 -->
+  <view class="card summary-card">
+    <view class="summary-title">年度总盈亏</view>
+    <view class="summary-amount {{stats.totalNet >= 0 ? 'amount-positive' : 'amount-negative'}}">
+      {{stats.totalNet >= 0 ? '+' : ''}}{{stats.totalNet}} 元
+    </view>
+  </view>
+  
+  <!-- 彩票 -->
+  <view class="card">
+    <view class="stat-row">
+      <text class="stat-title">🎰 彩票</text>
+      <text class="stat-net {{stats.lottery.net >= 0 ? 'amount-positive' : 'amount-negative'}}">
+        {{stats.lottery.net >= 0 ? '+' : ''}}{{stats.lottery.net}} 元
+      </text>
+    </view>
+  </view>
+  
+  <!-- 刮刮乐 -->
+  <view class="card">
+    <view class="stat-row">
+      <text class="stat-title">🎫 刮刮乐</text>
+      <text class="stat-net {{stats.scratch.net >= 0 ? 'amount-positive' : 'amount-negative'}}">
+        {{stats.scratch.net >= 0 ? '+' : ''}}{{stats.scratch.net}} 元
+      </text>
+    </view>
+  </view>
+  
+  <!-- 麻将 -->
+  <view class="card">
+    <view class="stat-row">
+      <text class="stat-title">🀄 麻将</text>
+      <text class="stat-net {{stats.mahjong.net >= 0 ? 'amount-positive' : 'amount-negative'}}">
+        {{stats.mahjong.net >= 0 ? '+' : ''}}{{stats.mahjong.net}} 元
+      </text>
+    </view>
+  </view>
+</view>

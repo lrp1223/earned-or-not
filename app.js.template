@@ -1,0 +1,22 @@
+// app.js 模板
+// 使用前请复制为 app.js 并填入你的环境ID
+
+App({
+  onLaunch() {
+    wx.cloud.init({
+      env: 'YOUR_ENV_ID_HERE', // 替换为你的云开发环境ID
+      traceUser: true
+    });
+    
+    wx.cloud.callFunction({
+      name: 'user',
+      data: { action: 'getOpenid' }
+    }).then(res => {
+      this.globalData.openid = res.result.openid;
+    });
+  },
+  
+  globalData: {
+    openid: null
+  }
+});
