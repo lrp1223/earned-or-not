@@ -7,7 +7,7 @@ Page({
   },
   onCostInput(e) { this.setData({ cost: e.detail.value }); this.calc(); },
   onWinInput(e) { this.setData({ winAmount: e.detail.value }); this.calc(); },
-  onTypeChange(e) { this.setData({ mahjongType: e.detail.value }); this.calc(); },
+  setMahjongType(e) { this.setData({ mahjongType: e.currentTarget.dataset.type }); this.calc(); },
   calc() {
     const { type, cost, winAmount, mahjongType } = this.data;
     let net = 0;

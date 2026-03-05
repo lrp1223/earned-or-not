@@ -2,21 +2,46 @@
 <view class="container">
   <view class="card">
     <view class="title">{{typeText}}记账</view>
-    <view class="form-item">
-      <text class="label">花费金额（元）</text>
-      <input type="digit" value="{{cost}}" bindinput="onCostInput" placeholder="请输入"/>
+    
+    <!-- 彩票/刮刮乐：花费 + 中奖 -->
+    <block wx:if="{{type !== 'mahjong'}}">
+      <view class="form-item">
+        <text class="label">花费金额（元）</text>
+        <input type="digit" value="{{cost}}" bindinput="onCostInput" placeholder="请输入购买金额"/>
+      </view>
+      <view class="form-item">
+        <text class="label">中奖金额（元）</text>
+        <input type="digit" value="{{winAmount}}" bindinput="onWinInput" placeholder="未中奖填0"/>
+      </view>
+    </block>
+    
+    <!-- 麻将：输赢选择 + 金额 -->
+    <block wx:if="{{type === 'mahjong'}}">
+      <view class="form-item">
+        <text class="label">本局结果</text>
+        <view class="mahjong-type">
+          <view class="type-option {{mahjongType === 'win' ? 'active' : ''}}" bindtap="setMahjongType" data-type="win">
+            <text class="type-icon">🎉</text>
+            <text class="type-text">赢了</text>
+          </view>
+          <view class="type-option {{mahjongType === 'lose' ? 'active' : ''}}" bindtap="setMahjongType" data-type="lose">
+            <text class="type-icon">😭</text>
+            <text class="type-text">输了</text>
+          </view>
+        </view>
+      </view>
+      <view class="form-item">
+        <text class="label">金额（元）</text>
+        <input type="digit" value="{{cost}}" bindinput="onCostInput" placeholder="{{mahjongType === 'win' ? '赢了多少钱' : '输了多少钱'}}"/>
+      </view>
+    </block>
+    
+    <!-- 预览 -->
+    <view class="preview {{previewNet >= 0 ? 'positive' : 'negative'}}">
+      <text class="preview-label">本次盈亏</text>
+      <text class="preview-amount">{{previewNet >= 0 ? '+' : ''}}{{previewNet.toFixed(2)}} 元</text>
     </view>
-    <view class="form-item">
-      <text class="label">中奖金额（元）</text>
-      <input type="digit" value="{{winAmount}}" bindinput="onWinInput" placeholder="未中奖填0"/>
-    </view>
-    <view wx:if="{{type === 'mahjong'}}" class="form-item">
-      <radio-group bindchange="onTypeChange">
-        <label><radio value="win" checked/>赢了</label>
-        <label><radio value="lose"/>输了</label>
-      </radio-group>
-    </view>
-    <view class="preview">本次盈亏：{{previewNet >= 0 ? '+' : ''}}{{previewNet.toFixed(2)}} 元</view>
-    <button class="btn-primary" bindtap="submit">保存</button>
+    
+    <button class="btn-primary" bindtap="submit">保存记录</button>
   </view>
 </view>

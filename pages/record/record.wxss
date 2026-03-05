@@ -1,4 +1,24 @@
-.form-item { margin-bottom: 30rpx; }
-.label { display: block; font-size: 28rpx; color: #666; margin-bottom: 10rpx; }
-input { height: 80rpx; border: 1rpx solid #e0e0e0; border-radius: 8rpx; padding: 0 20rpx; font-size: 32rpx; }
-.preview { padding: 30rpx; background: #f9f9f9; border-radius: 12rpx; margin-bottom: 30rpx; font-size: 32rpx; text-align: center; }
+/**pages/record/record.wxss**/
+.form-item { margin-bottom: 40rpx; }
+.label { display: block; font-size: 28rpx; color: #666; margin-bottom: 16rpx; font-weight: 500; }
+input { height: 88rpx; border: 2rpx solid #e8e8e8; border-radius: 12rpx; padding: 0 24rpx; font-size: 32rpx; background: #fafafa; }
+input:focus { border-color: #ff6b6b; background: #fff; }
+
+/* 麻将输赢选择 */
+.mahjong-type { display: flex; gap: 30rpx; }
+.type-option { flex: 1; display: flex; flex-direction: column; align-items: center; padding: 40rpx 0; border: 2rpx solid #e8e8e8; border-radius: 16rpx; background: #fafafa; transition: all 0.3s; }
+.type-option.active { border-color: #ff6b6b; background: #fff5f5; }
+.type-icon { font-size: 48rpx; margin-bottom: 12rpx; }
+.type-text { font-size: 30rpx; color: #666; }
+.type-option.active .type-text { color: #ff6b6b; font-weight: bold; }
+
+/* 预览区域 */
+.preview { display: flex; justify-content: space-between; align-items: center; padding: 40rpx; border-radius: 16rpx; margin: 40rpx 0; background: #f5f5f5; }
+.preview-label { font-size: 30rpx; color: #666; }
+.preview-amount { font-size: 48rpx; font-weight: bold; }
+.preview.positive { background: #f6ffed; }
+.preview.positive .preview-amount { color: #52c41a; }
+.preview.negative { background: #fff2f0; }
+.preview.negative .preview-amount { color: #ff4d4f; }
+
+.btn-primary { margin-top: 20rpx; }

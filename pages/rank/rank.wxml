@@ -1,12 +1,34 @@
 <!--pages/rank/rank.wxml-->
 <view class="container">
+  <!-- 标签切换 -->
   <view class="tab-bar">
-    <view class="tab-item {{currentTab === 'lottery' ? 'active' : ''}}" bindtap="switchTab" data-tab="lottery">彩票</view>
-    <view class="tab-item {{currentTab === 'scratch' ? 'active' : ''}}" bindtap="switchTab" data-tab="scratch">刮刮乐</view>
-    <view class="tab-item {{currentTab === 'mahjong' ? 'active' : ''}}" bindtap="switchTab" data-tab="mahjong">麻将</view>
+    <view class="tab-item {{currentTab === 'lottery' ? 'active' : ''}}" bindtap="switchTab" data-tab="lottery">🎰 彩票</view>
+    <view class="tab-item {{currentTab === 'scratch' ? 'active' : ''}}" bindtap="switchTab" data-tab="scratch">🎫 刮刮乐</view>
+    <view class="tab-item {{currentTab === 'mahjong' ? 'active' : ''}}" bindtap="switchTab" data-tab="mahjong">🀄 麻将</view>
   </view>
-  <view class="card" wx:for="{{rankList}}" wx:key="userId">
-    <text>{{item.nickname}}</text>
-    <text class="{{item.net >= 0 ? 'amount-positive' : 'amount-negative'}}">{{item.net >= 0 ? '+' : ''}}{{item.net.toFixed(2)}}</text>
+  
+  <!-- 排行榜列表 -->
+  <view class="rank-list">
+    <view class="rank-item {{item.isMe ? 'rank-me' : ''}}" wx:for="{{rankList}}" wx:key="userId">
+      <view class="rank-left">
+        <view class="rank-number {{index < 3 ? 'rank-top' : ''}}">{{index + 1}}</view>
+        <open-data wx:if="{{item.isMe}}" type="userAvatarUrl" class="rank-avatar"></open-data>
+        <view wx:else class="rank-avatar-default">{{item.nickname[0]}}</view>
+        <text class="rank-name {{item.isMe ? 'rank-name-me' : ''}}">{{item.nickname}}</text>
+        <text wx:if="{{item.isMe}}" class="rank-tag">我</text>
+      </view>
+      <view class="rank-right">
+        <text class="rank-amount {{item.net >= 0 ? 'amount-positive' : 'amount-negative'}}">
+          {{item.net >= 0 ? '+' : ''}}{{item.net.toFixed(2)}}
+        </text>
+      </view>
+    </view>
+  </view>
+  
+  <!-- 空状态 -->
+  <view wx:if="{{rankList.length === 0}}" class="empty-state">
+    <text class="empty-icon">📊</text>
+    <text class="empty-text">暂无排行数据</text>
+    <text class="empty-hint">快去记账吧，成为榜上有名的人！</text>
   </view>
 </view>
