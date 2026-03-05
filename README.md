@@ -1,85 +1,93 @@
-# 赚了么 - 彩票刮刮乐麻将记账小程序
+# 赚了么 - 微信记账小程序
+
+一款帮助用户记录彩票、刮刮乐、麻将收支的微信小程序，支持好友排行榜功能。
+
+## 功能特性
+
+- 📊 三种记账类型：彩票、刮刮乐、麻将
+- 📈 个人统计：年度总盈亏、分类盈亏
+- 🏆 好友排行榜：按类型查看好友盈亏排名
+- 👥 好友系统：添加好友，互相查看记录
+- ☁️ 微信云开发：无需服务器，免费部署
+
+## 技术栈
+
+- 微信小程序原生开发
+- 微信云开发（云函数 + 云数据库）
+- Node.js 云函数
 
 ## 项目结构
 
 ```
 earned-or-not/
-├── cloud/functions/     # 云函数
-│   ├── user/
-│   ├── lottery/
-│   ├── scratch/
-│   ├── mahjong/
-│   ├── stats/
-│   ├── friend/
-│   └── rank/
-├── pages/               # 小程序页面
-│   ├── index/
-│   ├── record/
-│   ├── stats/
-│   ├── rank/
-│   └── friends/
-├── app.js.template      # app.js 模板
-├── app.json
-├── app.wxss
-└── .gitignore
+├── app.js                 # 小程序入口（需配置环境ID）
+├── app.json               # 全局配置
+├── app.wxss               # 全局样式
+├── cloud/                 # 云函数
+│   └── functions/
+│       ├── user/          # 用户相关
+│       ├── lottery/       # 彩票记录
+│       ├── scratch/       # 刮刮乐记录
+│       ├── mahjong/       # 麻将记录
+│       ├── stats/         # 统计查询
+│       ├── friend/        # 好友管理
+│       └── rank/          # 排行榜
+├── pages/                 # 小程序页面
+│   ├── index/             # 首页
+│   ├── record/            # 记账页面
+│   ├── stats/             # 统计页面
+│   ├── rank/              # 排行榜
+│   └── friends/           # 好友页面
+└── README.md
 ```
 
-## 快速开始
+## 部署步骤
 
-### 1. 克隆项目
-```bash
-git clone https://github.com/lrp1223/earned-or-not.git
-cd earned-or-not
+### 1. 创建云开发环境
+- 登录微信开发者工具
+- 创建小程序项目
+- 开通云开发，记录环境ID
+
+### 2. 配置环境ID
+修改 `app.js`：
+```javascript
+wx.cloud.init({
+  env: '你的环境ID',
+  traceUser: true
+});
 ```
 
-### 2. 创建本地配置文件
-```bash
-# 复制模板
-cp app.js.template app.js
-
-# 编辑 app.js，填入你的环境ID
-# env: 'cloud1-7g3rl3bk62f4e747'
-```
-
-### 3. 创建 project.config.json
-```json
-{
-  "description": "赚了么",
-  "setting": { "urlCheck": false, "es6": true },
-  "compileType": "miniprogram",
-  "libVersion": "2.30.0",
-  "appid": "你的小程序appid",
-  "projectname": "earned-or-not",
-  "cloudfunctionRoot": "cloud/functions/"
-}
-```
-
-### 4. 部署云函数
+### 3. 部署云函数
 在微信开发者工具中：
-1. 右键 `cloud/functions/user` → "创建并部署：云端安装依赖"
-2. 依次部署其他6个云函数
+1. 展开 `cloud/functions/`
+2. 右键每个云函数文件夹
+3. 选择 **"创建并部署：云端安装依赖"**
+4. 依次部署7个云函数
 
-### 5. 创建数据库集合
-在云开发控制台创建：
-- users
-- lottery
-- scratch
-- mahjong
-- friends
+### 4. 创建数据库集合
+在云开发控制台 → 数据库，创建：
+- `users` - 用户信息
+- `lottery` - 彩票记录
+- `scratch` - 刮刮乐记录
+- `mahjong` - 麻将记录
+- `friends` - 好友关系
 
-## 开发规范
+### 5. 运行测试
+点击预览，测试各项功能。
 
-- app.js 和 project.config.json 已加入 .gitignore，不提交到仓库
-- 每次开发前 `git pull` 拉取最新代码
-- 修改后提交 PR 或推送
+## 开发团队
 
-## 功能列表
+- 产品 & 设计：lrp1223
+- 开发：18million (AI Assistant)
 
-- [x] 彩票记账（双色球/大乐透）
-- [x] 刮刮乐记账
-- [x] 麻将输赢记录
-- [x] 年度盈亏统计
-- [x] 好友系统
-- [x] 排行榜
-- [ ] OCR识别（后续）
-- [ ] 数据导出（后续）
+## 更新日志
+
+### v1.0 (2026-03-05)
+- 基础功能完成
+- 支持彩票、刮刮乐、麻将记账
+- 个人统计页面
+- 好友排行榜
+
+## License
+
+MIT
