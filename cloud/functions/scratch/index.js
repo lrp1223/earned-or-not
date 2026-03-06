@@ -2,11 +2,27 @@ const cloud = require('wx-server-sdk');
 cloud.init({ env: cloud.DYNAMIC_CURRENT_ENV });
 const db = cloud.database();
 
+async function ensureUser(OPENID) {
+  const user = await db.collection('users').where({ _openid: OPENID }).get();
+  if (user.data.length === 0) {
+    await db.collection('users').add({
+      data: {
+        _openid: OPENID,
+        nickname: '赚了么用户',
+        avatarUrl: '',
+        createTime: db.serverDate(),
+        updateTime: db.serverDate()
+      }
+    });
+  }
+}
+
 exports.main = async (event, context) => {
   const { action, id, cost, winAmount } = event;
   const { OPENID } = cloud.getWXContext();
 
   if (action === 'add') {
+    await ensureUser(OPENID);
     await db.collection('scratch').add({
       data: {
         _openid: OPENID,
