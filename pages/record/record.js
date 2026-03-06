@@ -3,7 +3,7 @@ Page({
   onLoad(options) {
     const type = options.type || 'lottery';
     const map = { lottery: '彩票', scratch: '刮刮乐', mahjong: '麻将' };
-    this.setData({ type, typeText: map[type] });
+    this.setData({ type, typeText: map[type], previewNetStr: '+0.00' });
   },
   onCostInput(e) { this.setData({ cost: e.detail.value }); this.calc(); },
   onWinInput(e) { this.setData({ winAmount: e.detail.value }); this.calc(); },
