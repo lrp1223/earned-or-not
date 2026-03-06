@@ -4,33 +4,12 @@ Page({
     totalNet: 0,
     totalNetStr: '+0.00',
     recentRecords: [],
-    loading: true,
-    userInfo: null
-  },
-
-  onLoad() {
-    this.getUserInfo();
+    loading: true
   },
 
   onShow() {
     this.loadStats();
     this.loadRecords();
-  },
-
-  getUserInfo() {
-    // 获取用户信息
-    wx.getUserProfile({
-      desc: '用于展示用户昵称',
-      success: (res) => {
-        this.setData({
-          userInfo: res.userInfo
-        });
-      },
-      fail: () => {
-        // 如果用户拒绝，使用默认 open-data
-        console.log('用户未授权获取昵称');
-      }
-    });
   },
 
   loadStats() {

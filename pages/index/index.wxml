@@ -2,7 +2,7 @@
 <view class="container">
   <view class="card user-card">
     <open-data type="userAvatarUrl" class="avatar"></open-data>
-    <text class="nickname">{{userInfo.nickName || '微信用户'}}</text>
+    <open-data type="userNickName" class="nickname"></open-data>
     <view class="total-net {{totalNet >= 0 ? 'amount-positive' : 'amount-negative'}}">
       年度盈亏：{{totalNetStr}} 元
     </view>
