@@ -15,9 +15,10 @@
 
 .stats-card { padding: 40rpx; }
 .section-title { font-size: 32rpx; font-weight: bold; color: #333; margin-bottom: 30rpx; }
-.stats-grid { display: flex; justify-content: space-around; }
-.stat-item { text-align: center; }
-.stat-value { font-size: 48rpx; font-weight: bold; color: #333; }
-.stat-value.positive { color: #52c41a; }
-.stat-value.negative { color: #ff4d4f; }
-.stat-label { font-size: 26rpx; color: #999; margin-top: 10rpx; }
+.stats-list { display: flex; flex-direction: column; gap: 20rpx; }
+.stats-row { display: flex; justify-content: space-between; align-items: center; padding: 16rpx 0; border-bottom: 1rpx solid #f0f0f0; }
+.stats-row:last-child { border-bottom: none; }
+.stats-label { font-size: 30rpx; color: #666; }
+.stats-value { font-size: 32rpx; font-weight: bold; color: #333; }
+.stats-value.positive { color: #52c41a; }
+.stats-value.negative { color: #ff4d4f; }

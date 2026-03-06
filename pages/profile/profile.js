@@ -5,6 +5,12 @@ Page({
     userId: '',
     totalNet: 0,
     totalNetStr: '0.00',
+    lotteryNet: 0,
+    lotteryNetStr: '0.00',
+    scratchNet: 0,
+    scratchNetStr: '0.00',
+    mahjongNet: 0,
+    mahjongNetStr: '0.00',
     recordCount: 0
   },
 
@@ -28,6 +34,7 @@ Page({
   },
 
   loadStats() {
+    // 获取总统计
     wx.cloud.callFunction({
       name: 'stats',
       data: { action: 'getPersonalStats' }
@@ -40,14 +47,32 @@ Page({
         });
       }
     });
-    
-    // 获取记录数
+
+    // 获取分类统计和记录数
     wx.cloud.callFunction({
       name: 'stats',
-      data: { action: 'getRecentRecords', limit: 100 }
+      data: { action: 'getRecentRecords', limit: 1000 }
     }).then(res => {
       if (res.result && res.result.success) {
-        this.setData({ recordCount: res.result.data.length });
+        const records = res.result.data;
+        let lotteryNet = 0, scratchNet = 0, mahjongNet = 0;
+
+        records.forEach(item => {
+          const net = parseFloat(item.net) || 0;
+          if (item.type === 'lottery') lotteryNet += net;
+          else if (item.type === 'scratch') scratchNet += net;
+          else if (item.type === 'mahjong') mahjongNet += net;
+        });
+
+        this.setData({
+          recordCount: records.length,
+          lotteryNet: lotteryNet,
+          lotteryNetStr: (lotteryNet >= 0 ? '+' : '') + lotteryNet.toFixed(2),
+          scratchNet: scratchNet,
+          scratchNetStr: (scratchNet >= 0 ? '+' : '') + scratchNet.toFixed(2),
+          mahjongNet: mahjongNet,
+          mahjongNetStr: (mahjongNet >= 0 ? '+' : '') + mahjongNet.toFixed(2)
+        });
       }
     });
   },
