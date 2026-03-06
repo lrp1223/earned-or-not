@@ -110,5 +110,46 @@ Page({
     wx.navigateTo({
       url: `/pages/record/record?type=${e.currentTarget.dataset.type}`
     });
+  },
+
+  editRecord(e) {
+    const { id, type } = e.currentTarget.dataset;
+    wx.showActionSheet({
+      itemList: ['编辑', '删除'],
+      success: (res) => {
+        if (res.tapIndex === 0) {
+          // 编辑
+          wx.navigateTo({
+            url: `/pages/record/record?type=${type}&id=${id}&mode=edit`
+          });
+        } else if (res.tapIndex === 1) {
+          // 删除
+          this.deleteRecord(id, type);
+        }
+      }
+    });
+  },
+
+  deleteRecord(id, type) {
+    wx.showModal({
+      title: '确认删除',
+      content: '删除后无法恢复，是否继续？',
+      success: (res) => {
+        if (res.confirm) {
+          wx.cloud.callFunction({
+            name: type,
+            data: { action: 'delete', id }
+          }).then(() => {
+            wx.showToast({ title: '删除成功' });
+            this.loadRecords();
+            this.loadStats();
+          });
+        }
+      }
+    });
+  },
+
+  viewAll() {
+    wx.switchTab({ url: '/pages/stats/stats' });
   }
 });

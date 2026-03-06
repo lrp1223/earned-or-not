@@ -1,8 +1,5 @@
 .user-card { display: flex; flex-direction: column; align-items: center; padding: 40rpx; }
-.avatar { width: 120rpx; height: 120rpx; border-radius: 60rpx; overflow: hidden; margin-bottom: 20rpx; border: 4rpx solid #ff6b6b; }
 .nickname { font-size: 32rpx; color: #333; margin-bottom: 20rpx; font-weight: bold; }
-.btn-login { margin: 20rpx 0; padding: 16rpx 40rpx; background: #ff6b6b; color: white; border-radius: 40rpx; font-size: 28rpx; border: none; }
-.btn-login::after { border: none; }
 .total-net { font-size: 48rpx; font-weight: bold; }
 .quick-actions { display: flex; justify-content: space-around; margin-top: 20rpx; }
 .action-item { display: flex; flex-direction: column; align-items: center; padding: 20rpx; }
@@ -11,18 +8,21 @@
 .scratch { background: linear-gradient(135deg, #4ecdc4, #44a08d); }
 .mahjong { background: linear-gradient(135deg, #f7b731, #e58e26); }
 
-/* 记录列表表格样式 */
-.record-list { width: 100%; }
-.record-header { display: flex; padding: 20rpx 0; border-bottom: 2rpx solid #e0e0e0; font-size: 26rpx; color: #999; font-weight: bold; }
-.record-item { display: flex; padding: 24rpx 0; border-bottom: 1rpx solid #f0f0f0; font-size: 28rpx; align-items: center; }
-.record-item:last-child { border-bottom: none; }
+.title { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20rpx; }
+.subtitle { font-size: 26rpx; color: #ff6b6b; }
 
-.col-type { flex: 2; text-align: left; }
-.col-date { flex: 3; text-align: center; color: #666; }
-.col-result { flex: 2; text-align: center; font-weight: bold; }
-.col-amount { flex: 2; text-align: right; font-weight: bold; }
-
-.col-result.win { color: #52c41a; }
-.col-result.lose { color: #ff4d4f; }
+.record-list { }
+.record-item { display: flex; align-items: center; padding: 24rpx; background: #fafafa; border-radius: 16rpx; margin-bottom: 16rpx; }
+.record-icon { width: 80rpx; height: 80rpx; border-radius: 40rpx; display: flex; align-items: center; justify-content: center; font-size: 40rpx; margin-right: 20rpx; flex-shrink: 0; }
+.record-info { flex: 1; }
+.record-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8rpx; }
+.record-type { font-size: 32rpx; font-weight: bold; color: #333; }
+.record-amount { font-size: 36rpx; font-weight: bold; }
+.record-bottom { display: flex; justify-content: space-between; align-items: center; }
+.record-date { font-size: 24rpx; color: #999; }
+.record-result { font-size: 26rpx; font-weight: bold; }
+.record-result.win { color: #52c41a; }
+.record-result.lose { color: #ff4d4f; }
+.record-arrow { font-size: 40rpx; color: #ccc; margin-left: 16rpx; }
 
 .empty { text-align: center; color: #999; padding: 40rpx; }
