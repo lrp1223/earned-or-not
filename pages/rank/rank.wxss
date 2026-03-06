@@ -7,19 +7,19 @@
 .rank-item { display: flex; justify-content: space-between; align-items: center; padding: 30rpx; background: white; border-radius: 16rpx; margin-bottom: 16rpx; }
 .rank-item.rank-me { background: #fff5f5; border: 2rpx solid #ff6b6b; }
 
-.rank-left { display: flex; align-items: center; flex: 1; }
+.rank-left { display: flex; align-items: center; flex: 1; height: 64rpx; }
 .rank-number { width: 48rpx; height: 48rpx; border-radius: 50%; background: #f0f0f0; color: #666; font-size: 28rpx; font-weight: bold; display: flex; align-items: center; justify-content: center; margin-right: 20rpx; }
 .rank-number.rank-top { background: linear-gradient(135deg, #ffd700, #ffaa00); color: white; }
 .rank-item:nth-child(1) .rank-number { background: linear-gradient(135deg, #ffd700, #ffaa00); }
 .rank-item:nth-child(2) .rank-number { background: linear-gradient(135deg, #c0c0c0, #a0a0a0); color: white; }
 .rank-item:nth-child(3) .rank-number { background: linear-gradient(135deg, #cd7f32, #b87333); color: white; }
 
-.rank-avatar { width: 64rpx; height: 64rpx; border-radius: 50%; margin-right: 16rpx; overflow: hidden; }
-.rank-avatar-default { width: 64rpx; height: 64rpx; border-radius: 50%; background: #ff6b6b; color: white; font-size: 28rpx; display: flex; align-items: center; justify-content: center; margin-right: 16rpx; }
+.rank-avatar { width: 64rpx; height: 64rpx; border-radius: 50%; margin-right: 16rpx; flex-shrink: 0; vertical-align: middle; }
+.rank-avatar-default { width: 64rpx; height: 64rpx; border-radius: 50%; background: #ff6b6b; color: white; font-size: 28rpx; display: flex; align-items: center; justify-content: center; margin-right: 16rpx; flex-shrink: 0; }
 
-.rank-name { font-size: 30rpx; color: #333; }
+.rank-name { font-size: 30rpx; color: #333; line-height: 64rpx; vertical-align: middle; }
 .rank-name-me { font-weight: bold; color: #ff6b6b; }
-.rank-tag { margin-left: 12rpx; padding: 4rpx 12rpx; background: #ff6b6b; color: white; font-size: 20rpx; border-radius: 8rpx; }
+.rank-tag { margin-left: 12rpx; padding: 4rpx 12rpx; background: #ff6b6b; color: white; font-size: 20rpx; border-radius: 8rpx; vertical-align: middle; }
 
 .rank-right { margin-left: 20rpx; }
 .rank-amount { font-size: 36rpx; font-weight: bold; }
