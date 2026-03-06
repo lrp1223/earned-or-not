@@ -21,12 +21,19 @@ Page({
     this.loadRecords();
   },
 
-  onGetUserInfo(e) {
-    if (e.detail.userInfo) {
-      const userInfo = e.detail.userInfo;
-      this.setData({ userInfo });
-      wx.setStorageSync('userInfo', userInfo);
-    }
+  getUserProfile() {
+    wx.getUserProfile({
+      desc: '用于展示用户头像和昵称',
+      success: (res) => {
+        const userInfo = res.userInfo;
+        this.setData({ userInfo });
+        wx.setStorageSync('userInfo', userInfo);
+      },
+      fail: (err) => {
+        console.log('获取用户信息失败', err);
+        wx.showToast({ title: '需要授权才能显示头像', icon: 'none' });
+      }
+    });
   },
 
   loadStats() {
