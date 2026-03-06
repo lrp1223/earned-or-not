@@ -36,12 +36,18 @@
       </view>
     </block>
     
+    <!-- 备注 -->
+    <view class="form-item">
+      <text class="label">备注（选填）</text>
+      <input type="text" value="{{remark}}" bindinput="onRemarkInput" placeholder="例如：大乐透、双色球..."/>
+    </view>
+
     <!-- 预览 -->
     <view class="preview {{previewNet >= 0 ? 'positive' : 'negative'}}">
       <text class="preview-label">本次盈亏</text>
       <text class="preview-amount">{{previewNetStr}} 元</text>
     </view>
-    
-    <button class="btn-primary" bindtap="submit">保存记录</button>
+
+    <button class="btn-primary" bindtap="submit" disabled="{{submitting}}">{{submitting ? '保存中...' : '保存记录'}}</button>
   </view>
 </view>

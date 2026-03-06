@@ -4,11 +4,13 @@ Page({
     typeText: '',
     cost: '',
     winAmount: '',
+    remark: '',
     mahjongType: 'win',
     previewNet: 0,
     previewNetStr: '+0.00',
     mode: 'add',
-    recordId: ''
+    recordId: '',
+    submitting: false
   },
 
   onLoad(options) {
@@ -58,6 +60,10 @@ Page({
     this.calc();
   },
 
+  onRemarkInput(e) {
+    this.setData({ remark: e.detail.value });
+  },
+
   setMahjongType(e) {
     this.setData({ mahjongType: e.currentTarget.dataset.type });
     this.calc();
@@ -79,26 +85,34 @@ Page({
   },
 
   submit() {
-    const { type, cost, winAmount, mahjongType, mode, recordId } = this.data;
+    const { type, cost, winAmount, remark, mahjongType, mode, recordId, submitting } = this.data;
+    if (submitting) return; // 防止重复提交
     if (!cost) {
       wx.showToast({ title: '请输入金额', icon: 'none' });
       return;
     }
 
+    this.setData({ submitting: true });
+    wx.showLoading({ title: '保存中...' });
+
     const action = mode === 'edit' ? 'update' : 'add';
-    const data = { action, cost, winAmount: winAmount || '0', mahjongType };
+    const data = { action, cost, winAmount: winAmount || '0', remark, mahjongType };
     if (mode === 'edit') data.id = recordId;
 
     wx.cloud.callFunction({ name: type, data })
       .then(res => {
+        wx.hideLoading();
+        this.setData({ submitting: false });
         if (res.result.success) {
           wx.showToast({ title: mode === 'edit' ? '修改成功' : '保存成功' });
           setTimeout(() => wx.navigateBack(), 1000);
         } else {
-          wx.showToast({ title: '保存失败', icon: 'none' });
+          wx.showToast({ title: res.result.message || '保存失败', icon: 'none' });
         }
       })
       .catch(() => {
+        wx.hideLoading();
+        this.setData({ submitting: false });
         wx.showToast({ title: '保存失败', icon: 'none' });
       });
   }

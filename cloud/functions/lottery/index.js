@@ -29,6 +29,7 @@ exports.main = async (event, context) => {
         _openid: OPENID,
         cost: parseFloat(cost) || 0,
         winAmount: parseFloat(winAmount) || 0,
+        remark: event.remark || '',
         createTime: db.serverDate(),
         updateTime: db.serverDate()
       }
@@ -45,6 +46,7 @@ exports.main = async (event, context) => {
       data: {
         cost: parseFloat(cost) || 0,
         winAmount: parseFloat(winAmount) || 0,
+        remark: event.remark || '',
         updateTime: db.serverDate()
       }
     });
