@@ -4,7 +4,7 @@
     "pages/record/record",
     "pages/stats/stats",
     "pages/rank/rank",
-    "pages/friends/friends"
+    "pages/profile/profile"
   ],
   "window": {
     "backgroundTextStyle": "light",
@@ -21,7 +21,7 @@
       {"pagePath": "pages/index/index", "text": "首页"},
       {"pagePath": "pages/stats/stats", "text": "统计"},
       {"pagePath": "pages/rank/rank", "text": "排行"},
-      {"pagePath": "pages/friends/friends", "text": "好友"}
+      {"pagePath": "pages/profile/profile", "text": "我的"}
     ]
   },
   "cloud": true,

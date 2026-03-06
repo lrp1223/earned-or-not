@@ -1,9 +1,35 @@
+// pages/rank/rank.js
 Page({
-  data: { currentTab: 'lottery', rankList: [] },
+  data: { currentTab: 'total', rankList: [] },
+  
   onShow() { this.loadRank(this.data.currentTab); },
-  switchTab(e) { const tab = e.currentTarget.dataset.tab; this.setData({ currentTab: tab }); this.loadRank(tab); },
+  
+  switchTab(e) { 
+    const tab = e.currentTarget.dataset.tab; 
+    this.setData({ currentTab: tab }); 
+    this.loadRank(tab); 
+  },
+  
   loadRank(type) {
-    wx.cloud.callFunction({ name: 'rank', data: { action: 'get' + type.charAt(0).toUpperCase() + type.slice(1) + 'Rank' } })
-      .then(res => { if (res.result.success) this.setData({ rankList: res.result.data }); });
+    const actionMap = {
+      'total': 'getTotalRank',
+      'lottery': 'getLotteryRank',
+      'scratch': 'getScratchRank',
+      'mahjong': 'getMahjongRank'
+    };
+    
+    wx.cloud.callFunction({ 
+      name: 'rank', 
+      data: { action: actionMap[type] || 'getTotalRank' } 
+    }).then(res => { 
+      if (res.result.success) {
+        // 格式化数据
+        const list = res.result.data.map(item => ({
+          ...item,
+          net: parseFloat(item.net) || 0
+        }));
+        this.setData({ rankList: list }); 
+      }
+    });
   }
 });

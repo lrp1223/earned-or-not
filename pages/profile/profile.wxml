@@ -1,0 +1,49 @@
+<!--pages/profile/profile.wxml-->
+<view class="container">
+  <view class="card profile-card">
+    <view class="avatar-section" bindtap="chooseAvatar">
+      <image wx:if="{{userProfile.avatarUrl}}" class="avatar" src="{{userProfile.avatarUrl}}" mode="aspectFill"></image>
+      <view wx:else class="avatar avatar-default">🎰</view>
+      <text class="avatar-hint">点击更换头像</text>
+    </view>
+    
+    <view class="info-section">
+      <view class="info-item" bindtap="editNickname">
+        <text class="label">昵称</text>
+        <text class="value">{{userProfile.nickname || '点击设置'}}</text>
+        <text class="arrow">›</text>
+      </view>
+      
+      <view class="info-item">
+        <text class="label">用户ID</text>
+        <text class="value id-text">{{userId}}</text>
+      </view>
+    </view>
+  </view>
+  
+  <view class="card stats-card">
+    <view class="section-title">我的战绩</view>
+    <view class="stats-grid">
+      <view class="stat-item">
+        <text class="stat-value {{totalNet >= 0 ? 'positive' : 'negative'}}">{{totalNetStr}}</text>
+        <text class="stat-label">总盈亏</text>
+      </view>
+      <view class="stat-item">
+        <text class="stat-value">{{recordCount}}</text>
+        <text class="stat-label">记账次数</text>
+      </view>
+    </view>
+  </view>
+  
+  <view class="card">
+    <view class="section-title">关于</view>
+    <view class="info-item">
+      <text class="label">版本</text>
+      <text class="value">v1.0.0</text>
+    </view>
+    <view class="info-item">
+      <text class="label">开发者</text>
+      <text class="value">18million</text>
+    </view>
+  </view>
+</view>
