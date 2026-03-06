@@ -9,7 +9,13 @@
         body {
             font-family: 'Comic Sans MS', 'Chalkboard SE', 'Marker Felt', sans-serif;
             background: #f5f5f0;
-            overflow-x: hidden;
+            overflow: hidden;
+        }
+        .slider {
+            display: flex;
+            width: 900vw;
+            height: 100vh;
+            transition: transform 0.5s ease;
         }
         .slide {
             width: 100vw;
@@ -20,7 +26,6 @@
             align-items: center;
             padding: 40px;
             position: relative;
-            page-break-after: always;
         }
         .slide-title {
             background: white;
@@ -129,16 +134,63 @@
             padding: 2px 8px;
             border-radius: 5px;
         }
-        .prototype-img {
-            max-width: 300px;
+        .nav-btn {
+            position: fixed;
+            top: 50%;
+            transform: translateY(-50%);
+            background: white;
             border: 3px solid #333;
-            border-radius: 15px;
-            box-shadow: 5px 5px 0 rgba(0,0,0,0.1);
-            margin: 20px 0;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            font-size: 24px;
+            cursor: pointer;
+            z-index: 100;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
+        .nav-btn:hover { background: #ff6b6b; color: white; }
+        .nav-prev { left: 20px; }
+        .nav-next { right: 20px; }
+        .dots {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 10px;
+            z-index: 100;
+        }
+        .dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: #ccc;
+            border: 2px solid #333;
+            cursor: pointer;
+        }
+        .dot.active { background: #ff6b6b; }
     </style>
 </head>
 <body>
+
+<button class="nav-btn nav-prev" onclick="prevSlide()">‹</button>
+<button class="nav-btn nav-next" onclick="nextSlide()">›</button>
+
+<div class="dots">
+    <div class="dot active" onclick="goToSlide(0)"></div>
+    <div class="dot" onclick="goToSlide(1)"></div>
+    <div class="dot" onclick="goToSlide(2)"></div>
+    <div class="dot" onclick="goToSlide(3)"></div>
+    <div class="dot" onclick="goToSlide(4)"></div>
+    <div class="dot" onclick="goToSlide(5)"></div>
+    <div class="dot" onclick="goToSlide(6)"></div>
+    <div class="dot" onclick="goToSlide(7)"></div>
+    <div class="dot" onclick="goToSlide(8)"></div>
+</div>
+
+<div class="slider" id="slider">
 
 <!-- Slide 1: 封面 -->
 <div class="slide">
@@ -148,7 +200,7 @@
         <h2>一个"赌狗"的自我救赎工具</h2>
         <h3>从"死了么"到"赚了么"的开发历程</h3>
     </div>
-    <div class="page-num">1</div>
+    <div class="page-num">1/9</div>
 </div>
 
 <!-- Slide 2: 灵感来源 -->
@@ -172,7 +224,7 @@
             </div>
         </div>
     </div>
-    <div class="page-num">2</div>
+    <div class="page-num">2/9</div>
 </div>
 
 <!-- Slide 3: Trae 尝试 -->
@@ -195,7 +247,7 @@
     </div>
     <div class="arrow">↓</div>
     <p style="color: #999; font-style: italic;">生成的版本像原型图，无法真正使用</p>
-    <div class="page-num">3</div>
+    <div class="page-num">3/9</div>
 </div>
 
 <!-- Slide 4: 过年躺平 -->
@@ -211,7 +263,7 @@
             项目暂时搁置</p>
         </div>
     </div>
-    <div class="page-num">4</div>
+    <div class="page-num">4/9</div>
 </div>
 
 <!-- Slide 5: OpenClaw 转机 -->
@@ -230,7 +282,7 @@
     </div>
     <div class="arrow">↓</div>
     <h2 style="color: #ff6b6b;">于是，你看到了 18million</h2>
-    <div class="page-num">5</div>
+    <div class="page-num">5/9</div>
 </div>
 
 <!-- Slide 6: 18million 是谁 -->
@@ -246,7 +298,7 @@
             也代表这个项目的初心</p>
         </div>
     </div>
-    <div class="page-num">6</div>
+    <div class="page-num">6/9</div>
 </div>
 
 <!-- Slide 7: 开发对比 -->
@@ -274,7 +326,7 @@
             </ul>
         </div>
     </div>
-    <div class="page-num">7</div>
+    <div class="page-num">7/9</div>
 </div>
 
 <!-- Slide 8: 成果展示 -->
@@ -303,7 +355,7 @@
             </div>
         </div>
     </div>
-    <div class="page-num">8</div>
+    <div class="page-num">8/9</div>
 </div>
 
 <!-- Slide 9: 结尾 -->
@@ -319,8 +371,65 @@
             <p style="margin-top: 15px; color: #999;">Powered by OpenClaw</p>
         </div>
     </div>
-    <div class="page-num">9</div>
+    <div class="page-num">9/9</div>
 </div>
+
+</div>
+
+<script>
+let currentSlide = 0;
+const totalSlides = 9;
+
+function updateSlider() {
+    const slider = document.getElementById('slider');
+    slider.style.transform = `translateX(-${currentSlide * 100}vw)`;
+    
+    // Update dots
+    document.querySelectorAll('.dot').forEach((dot, index) => {
+        dot.classList.toggle('active', index === currentSlide);
+    });
+}
+
+function nextSlide() {
+    if (currentSlide < totalSlides - 1) {
+        currentSlide++;
+        updateSlider();
+    }
+}
+
+function prevSlide() {
+    if (currentSlide > 0) {
+        currentSlide--;
+        updateSlider();
+    }
+}
+
+function goToSlide(index) {
+    currentSlide = index;
+    updateSlider();
+}
+
+// Keyboard navigation
+document.addEventListener('keydown', (e) => {
+    if (e.key === 'ArrowRight') nextSlide();
+    if (e.key === 'ArrowLeft') prevSlide();
+});
+
+// Touch/swipe support
+let startX = 0;
+document.addEventListener('touchstart', (e) => {
+    startX = e.touches[0].clientX;
+});
+
+document.addEventListener('touchend', (e) => {
+    const endX = e.changedTouches[0].clientX;
+    const diff = startX - endX;
+    if (Math.abs(diff) > 50) {
+        if (diff > 0) nextSlide();
+        else prevSlide();
+    }
+});
+</script>
 
 </body>
 </html>
