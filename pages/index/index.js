@@ -4,12 +4,29 @@ Page({
     totalNet: 0,
     totalNetStr: '+0.00',
     recentRecords: [],
-    loading: true
+    loading: true,
+    userInfo: null
+  },
+
+  onLoad() {
+    // 检查本地缓存
+    const userInfo = wx.getStorageSync('userInfo');
+    if (userInfo) {
+      this.setData({ userInfo });
+    }
   },
 
   onShow() {
     this.loadStats();
     this.loadRecords();
+  },
+
+  onGetUserInfo(e) {
+    if (e.detail.userInfo) {
+      const userInfo = e.detail.userInfo;
+      this.setData({ userInfo });
+      wx.setStorageSync('userInfo', userInfo);
+    }
   },
 
   loadStats() {
