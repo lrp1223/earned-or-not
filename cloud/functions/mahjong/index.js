@@ -28,6 +28,7 @@ exports.main = async (event, context) => {
       data: {
         _openid: OPENID,
         amount,
+        remark: event.remark || '',
         createTime: db.serverDate(),
         updateTime: db.serverDate()
       }
@@ -44,6 +45,7 @@ exports.main = async (event, context) => {
     await db.collection('mahjong').doc(id).update({
       data: {
         amount,
+        remark: event.remark || '',
         updateTime: db.serverDate()
       }
     });
