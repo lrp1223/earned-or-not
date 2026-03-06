@@ -1,8 +1,8 @@
 // pages/profile/profile.js
 Page({
   data: {
-    userProfile: {},
-    userId: '',
+    nickname: '',
+    avatarUrl: '',
     totalNet: 0,
     totalNetStr: '0.00',
     lotteryNet: 0,
@@ -24,10 +24,10 @@ Page({
       name: 'user',
       data: { action: 'getProfile' }
     }).then(res => {
-      if (res.result && res.result.success) {
+      if (res.result && res.result.success && res.result.data) {
         this.setData({
-          userProfile: res.result.data,
-          userId: res.result.data._openid?.slice(-8) || '未知'
+          nickname: res.result.data.nickname || '',
+          avatarUrl: res.result.data.avatarUrl || ''
         });
       }
     });

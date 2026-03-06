@@ -1,8 +1,9 @@
 <!--pages/profile/profile.wxml-->
 <view class="container">
-  <view class="card profile-card">
+  <!-- 用户信息卡片 -->
+  <view class="profile-card">
     <view class="avatar-section" bindtap="chooseAvatar">
-      <image wx:if="{{userProfile.avatarUrl}}" class="avatar" src="{{userProfile.avatarUrl}}" mode="aspectFill"></image>
+      <image wx:if="{{avatarUrl}}" class="avatar" src="{{avatarUrl}}" mode="aspectFill"></image>
       <view wx:else class="avatar avatar-default">🎰</view>
       <text class="avatar-hint">点击更换头像</text>
     </view>
@@ -10,52 +11,49 @@
     <view class="info-section">
       <view class="info-item" bindtap="editNickname">
         <text class="label">昵称</text>
-        <text class="value">{{userProfile.nickname || '点击设置'}}</text>
+        <text class="value">{{nickname || '点击设置'}}</text>
         <text class="arrow">›</text>
       </view>
-      
-      <view class="info-item">
-        <text class="label">用户ID</text>
-        <text class="value id-text">{{userId}}</text>
-      </view>
     </view>
   </view>
   
-  <view class="card stats-card">
+  <!-- 战绩卡片 -->
+  <view class="stats-card">
     <view class="section-title">我的战绩</view>
-    <view class="stats-list">
-      <view class="stats-row">
-        <text class="stats-label">总盈亏</text>
-        <text class="stats-value {{totalNet >= 0 ? 'positive' : 'negative'}}">{{totalNetStr}}元</text>
+    <view class="stats-grid">
+      <view class="stats-item primary">
+        <text class="stats-num {{totalNet >= 0 ? 'positive' : 'negative'}}">{{totalNetStr}}</text>
+        <text class="stats-desc">总盈亏（元）</text>
       </view>
-      <view class="stats-row">
-        <text class="stats-label">刮刮乐</text>
-        <text class="stats-value {{scratchNet >= 0 ? 'positive' : 'negative'}}">{{scratchNetStr}}元</text>
+      <view class="stats-item">
+        <text class="stats-num {{lotteryNet >= 0 ? 'positive' : 'negative'}}">{{lotteryNetStr}}</text>
+        <text class="stats-desc">大乐透</text>
       </view>
-      <view class="stats-row">
-        <text class="stats-label">大乐透</text>
-        <text class="stats-value {{lotteryNet >= 0 ? 'positive' : 'negative'}}">{{lotteryNetStr}}元</text>
+      <view class="stats-item">
+        <text class="stats-num {{scratchNet >= 0 ? 'positive' : 'negative'}}">{{scratchNetStr}}</text>
+        <text class="stats-desc">刮刮乐</text>
       </view>
-      <view class="stats-row">
-        <text class="stats-label">麻将</text>
-        <text class="stats-value {{mahjongNet >= 0 ? 'positive' : 'negative'}}">{{mahjongNetStr}}元</text>
+      <view class="stats-item">
+        <text class="stats-num {{mahjongNet >= 0 ? 'positive' : 'negative'}}">{{mahjongNetStr}}</text>
+        <text class="stats-desc">麻将</text>
       </view>
-      <view class="stats-row">
-        <text class="stats-label">总次数</text>
-        <text class="stats-value">{{recordCount}}次</text>
+      <view class="stats-item">
+        <text class="stats-num">{{recordCount}}</text>
+        <text class="stats-desc">总次数</text>
       </view>
     </view>
   </view>
   
-  <view class="card">
-    <view class="section-title">关于</view>
-    <view class="info-item">
-      <text class="label">版本</text>
-      <text class="value">v1.0.0</text>
+  <!-- 关于卡片 -->
+  <view class="about-card">
+    <view class="about-title">关于</view>
+    <view class="about-item">
+      <text class="about-label">版本</text>
+      <text class="about-value">v1.1.0</text>
     </view>
-    <view class="info-item">
-      <text class="label">开发者</text>
-      <text class="value">18million</text>
+    <view class="about-item">
+      <text class="about-label">开发者</text>
+      <text class="about-value">18million 🤖</text>
     </view>
   </view>
 </view>
