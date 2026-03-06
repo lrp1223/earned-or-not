@@ -5,12 +5,24 @@ Page({
     totalNetStr: '+0.00',
     recentRecords: [],
     loading: true,
-    userProfile: null
+    userProfile: null,
+    nickname: '赚了么用户'
   },
 
   onLoad() {
-    // 从数据库获取用户信息
     this.loadUserProfile();
+  },
+
+  loadUserProfile() {
+    wx.cloud.callFunction({
+      name: 'user',
+      data: { action: 'getProfile' }
+    }).then(res => {
+      if (res.result && res.result.success && res.result.data) {
+        const nickname = res.result.data.nickname || '赚了么用户';
+        this.setData({ nickname, userProfile: res.result.data });
+      }
+    });
   },
 
   onShow() {
