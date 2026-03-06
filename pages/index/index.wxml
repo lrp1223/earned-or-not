@@ -48,4 +48,19 @@
       </view>
     </view>
   </view>
+
+  <!-- 自定义操作菜单 -->
+  <view class="action-menu-mask" wx:if="{{showActionMenu}}" bindtap="hideActionMenu"></view>
+  <view class="action-menu" wx:if="{{showActionMenu}}">
+    <view class="action-menu-title">操作</view>
+    <view class="action-menu-item" bindtap="onEdit">
+      <text class="action-icon">✏️</text>
+      <text>编辑</text>
+    </view>
+    <view class="action-menu-item delete" bindtap="onDelete">
+      <text class="action-icon">🗑️</text>
+      <text>删除</text>
+    </view>
+    <view class="action-menu-cancel" bindtap="hideActionMenu">取消</view>
+  </view>
 </view>

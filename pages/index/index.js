@@ -6,7 +6,9 @@ Page({
     recentRecords: [],
     loading: true,
     nickname: '赚了么用户',
-    avatarUrl: ''
+    avatarUrl: '',
+    showActionMenu: false,
+    currentRecord: null
   },
 
   onLoad() {
@@ -92,33 +94,57 @@ Page({
 
   editRecord(e) {
     const { id, type } = e.currentTarget.dataset;
-    wx.showActionSheet({
-      itemList: ['编辑', '删除'],
-      success: (res) => {
-        if (res.tapIndex === 0) {
-          wx.navigateTo({
-            url: `/pages/record/record?type=${type}&id=${id}&mode=edit`
-          });
-        } else if (res.tapIndex === 1) {
-          this.deleteRecord(id, type);
-        }
-      }
+    this.setData({
+      showActionMenu: true,
+      currentRecord: { id, type }
     });
+  },
+
+  hideActionMenu() {
+    this.setData({ showActionMenu: false, currentRecord: null });
+  },
+
+  onEdit() {
+    const { id, type } = this.data.currentRecord;
+    this.hideActionMenu();
+    wx.navigateTo({
+      url: `/pages/record/record?type=${type}&id=${id}&mode=edit`
+    });
+  },
+
+  onDelete() {
+    const { id, type } = this.data.currentRecord;
+    this.hideActionMenu();
+    this.deleteRecord(id, type);
   },
 
   deleteRecord(id, type) {
     wx.showModal({
       title: '确认删除',
       content: '删除后无法恢复，是否继续？',
+      confirmColor: '#ff6b6b',
       success: (res) => {
         if (res.confirm) {
+          wx.showLoading({ title: '删除中...' });
           wx.cloud.callFunction({
             name: type,
             data: { action: 'delete', id }
-          }).then(() => {
-            wx.showToast({ title: '删除成功' });
-            this.loadRecords();
-            this.loadStats();
+          }).then((res) => {
+            wx.hideLoading();
+            if (res.result && res.result.success) {
+              wx.showToast({ title: '删除成功', icon: 'success' });
+              // 延迟刷新，让用户看到提示
+              setTimeout(() => {
+                this.loadRecords();
+                this.loadStats();
+              }, 500);
+            } else {
+              wx.showToast({ title: '删除失败', icon: 'none' });
+            }
+          }).catch(err => {
+            wx.hideLoading();
+            console.error('删除失败', err);
+            wx.showToast({ title: '删除失败', icon: 'none' });
           });
         }
       }
