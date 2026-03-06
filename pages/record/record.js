@@ -13,7 +13,10 @@ Page({
     let net = 0;
     if (type === 'mahjong') net = (parseFloat(cost) || 0) * (mahjongType === 'win' ? 1 : -1);
     else net = (parseFloat(winAmount) || 0) - (parseFloat(cost) || 0);
-    this.setData({ previewNet: net });
+    this.setData({
+      previewNet: net,
+      previewNetStr: (net >= 0 ? '+' : '') + net.toFixed(2)
+    });
   },
   submit() {
     const { type, cost, winAmount, mahjongType, previewNet } = this.data;

@@ -39,7 +39,7 @@
     <!-- 预览 -->
     <view class="preview {{previewNet >= 0 ? 'positive' : 'negative'}}">
       <text class="preview-label">本次盈亏</text>
-      <text class="preview-amount">{{previewNet >= 0 ? '+' : ''}}{{previewNet.toFixed(2)}} 元</text>
+      <text class="preview-amount">{{previewNetStr}} 元</text>
     </view>
     
     <button class="btn-primary" bindtap="submit">保存记录</button>
