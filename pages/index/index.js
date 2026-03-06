@@ -2,13 +2,35 @@
 Page({
   data: {
     totalNet: 0,
+    totalNetStr: '+0.00',
     recentRecords: [],
-    loading: true
+    loading: true,
+    userInfo: null
+  },
+
+  onLoad() {
+    this.getUserInfo();
   },
 
   onShow() {
     this.loadStats();
     this.loadRecords();
+  },
+
+  getUserInfo() {
+    // 获取用户信息
+    wx.getUserProfile({
+      desc: '用于展示用户昵称',
+      success: (res) => {
+        this.setData({
+          userInfo: res.userInfo
+        });
+      },
+      fail: () => {
+        // 如果用户拒绝，使用默认 open-data
+        console.log('用户未授权获取昵称');
+      }
+    });
   },
 
   loadStats() {
@@ -17,8 +39,10 @@ Page({
       data: { action: 'getPersonalStats' }
     }).then(res => {
       if (res.result && res.result.success) {
+        const totalNet = parseFloat(res.result.data.totalNet) || 0;
         this.setData({
-          totalNet: res.result.data.totalNet,
+          totalNet: totalNet,
+          totalNetStr: (totalNet >= 0 ? '+' : '') + totalNet.toFixed(2),
           loading: false
         });
       }
@@ -34,7 +58,6 @@ Page({
       data: { action: 'getRecentRecords', limit: 5 }
     }).then(res => {
       if (res.result && res.result.success) {
-        // 格式化数据
         const records = res.result.data.map(item => {
           const net = parseFloat(item.net) || 0;
           return {
