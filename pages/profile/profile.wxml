@@ -20,26 +20,15 @@
   <!-- 战绩卡片 -->
   <view class="stats-card">
     <view class="section-title">我的战绩</view>
-    <view class="stats-grid">
-      <view class="stats-item primary">
-        <text class="stats-num {{totalNet >= 0 ? 'positive' : 'negative'}}">{{totalNetStr}}</text>
-        <text class="stats-desc">总盈亏（元）</text>
+    <view class="stats-simple">
+      <view class="stats-main">
+        <text class="stats-label">总盈亏</text>
+        <text class="stats-value {{totalNet >= 0 ? 'positive' : 'negative'}}">{{totalNetStr}}元</text>
       </view>
-      <view class="stats-item">
-        <text class="stats-num {{lotteryNet >= 0 ? 'positive' : 'negative'}}">{{lotteryNetStr}}</text>
-        <text class="stats-desc">大乐透</text>
-      </view>
-      <view class="stats-item">
-        <text class="stats-num {{scratchNet >= 0 ? 'positive' : 'negative'}}">{{scratchNetStr}}</text>
-        <text class="stats-desc">刮刮乐</text>
-      </view>
-      <view class="stats-item">
-        <text class="stats-num {{mahjongNet >= 0 ? 'positive' : 'negative'}}">{{mahjongNetStr}}</text>
-        <text class="stats-desc">麻将</text>
-      </view>
-      <view class="stats-item">
-        <text class="stats-num">{{recordCount}}</text>
-        <text class="stats-desc">总次数</text>
+      <view class="stats-divider"></view>
+      <view class="stats-main">
+        <text class="stats-label">总次数</text>
+        <text class="stats-value">{{recordCount}}次</text>
       </view>
     </view>
   </view>

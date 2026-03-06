@@ -18,14 +18,13 @@
 .section-title { font-size: 32rpx; font-weight: bold; color: #333; margin-bottom: 30rpx; display: flex; align-items: center; }
 .section-title::before { content: "🏆"; margin-right: 12rpx; }
 
-.stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20rpx; }
-.stats-item { background: #f8f8f8; border-radius: 16rpx; padding: 30rpx; text-align: center; }
-.stats-item.primary { background: linear-gradient(135deg, #fff5f5, #ffebee); grid-column: span 2; }
-.stats-item.primary .stats-num { font-size: 56rpx; }
-.stats-num { font-size: 40rpx; font-weight: bold; color: #333; }
-.stats-num.positive { color: #52c41a; }
-.stats-num.negative { color: #ff4d4f; }
-.stats-desc { font-size: 26rpx; color: #999; margin-top: 8rpx; }
+.stats-simple { display: flex; align-items: center; justify-content: space-around; padding: 20rpx 0; }
+.stats-main { text-align: center; flex: 1; }
+.stats-label { display: block; font-size: 28rpx; color: #999; margin-bottom: 12rpx; }
+.stats-value { display: block; font-size: 48rpx; font-weight: bold; color: #333; }
+.stats-value.positive { color: #52c41a; }
+.stats-value.negative { color: #ff4d4f; }
+.stats-divider { width: 2rpx; height: 80rpx; background: #f0f0f0; }
 
 .about-card { padding: 40rpx; margin: 20rpx; background: white; border-radius: 24rpx; box-shadow: 0 4rpx 20rpx rgba(0,0,0,0.08); }
 .about-title { font-size: 32rpx; font-weight: bold; color: #333; margin-bottom: 20rpx; display: flex; align-items: center; }
