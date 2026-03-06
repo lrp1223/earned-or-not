@@ -35,11 +35,15 @@ Page({
     }).then(res => {
       if (res.result && res.result.success) {
         // 格式化数据
-        const records = res.result.data.map(item => ({
-          ...item,
-          net: parseFloat(item.net) || 0,
-          timeStr: this.formatTime(item.createTime)
-        }));
+        const records = res.result.data.map(item => {
+          const net = parseFloat(item.net) || 0;
+          return {
+            ...item,
+            net: net,
+            netStr: (net >= 0 ? '+' : '') + net.toFixed(2),
+            timeStr: this.formatTime(item.createTime)
+          };
+        });
         this.setData({ recentRecords: records });
       }
     }).catch(err => {
@@ -53,9 +57,7 @@ Page({
     const year = date.getFullYear().toString().slice(-2);
     const month = (date.getMonth() + 1).toString().padStart(2, '0');
     const day = date.getDate().toString().padStart(2, '0');
-    const hour = date.getHours().toString().padStart(2, '0');
-    const minute = date.getMinutes().toString().padStart(2, '0');
-    return `${year}-${month}-${day} ${hour}:${minute}`;
+    return `${year}-${month}-${day}`;
   },
 
   goRecord(e) {

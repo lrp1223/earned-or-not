@@ -32,7 +32,7 @@
         </view>
         <view class="record-row">
           <text class="record-result {{item.net >= 0 ? 'win' : 'lose'}}">{{item.net >= 0 ? '赚了' : '亏了'}}</text>
-          <text class="record-amount {{item.net >= 0 ? 'amount-positive' : 'amount-negative'}}">{{item.net >= 0 ? '+' : ''}}{{item.net.toFixed(2)}} 元</text>
+          <text class="record-amount {{item.net >= 0 ? 'amount-positive' : 'amount-negative'}}">{{item.netStr}} 元</text>
         </view>
       </view>
     </view>
