@@ -25,15 +25,13 @@
     <view class="title">最近记录</view>
     <view wx:if="{{recentRecords.length === 0}}" class="empty">暂无记录</view>
     <view wx:for="{{recentRecords}}" wx:key="_id" class="record-item">
-      <view class="record-info">
-        <view class="record-row">
-          <text class="record-type">{{item.typeText}}</text>
-          <text class="record-time">{{item.timeStr}}</text>
-        </view>
-        <view class="record-row">
-          <text class="record-result {{item.net >= 0 ? 'win' : 'lose'}}">{{item.net >= 0 ? '赚了' : '亏了'}}</text>
-          <text class="record-amount {{item.net >= 0 ? 'amount-positive' : 'amount-negative'}}">{{item.netStr}} 元</text>
-        </view>
+      <view class="record-left">
+        <text class="record-type">{{item.typeText}}</text>
+        <text class="record-time">{{item.timeStr}}</text>
+      </view>
+      <view class="record-right">
+        <text class="record-result {{item.net >= 0 ? 'win' : 'lose'}}">{{item.net >= 0 ? '赚了' : '亏了'}}</text>
+        <text class="record-amount {{item.net >= 0 ? 'amount-positive' : 'amount-negative'}}">{{item.netStr}} 元</text>
       </view>
     </view>
   </view>

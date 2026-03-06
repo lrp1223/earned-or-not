@@ -8,10 +8,10 @@
 .lottery { background: linear-gradient(135deg, #ff6b6b, #ff8e8e); }
 .scratch { background: linear-gradient(135deg, #4ecdc4, #44a08d); }
 .mahjong { background: linear-gradient(135deg, #f7b731, #e58e26); }
-.record-item { padding: 24rpx 0; border-bottom: 1rpx solid #f0f0f0; }
+.record-item { display: flex; justify-content: space-between; align-items: center; padding: 24rpx 0; border-bottom: 1rpx solid #f0f0f0; }
 .record-item:last-child { border-bottom: none; }
-.record-info { display: flex; flex-direction: column; gap: 16rpx; }
-.record-row { display: flex; justify-content: space-between; align-items: center; }
+.record-left { display: flex; align-items: center; gap: 16rpx; }
+.record-right { display: flex; align-items: center; gap: 16rpx; }
 .record-type { font-size: 30rpx; color: #333; font-weight: 500; }
 .record-time { font-size: 24rpx; color: #999; }
 .record-result { font-size: 28rpx; font-weight: bold; }
