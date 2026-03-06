@@ -6,10 +6,6 @@ exports.main = async (event, context) => {
   const { action, limit = 5 } = event;
   const { OPENID } = cloud.getWXContext();
 
-  console.log('=== 云函数开始执行 ===');
-  console.log('action:', action);
-  console.log('OPENID:', OPENID);
-
   if (action === 'getPersonalStats') {
     const [lottery, scratch, mahjong] = await Promise.all([
       db.collection('lottery').where({ _openid: OPENID }).get(),
@@ -23,19 +19,55 @@ exports.main = async (event, context) => {
     return { success: true, data: { lottery: { net: lw - lc }, scratch: { net: sw - sc }, mahjong: { net: mn }, totalNet: (lw - lc) + (sw - sc) + mn } };
   }
 
-  // 测试：直接返回固定数据
   if (action === 'getRecentRecords') {
-    console.log('返回测试数据');
-    return { 
-      success: true, 
-      data: [
-        { _id: '1', type: 'lottery', typeText: '彩票', net: -10, createTime: new Date() },
-        { _id: '2', type: 'scratch', typeText: '刮刮乐', net: 5, createTime: new Date() }
-      ],
-      message: '测试返回'
-    };
+    try {
+      // 获取各集合数据
+      const lotteryRes = await db.collection('lottery').where({ _openid: OPENID }).limit(10).get();
+      const scratchRes = await db.collection('scratch').where({ _openid: OPENID }).limit(10).get();
+      const mahjongRes = await db.collection('mahjong').where({ _openid: OPENID }).limit(10).get();
+
+      // 合并记录
+      let records = [];
+      lotteryRes.data.forEach(i => {
+        records.push({
+          _id: i._id,
+          type: 'lottery',
+          typeText: '彩票',
+          net: (i.winAmount || 0) - (i.cost || 0),
+          createTime: i.createTime
+        });
+      });
+      scratchRes.data.forEach(i => {
+        records.push({
+          _id: i._id,
+          type: 'scratch',
+          typeText: '刮刮乐',
+          net: (i.winAmount || 0) - (i.cost || 0),
+          createTime: i.createTime
+        });
+      });
+      mahjongRes.data.forEach(i => {
+        records.push({
+          _id: i._id,
+          type: 'mahjong',
+          typeText: '麻将',
+          net: i.amount || 0,
+          createTime: i.createTime
+        });
+      });
+
+      // 按时间排序
+      records.sort((a, b) => {
+        if (!a.createTime || !b.createTime) return 0;
+        return new Date(b.createTime) - new Date(a.createTime);
+      });
+      
+      records = records.slice(0, limit);
+      return { success: true, data: records };
+    } catch (err) {
+      return { success: false, message: err.message };
+    }
   }
 
-  console.log('未知操作:', action);
   return { success: false, message: '未知操作: ' + action };
 };
