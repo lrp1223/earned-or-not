@@ -20,6 +20,10 @@ exports.main = async (event, context) => {
   }
 
   if (action === 'update' && id) {
+    const record = await db.collection('scratch').doc(id).get();
+    if (record.data._openid !== OPENID) {
+      return { success: false, message: '无权修改' };
+    }
     await db.collection('scratch').doc(id).update({
       data: {
         cost: parseFloat(cost) || 0,
@@ -31,8 +35,17 @@ exports.main = async (event, context) => {
   }
 
   if (action === 'delete' && id) {
-    await db.collection('scratch').doc(id).remove();
-    return { success: true };
+    try {
+      const record = await db.collection('scratch').doc(id).get();
+      if (record.data._openid !== OPENID) {
+        return { success: false, message: '无权删除' };
+      }
+      await db.collection('scratch').doc(id).remove();
+      return { success: true };
+    } catch (err) {
+      console.error('删除失败:', err);
+      return { success: false, message: err.message || '删除失败' };
+    }
   }
 
   return { success: false, message: '未知操作' };

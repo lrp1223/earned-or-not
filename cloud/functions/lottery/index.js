@@ -3,7 +3,7 @@ cloud.init({ env: cloud.DYNAMIC_CURRENT_ENV });
 const db = cloud.database();
 
 exports.main = async (event, context) => {
-  const { action, id, cost, winAmount, mahjongType } = event;
+  const { action, id, cost, winAmount } = event;
   const { OPENID } = cloud.getWXContext();
 
   if (action === 'add') {
@@ -20,6 +20,11 @@ exports.main = async (event, context) => {
   }
 
   if (action === 'update' && id) {
+    // 先检查权限
+    const record = await db.collection('lottery').doc(id).get();
+    if (record.data._openid !== OPENID) {
+      return { success: false, message: '无权修改' };
+    }
     await db.collection('lottery').doc(id).update({
       data: {
         cost: parseFloat(cost) || 0,
@@ -31,8 +36,18 @@ exports.main = async (event, context) => {
   }
 
   if (action === 'delete' && id) {
-    await db.collection('lottery').doc(id).remove();
-    return { success: true };
+    try {
+      // 先检查权限
+      const record = await db.collection('lottery').doc(id).get();
+      if (record.data._openid !== OPENID) {
+        return { success: false, message: '无权删除' };
+      }
+      await db.collection('lottery').doc(id).remove();
+      return { success: true };
+    } catch (err) {
+      console.error('删除失败:', err);
+      return { success: false, message: err.message || '删除失败' };
+    }
   }
 
   return { success: false, message: '未知操作' };
