@@ -1,8 +1,15 @@
 <!--pages/index/index.wxml-->
 <view class="container">
   <view class="card user-card">
-    <view class="avatar" style="background: linear-gradient(135deg, #ff6b6b, #ffd93d); display: flex; align-items: center; justify-content: center; font-size: 60px; color: white;">🎰</view>
-    <text class="nickname">赚了么用户</text>
+    <block wx:if="{{userProfile && userProfile.nickname}}">
+      <image wx:if="{{userProfile.avatarUrl}}" class="avatar" src="{{userProfile.avatarUrl}}" mode="aspectFill"></image>
+      <view wx:else class="avatar" style="background: linear-gradient(135deg, #ff6b6b, #ffd93d); display: flex; align-items: center; justify-content: center; font-size: 60px; color: white;">🎰</view>
+      <text class="nickname">{{userProfile.nickname}}</text>
+    </block>
+    <block wx:else>
+      <view class="avatar" style="background: linear-gradient(135deg, #ff6b6b, #ffd93d); display: flex; align-items: center; justify-content: center; font-size: 60px; color: white;">🎰</view>
+      <button class="btn-login" bindtap="showSetName">设置昵称</button>
+    </block>
     <view class="total-net {{totalNet >= 0 ? 'amount-positive' : 'amount-negative'}}">
       年度盈亏：{{totalNetStr}} 元
     </view>
@@ -26,14 +33,18 @@
   <view class="card">
     <view class="title">最近记录</view>
     <view wx:if="{{recentRecords.length === 0}}" class="empty">暂无记录</view>
-    <view wx:for="{{recentRecords}}" wx:key="_id" class="record-item">
-      <view class="record-left">
-        <text class="record-type">{{item.typeText}}</text>
-        <text class="record-time">{{item.timeStr}}</text>
+    <view class="record-list">
+      <view class="record-header">
+        <text class="col-type">类型</text>
+        <text class="col-date">日期</text>
+        <text class="col-result">盈亏</text>
+        <text class="col-amount">金额</text>
       </view>
-      <view class="record-right">
-        <text class="record-result {{item.net >= 0 ? 'win' : 'lose'}}">{{item.net >= 0 ? '赚了' : '亏了'}}</text>
-        <text class="record-amount {{item.net >= 0 ? 'amount-positive' : 'amount-negative'}}">{{item.netStr}} 元</text>
+      <view wx:for="{{recentRecords}}" wx:key="_id" class="record-item">
+        <text class="col-type">{{item.typeText}}</text>
+        <text class="col-date">{{item.timeStr}}</text>
+        <text class="col-result {{item.net >= 0 ? 'win' : 'lose'}}">{{item.net >= 0 ? '赚了' : '亏了'}}</text>
+        <text class="col-amount {{item.net >= 0 ? 'amount-positive' : 'amount-negative'}}">{{item.netStr}}</text>
       </view>
     </view>
   </view>

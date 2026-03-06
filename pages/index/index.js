@@ -5,15 +5,12 @@ Page({
     totalNetStr: '+0.00',
     recentRecords: [],
     loading: true,
-    userInfo: null
+    userProfile: null
   },
 
   onLoad() {
-    // 检查本地缓存
-    const userInfo = wx.getStorageSync('userInfo');
-    if (userInfo) {
-      this.setData({ userInfo });
-    }
+    // 从数据库获取用户信息
+    this.loadUserProfile();
   },
 
   onShow() {
@@ -21,17 +18,40 @@ Page({
     this.loadRecords();
   },
 
-  getUserProfile() {
-    wx.getUserProfile({
-      desc: '用于展示用户头像和昵称',
+  loadUserProfile() {
+    wx.cloud.callFunction({
+      name: 'user',
+      data: { action: 'getProfile' }
+    }).then(res => {
+      if (res.result && res.result.success && res.result.data) {
+        this.setData({ userProfile: res.result.data });
+      }
+    });
+  },
+
+  showSetName() {
+    wx.showModal({
+      title: '设置昵称',
+      editable: true,
+      placeholderText: '请输入您的昵称',
       success: (res) => {
-        const userInfo = res.userInfo;
-        this.setData({ userInfo });
-        wx.setStorageSync('userInfo', userInfo);
-      },
-      fail: (err) => {
-        console.log('获取用户信息失败', err);
-        wx.showToast({ title: '需要授权才能显示头像', icon: 'none' });
+        if (res.confirm && res.content) {
+          this.setNickname(res.content);
+        }
+      }
+    });
+  },
+
+  setNickname(nickname) {
+    wx.cloud.callFunction({
+      name: 'user',
+      data: { action: 'setProfile', nickname }
+    }).then(res => {
+      if (res.result && res.result.success) {
+        this.setData({
+          userProfile: { nickname }
+        });
+        wx.showToast({ title: '设置成功' });
       }
     });
   },
