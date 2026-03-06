@@ -42,7 +42,10 @@
     </view>
     <view class="about-item">
       <text class="about-label">开发者</text>
-      <text class="about-value">18million 🤖</text>
+      <view class="about-dev">
+        <image class="dev-avatar" src="/images/avatar.png" mode="aspectFill"></image>
+        <text class="about-value">18million</text>
+      </view>
     </view>
   </view>
 </view>

@@ -29,6 +29,8 @@
 .about-card { padding: 40rpx; margin: 20rpx; background: white; border-radius: 24rpx; box-shadow: 0 4rpx 20rpx rgba(0,0,0,0.08); }
 .about-title { font-size: 32rpx; font-weight: bold; color: #333; margin-bottom: 20rpx; display: flex; align-items: center; }
 .about-title::before { content: "ℹ️"; margin-right: 12rpx; }
-.about-item { display: flex; padding: 20rpx 0; }
+.about-item { display: flex; align-items: center; padding: 20rpx 0; }
 .about-label { width: 120rpx; font-size: 28rpx; color: #666; }
-.about-value { flex: 1; font-size: 28rpx; color: #333; }
+.about-value { font-size: 28rpx; color: #333; }
+.about-dev { display: flex; align-items: center; flex: 1; }
+.dev-avatar { width: 48rpx; height: 48rpx; border-radius: 50%; margin-right: 12rpx; }
