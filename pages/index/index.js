@@ -5,7 +5,6 @@ Page({
     totalNetStr: '+0.00',
     recentRecords: [],
     loading: true,
-    userProfile: null,
     nickname: '赚了么用户'
   },
 
@@ -13,19 +12,8 @@ Page({
     this.loadUserProfile();
   },
 
-  loadUserProfile() {
-    wx.cloud.callFunction({
-      name: 'user',
-      data: { action: 'getProfile' }
-    }).then(res => {
-      if (res.result && res.result.success && res.result.data) {
-        const nickname = res.result.data.nickname || '赚了么用户';
-        this.setData({ nickname, userProfile: res.result.data });
-      }
-    });
-  },
-
   onShow() {
+    this.loadUserProfile();
     this.loadStats();
     this.loadRecords();
   },
@@ -36,35 +24,11 @@ Page({
       data: { action: 'getProfile' }
     }).then(res => {
       if (res.result && res.result.success && res.result.data) {
-        this.setData({ userProfile: res.result.data });
+        const nickname = res.result.data.nickname || '赚了么用户';
+        this.setData({ nickname });
       }
-    });
-  },
-
-  showSetName() {
-    wx.showModal({
-      title: '设置昵称',
-      editable: true,
-      placeholderText: '请输入您的昵称',
-      success: (res) => {
-        if (res.confirm && res.content) {
-          this.setNickname(res.content);
-        }
-      }
-    });
-  },
-
-  setNickname(nickname) {
-    wx.cloud.callFunction({
-      name: 'user',
-      data: { action: 'setProfile', nickname }
-    }).then(res => {
-      if (res.result && res.result.success) {
-        this.setData({
-          userProfile: { nickname }
-        });
-        wx.showToast({ title: '设置成功' });
-      }
+    }).catch(err => {
+      console.log('获取用户信息失败', err);
     });
   },
 
@@ -130,12 +94,10 @@ Page({
       itemList: ['编辑', '删除'],
       success: (res) => {
         if (res.tapIndex === 0) {
-          // 编辑
           wx.navigateTo({
             url: `/pages/record/record?type=${type}&id=${id}&mode=edit`
           });
         } else if (res.tapIndex === 1) {
-          // 删除
           this.deleteRecord(id, type);
         }
       }
