@@ -13,13 +13,14 @@
     <view class="rank-item {{item.isMe ? 'rank-me' : ''}}" wx:for="{{rankList}}" wx:key="userId">
       <view class="rank-left">
         <view class="rank-number {{index < 3 ? 'rank-top' : ''}}">{{index + 1}}</view>
-        <view class="rank-avatar-default">{{item.nickname[0]}}</view>
+        <image wx:if="{{item.avatarUrl}}" class="rank-avatar" src="{{item.avatarUrl}}" mode="aspectFill"></image>
+        <view wx:else class="rank-avatar-default">{{item.nickname[0]}}</view>
         <text class="rank-name {{item.isMe ? 'rank-name-me' : ''}}">{{item.nickname}}</text>
         <text wx:if="{{item.isMe}}" class="rank-tag">我</text>
       </view>
       <view class="rank-right">
         <text class="rank-amount {{item.net >= 0 ? 'amount-positive' : 'amount-negative'}}">
-          {{item.net >= 0 ? '+' : ''}}{{item.net.toFixed(2)}}
+          {{item.net >= 0 ? '+' : ''}}{{item.netStr}}
         </text>
       </view>
     </view>

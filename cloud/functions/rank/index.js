@@ -41,6 +41,7 @@ exports.main = async (event, context) => {
     list.push({
       userId: userId,
       nickname: nickname,
+      avatarUrl: user.avatarUrl || '',
       net: net,
       isMe: userId === OPENID
     });

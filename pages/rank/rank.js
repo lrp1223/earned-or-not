@@ -17,18 +17,22 @@ Page({
       'scratch': 'getScratchRank',
       'mahjong': 'getMahjongRank'
     };
-    
-    wx.cloud.callFunction({ 
-      name: 'rank', 
-      data: { action: actionMap[type] || 'getTotalRank' } 
-    }).then(res => { 
+
+    wx.cloud.callFunction({
+      name: 'rank',
+      data: { action: actionMap[type] || 'getTotalRank' }
+    }).then(res => {
       if (res.result.success) {
         // 格式化数据
-        const list = res.result.data.map(item => ({
-          ...item,
-          net: parseFloat(item.net) || 0
-        }));
-        this.setData({ rankList: list }); 
+        const list = res.result.data.map(item => {
+          const net = parseFloat(item.net) || 0;
+          return {
+            ...item,
+            net: net,
+            netStr: net.toFixed(2)
+          };
+        });
+        this.setData({ rankList: list });
       }
     });
   }
