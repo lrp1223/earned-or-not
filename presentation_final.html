@@ -1,0 +1,519 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Meet 18million - AI 开发助手</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=ZCOOL+KuaiLe&family=Noto+Sans+SC:wght@400;700&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Noto Sans SC', sans-serif;
+            background: #fef9f3;
+            overflow: hidden;
+        }
+        
+        .slide {
+            width: 100vw;
+            height: 100vh;
+            display: none;
+            padding: 60px;
+            position: relative;
+            background: #fef9f3;
+        }
+        
+        .slide.active {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        /* 手绘风格边框 */
+        .hand-drawn {
+            border: 3px solid #333;
+            border-radius: 255px 15px 225px 15px / 15px 225px 15px 255px;
+            box-shadow: 4px 4px 0 rgba(0,0,0,0.1);
+        }
+        
+        /* 标题样式 */
+        h1 {
+            font-family: 'ZCOOL KuaiLe', cursive;
+            font-size: 72px;
+            color: #ff6b6b;
+            text-shadow: 3px 3px 0 #ffd93d;
+            margin-bottom: 20px;
+            transform: rotate(-2deg);
+        }
+        
+        h2 {
+            font-family: 'ZCOOL KuaiLe', cursive;
+            font-size: 48px;
+            color: #4ecdc4;
+            margin-bottom: 30px;
+        }
+        
+        h3 {
+            font-size: 32px;
+            color: #333;
+            margin-bottom: 20px;
+        }
+        
+        /* 内容卡片 */
+        .card {
+            background: white;
+            padding: 40px;
+            max-width: 900px;
+            font-size: 24px;
+            line-height: 1.8;
+            color: #555;
+        }
+        
+        /* 列表样式 */
+        .feature-list {
+            list-style: none;
+            text-align: left;
+        }
+        
+        .feature-list li {
+            padding: 15px 0;
+            padding-left: 40px;
+            position: relative;
+            font-size: 22px;
+        }
+        
+        .feature-list li::before {
+            content: "🎯";
+            position: absolute;
+            left: 0;
+        }
+        
+        .problem-list li::before {
+            content: "❌";
+        }
+        
+        .solution-list li::before {
+            content: "✅";
+        }
+        
+        /* 头像容器 */
+        .avatar-container {
+            width: 200px;
+            height: 200px;
+            background: linear-gradient(135deg, #ffd93d, #ff6b6b);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 100px;
+            margin-bottom: 30px;
+        }
+        
+        /* 装饰元素 */
+        .decoration {
+            position: absolute;
+            font-size: 60px;
+            opacity: 0.6;
+        }
+        
+        .decoration-1 { top: 50px; left: 50px; transform: rotate(-15deg); }
+        .decoration-2 { top: 80px; right: 80px; transform: rotate(20deg); }
+        .decoration-3 { bottom: 100px; left: 100px; transform: rotate(-10deg); }
+        .decoration-4 { bottom: 80px; right: 60px; transform: rotate(15deg); }
+        
+        /* 导航按钮 */
+        .nav {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 20px;
+            z-index: 100;
+        }
+        
+        .nav button {
+            padding: 12px 30px;
+            font-size: 18px;
+            background: #ff6b6b;
+            color: white;
+            border: none;
+            border-radius: 30px;
+            cursor: pointer;
+            font-family: 'Noto Sans SC', sans-serif;
+            box-shadow: 0 4px 0 #d64545;
+            transition: all 0.2s;
+        }
+        
+        .nav button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 0 #d64545;
+        }
+        
+        .nav button:active {
+            transform: translateY(2px);
+            box-shadow: 0 2px 0 #d64545;
+        }
+        
+        /* 高亮文字 */
+        .highlight {
+            background: linear-gradient(120deg, #ffd93d 0%, #ffd93d 100%);
+            background-repeat: no-repeat;
+            background-size: 100% 40%;
+            background-position: 0 88%;
+            padding: 0 8px;
+        }
+        
+        /* 两栏布局 */
+        .two-col {
+            display: flex;
+            gap: 40px;
+            align-items: stretch;
+        }
+        
+        .two-col .card {
+            flex: 1;
+        }
+        
+        /* 对比卡片 */
+        .compare-card {
+            padding: 30px;
+            border-radius: 20px;
+        }
+        
+        .compare-before {
+            background: #fff2f0;
+            border: 2px solid #ffccc7;
+        }
+        
+        .compare-after {
+            background: #f6ffed;
+            border: 2px solid #b7eb8f;
+        }
+        
+        /* 页码 */
+        .page-num {
+            position: absolute;
+            bottom: 30px;
+            right: 40px;
+            font-size: 20px;
+            color: #999;
+        }
+        
+        /* 时间线 */
+        .timeline {
+            position: relative;
+            padding-left: 40px;
+        }
+        
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 15px;
+            top: 0;
+            bottom: 0;
+            width: 4px;
+            background: linear-gradient(to bottom, #ff6b6b, #4ecdc4);
+            border-radius: 2px;
+        }
+        
+        .timeline-item {
+            position: relative;
+            margin-bottom: 30px;
+            padding: 20px;
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+        
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: -33px;
+            top: 24px;
+            width: 16px;
+            height: 16px;
+            background: #ff6b6b;
+            border-radius: 50%;
+            border: 4px solid #fef9f3;
+        }
+        
+        /* 响应式 */
+        @media (max-width: 768px) {
+            h1 { font-size: 48px; }
+            h2 { font-size: 32px; }
+            .card { padding: 24px; }
+            .two-col { flex-direction: column; }
+        }
+    </style>
+</head>
+<body>
+    <!-- 第1页：封面 -->
+    <div class="slide active">
+        <span class="decoration decoration-1">🎰</span>
+        <span class="decoration decoration-2">💰</span>
+        <span class="decoration decoration-3">🎫</span>
+        <span class="decoration decoration-4">🀄</span>
+        
+        <div class="avatar-container hand-drawn">
+            🤖
+        </div>
+        <h1>Meet 18million</h1>
+        <p style="font-size: 28px; color: #666; margin-top: 20px;">你的 AI 开发搭档 · 让创意快速落地</p>
+        <p style="font-size: 20px; color: #999; margin-top: 40px;">按 → 键或点击下一页开始</p>
+        <span class="page-num">1 / 9</span>
+    </div>
+
+    <!-- 第2页：我是谁 -->
+    <div class="slide">
+        <h2>🎭 我是谁？</h2>
+        <div class="two-col">
+            <div class="avatar-container hand-drawn" style="width: 250px; height: 250px; font-size: 120px;">
+                🎰
+            </div>
+            <div class="card hand-drawn">
+                <h3>18million（1800万）</h3>
+                <p style="margin-bottom: 20px;">名字来源于 <span class="highlight">大乐透一注追加的最高奖金</span></p>
+                <ul class="feature-list">
+                    <li>你的专属 AI 开发助手</li>
+                    <li>全栈开发能力覆盖</li>
+                    <li>分钟级问题响应</li>
+                    <li>持续迭代优化</li>
+                </ul>
+            </div>
+        </div>
+        <span class="page-num">2 / 9</span>
+    </div>
+
+    <!-- 第3页：项目背景 -->
+    <div class="slide">
+        <h2>💡 项目背景</h2>
+        <div class="card hand-drawn">
+            <h3>客户痛点</h3>
+            <p style="margin-bottom: 30px;">想记录 <span class="highlight">彩票 / 刮刮乐 / 麻将</span> 的收支情况，但市面上的记账软件都不合适...</p>
+            
+            <h3>需求特点</h3>
+            <ul class="feature-list">
+                <li>轻量级，不需要复杂功能</li>
+                <li>能和好友对比盈亏</li>
+                <li>部署简单，成本低廉</li>
+                <li>快速上线，持续迭代</li>
+            </ul>
+        </div>
+        <span class="page-num">3 / 9</span>
+    </div>
+
+    <!-- 第4页：开发历程（新增） -->
+    <div class="slide">
+        <h2>🛤️ 开发历程</h2>
+        <div class="card hand-drawn" style="max-width: 850px;">
+            <div class="timeline">
+                <div class="timeline-item">
+                    <h3 style="font-size: 24px; color: #ff6b6b;">第一次尝试：传统开发</h3>
+                    <p style="font-size: 18px; color: #666; margin-top: 10px;">
+                        使用 Cursor 等工具，生成 SpringBoot 后端 + 小程序前端<br>
+                        <span style="color: #999;">结果：代码不完整，部署复杂，放弃</span>
+                    </p>
+                </div>
+                <div class="timeline-item">
+                    <h3 style="font-size: 24px; color: #fa8c16;">第二次尝试：低代码平台</h3>
+                    <p style="font-size: 18px; color: #666; margin-top: 10px;">
+                        尝试各种低代码/无代码平台<br>
+                        <span style="color: #999;">结果：灵活性不足，无法满足定制需求</span>
+                    </p>
+                </div>
+                <div class="timeline-item">
+                    <h3 style="font-size: 24px; color: #52c41a;">最终选择：18million + 微信云开发</h3>
+                    <p style="font-size: 18px; color: #666; margin-top: 10px;">
+                        Serverless 架构，零服务器成本，快速迭代<br>
+                        <span style="color: #52c41a; font-weight: bold;">结果：3天完成开发，成功上线！</span>
+                    </p>
+                </div>
+            </div>
+        </div>
+        <span class="page-num">4 / 9</span>
+    </div>
+
+    <!-- 第5页：为什么选择18million（新增） -->
+    <div class="slide">
+        <h2>🤔 为什么选择 18million？</h2>
+        <div class="two-col" style="max-width: 1000px;">
+            <div class="card compare-card compare-before">
+                <h3 style="color: #ff4d4f;">❌ 其他工具的痛点</h3>
+                <ul class="feature-list problem-list" style="font-size: 20px;">
+                    <li>代码生成不完整，跑不起来</li>
+                    <li>缺乏上下文记忆，每次要重复说明</li>
+                    <li>部署文档缺失，环境配置复杂</li>
+                    <li>出问题找不到人，只能自己摸索</li>
+                    <li>迭代一次要重新来一遍</li>
+                </ul>
+            </div>
+            <div class="card compare-card compare-after">
+                <h3 style="color: #52c41a;">✅ 18million 的优势</h3>
+                <ul class="feature-list solution-list" style="font-size: 20px;">
+                    <li>代码完整可运行，直接部署</li>
+                    <li>持续对话，记住项目背景</li>
+                    <li>手把手教部署，包教包会</li>
+                    <li>7×24 在线，问题秒回</li>
+                    <li>GitHub 协作，版本可追溯</li>
+                </ul>
+            </div>
+        </div>
+        <span class="page-num">5 / 9</span>
+    </div>
+
+    <!-- 第6页：技术方案 -->
+    <div class="slide">
+        <h2>🚀 技术方案</h2>
+        <div class="two-col">
+            <div class="card hand-drawn" style="background: #e8f8f5;">
+                <h3>选型：微信云开发</h3>
+                <p style="font-size: 28px; color: #4ecdc4; font-weight: bold;">Serverless 架构</p>
+                <p style="margin-top: 15px;">零服务器运维</p>
+            </div>
+            <div class="card hand-drawn">
+                <h3>核心优势</h3>
+                <ul class="feature-list">
+                    <li>零服务器成本</li>
+                    <li>自动部署云函数</li>
+                    <li>免费额度完全够用</li>
+                    <li>微信生态无缝集成</li>
+                </ul>
+            </div>
+        </div>
+        <span class="page-num">6 / 9</span>
+    </div>
+
+    <!-- 第7页：开发亮点 -->
+    <div class="slide">
+        <h2>⚡ 开发亮点</h2>
+        <div class="card hand-drawn">
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 30px;">
+                <div style="padding: 20px; background: #fff5f5; border-radius: 20px;">
+                    <h3 style="color: #ff6b6b;">🔄 快速迭代</h3>
+                    <p>GitHub 协作，代码实时推送，版本可追溯</p>
+                </div>
+                <div style="padding: 20px; background: #f0f9ff; border-radius: 20px;">
+                    <h3 style="color: #1890ff;">🐛 问题解决</h3>
+                    <p>云函数部署、数据库查询、UI 优化，逐个击破</p>
+                </div>
+                <div style="padding: 20px; background: #f6ffed; border-radius: 20px;">
+                    <h3 style="color: #52c41a;">⏱️ 响应速度</h3>
+                    <p>问题定位到修复，平均 <span class="highlight">分钟级</span></p>
+                </div>
+                <div style="padding: 20px; background: #fff7e6; border-radius: 20px;">
+                    <h3 style="color: #fa8c16;">🎨 体验优化</h3>
+                    <p>根据反馈持续调整，直到满意为止</p>
+                </div>
+            </div>
+        </div>
+        <span class="page-num">7 / 9</span>
+    </div>
+
+    <!-- 第8页：成果展示 -->
+    <div class="slide">
+        <h2>🏆 成果展示</h2>
+        <div class="card hand-drawn" style="max-width: 900px;">
+            <div style="display: flex; justify-content: space-around; text-align: center; margin-bottom: 40px;">
+                <div>
+                    <p style="font-size: 48px; color: #ff6b6b; font-weight: bold;">4</p>
+                    <p>核心功能</p>
+                </div>
+                <div>
+                    <p style="font-size: 48px; color: #4ecdc4; font-weight: bold;">40+</p>
+                    <p>代码文件</p>
+                </div>
+                <div>
+                    <p style="font-size: 48px; color: #ffd93d; font-weight: bold;">7</p>
+                    <p>云函数</p>
+                </div>
+                <div>
+                    <p style="font-size: 48px; color: #a29bfe; font-weight: bold;">5</p>
+                    <p>数据库集合</p>
+                </div>
+            </div>
+            <p style="text-align: center; font-size: 20px; color: #666;">
+                📱 记账 · 📊 统计 · 🏆 排行榜 · 👥 好友
+            </p>
+            <p style="text-align: center; margin-top: 20px;">
+                <span class="highlight">开源维护中</span>：github.com/lrp1223/earned-or-not
+            </p>
+        </div>
+        <span class="page-num">8 / 9</span>
+    </div>
+
+    <!-- 第9页：感谢 -->
+    <div class="slide">
+        <span class="decoration decoration-1">🎉</span>
+        <span class="decoration decoration-2">💎</span>
+        <span class="decoration decoration-3">🏆</span>
+        <span class="decoration decoration-4">🌟</span>
+        
+        <div class="avatar-container hand-drawn" style="width: 180px; height: 180px; font-size: 90px;">
+            🎰
+        </div>
+        <h1 style="font-size: 60px;">谢谢观看！</h1>
+        <p style="font-size: 32px; color: #ff6b6b; margin-top: 30px; font-weight: bold;">
+            祝早日中 1800 万！🎊
+        </p>
+        <p style="font-size: 20px; color: #999; margin-top: 40px;">
+            18million · 你的 AI 开发搭档
+        </p>
+        <span class="page-num">9 / 9</span>
+    </div>
+
+    <!-- 导航 -->
+    <div class="nav">
+        <button onclick="prevSlide()">← 上一页</button>
+        <button onclick="nextSlide()">下一页 →</button>
+    </div>
+
+    <script>
+        let currentSlide = 0;
+        const slides = document.querySelectorAll('.slide');
+        const totalSlides = slides.length;
+
+        function showSlide(n) {
+            slides.forEach(slide => slide.classList.remove('active'));
+            currentSlide = (n + totalSlides) % totalSlides;
+            slides[currentSlide].classList.add('active');
+        }
+
+        function nextSlide() {
+            showSlide(currentSlide + 1);
+        }
+
+        function prevSlide() {
+            showSlide(currentSlide - 1);
+        }
+
+        // 键盘控制
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight' || e.key === ' ') {
+                nextSlide();
+            } else if (e.key === 'ArrowLeft') {
+                prevSlide();
+            }
+        });
+
+        // 触摸滑动
+        let touchStartX = 0;
+        document.addEventListener('touchstart', (e) => {
+            touchStartX = e.touches[0].clientX;
+        });
+        document.addEventListener('touchend', (e) => {
+            const touchEndX = e.changedTouches[0].clientX;
+            const diff = touchStartX - touchEndX;
+            if (Math.abs(diff) > 50) {
+                if (diff > 0) nextSlide();
+                else prevSlide();
+            }
+        });
+    </script>
+</body>
+</html>
