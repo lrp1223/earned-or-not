@@ -5,7 +5,8 @@ Page({
     totalNetStr: '+0.00',
     recentRecords: [],
     loading: true,
-    nickname: '赚了么用户'
+    nickname: '赚了么用户',
+    avatarUrl: ''
   },
 
   onLoad() {
@@ -25,7 +26,8 @@ Page({
     }).then(res => {
       if (res.result && res.result.success && res.result.data) {
         const nickname = res.result.data.nickname || '赚了么用户';
-        this.setData({ nickname });
+        const avatarUrl = res.result.data.avatarUrl || '';
+        this.setData({ nickname, avatarUrl });
       }
     }).catch(err => {
       console.log('获取用户信息失败', err);
