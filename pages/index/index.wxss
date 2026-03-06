@@ -8,5 +8,12 @@
 .lottery { background: linear-gradient(135deg, #ff6b6b, #ff8e8e); }
 .scratch { background: linear-gradient(135deg, #4ecdc4, #44a08d); }
 .mahjong { background: linear-gradient(135deg, #f7b731, #e58e26); }
-.record-item { display: flex; justify-content: space-between; padding: 20rpx 0; border-bottom: 1rpx solid #f0f0f0; }
+.record-item { display: flex; align-items: center; padding: 24rpx 0; border-bottom: 1rpx solid #f0f0f0; }
+.record-item:last-child { border-bottom: none; }
+.record-col { flex: 1; text-align: center; font-size: 28rpx; }
+.record-type { color: #333; font-weight: 500; }
+.record-result { font-weight: bold; }
+.record-result.win { color: #52c41a; }
+.record-result.lose { color: #ff4d4f; }
+.record-amount { font-weight: bold; }
 .empty { text-align: center; color: #999; padding: 40rpx; }
