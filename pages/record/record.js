@@ -17,10 +17,16 @@ Page({
     const type = options.type || 'lottery';
     const mode = options.mode || 'add';
     const map = { lottery: '彩票', scratch: '刮刮乐', mahjong: '麻将' };
-    
+    const remarkPlaceholder = {
+      lottery: '例如：大乐透、双色球...',
+      scratch: '例如：好运十倍、点球大战...',
+      mahjong: '例如：跟大饼打麻将赢了100'
+    };
+
     this.setData({
       type,
       typeText: map[type],
+      remarkPlaceholder: remarkPlaceholder[type],
       mode,
       recordId: options.id || ''
     });

@@ -39,7 +39,7 @@
     <!-- 备注 -->
     <view class="form-item">
       <text class="label">备注（选填）</text>
-      <input type="text" value="{{remark}}" bindinput="onRemarkInput" placeholder="例如：大乐透、双色球..."/>
+      <input type="text" value="{{remark}}" bindinput="onRemarkInput" placeholder="{{remarkPlaceholder}}"/>
     </view>
 
     <!-- 预览 -->
