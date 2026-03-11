@@ -11,7 +11,7 @@ if [ ! -d "cloud/functions" ]; then
 fi
 
 # 云函数列表
-FUNCTIONS=("user" "lottery" "scratch" "mahjong" "stats" "friend" "rank")
+FUNCTIONS=("user" "lottery" "scratch" "mahjong" "stats" "rank")
 
 # 逐个部署
 for func in "${FUNCTIONS[@]}"; do

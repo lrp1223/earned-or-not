@@ -38,10 +38,13 @@ exports.main = async (event, context) => {
     else if (action === 'getMahjongRank') net = mahjongNet;
     else net = totalNet; // 默认总排行
     
+    // 使用用户设置的自定义头像，如果没有则使用默认头像
+    const avatarUrl = user.customAvatarUrl || '';
+    
     list.push({
       userId: userId,
       nickname: nickname,
-      avatarUrl: user.avatarUrl || '',
+      avatarUrl: avatarUrl,
       net: net,
       isMe: userId === OPENID
     });
