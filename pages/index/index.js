@@ -153,5 +153,23 @@ Page({
 
   viewAll() {
     wx.switchTab({ url: '/pages/stats/stats' });
+  },
+
+  // 分享给朋友
+  onShareAppMessage() {
+    return {
+      title: `我在赚了么记录了${this.data.totalNet >= 0 ? '赚' : '亏'}了${Math.abs(this.data.totalNet).toFixed(2)}元，快来一起记账吧！`,
+      path: '/pages/index/index',
+      imageUrl: '/images/logo.png'
+    };
+  },
+
+  // 分享到朋友圈
+  onShareTimeline() {
+    return {
+      title: '赚了么 - 记录你的彩票、刮刮乐、麻将盈亏',
+      query: '',
+      imageUrl: '/images/logo.png'
+    };
   }
 });

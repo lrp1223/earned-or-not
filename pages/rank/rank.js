@@ -70,5 +70,24 @@ Page({
     wx.removeStorageSync(`avatar_${item.userId}`);
     
     this.setData({ rankList: list });
+  },
+
+  // 分享给朋友
+  onShareAppMessage() {
+    const tabNames = { total: '总排行', lottery: '彩票排行', scratch: '刮刮乐排行', mahjong: '麻将排行' };
+    return {
+      title: `来看看${tabNames[this.data.currentTab]}，你排第几？`,
+      path: '/pages/rank/rank',
+      imageUrl: '/images/logo.png'
+    };
+  },
+
+  // 分享到朋友圈
+  onShareTimeline() {
+    return {
+      title: '赚了么排行榜 - 看看谁是大赢家',
+      query: '',
+      imageUrl: '/images/logo.png'
+    };
   }
 });
