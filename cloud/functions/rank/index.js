@@ -39,7 +39,17 @@ exports.main = async (event, context) => {
     else net = totalNet; // 默认总排行
     
     // 使用用户设置的自定义头像（兼容新旧字段）
-    const avatarUrl = user.customAvatarUrl || user.avatarUrl || '';
+    let avatarUrl = user.customAvatarUrl || user.avatarUrl || '';
+    
+    // 如果是云存储 fileID，转换为 HTTPS URL
+    if (avatarUrl && avatarUrl.startsWith('cloud://')) {
+      try {
+        const { fileList } = await cloud.getTempFileURL({ fileList: [avatarUrl] });
+        avatarUrl = fileList[0].tempFileURL || avatarUrl;
+      } catch (e) {
+        console.log('转换头像URL失败:', e);
+      }
+    }
     
     list.push({
       userId: userId,
