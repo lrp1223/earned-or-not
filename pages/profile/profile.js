@@ -27,8 +27,8 @@ Page({
       if (res.result && res.result.success && res.result.data) {
         this.setData({
           nickname: res.result.data.nickname || '',
-          // 使用 customAvatarUrl 字段
-          avatarUrl: res.result.data.customAvatarUrl || ''
+          // 兼容新旧字段
+          avatarUrl: res.result.data.customAvatarUrl || res.result.data.avatarUrl || ''
         });
       }
     });

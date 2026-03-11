@@ -38,8 +38,8 @@ exports.main = async (event, context) => {
     else if (action === 'getMahjongRank') net = mahjongNet;
     else net = totalNet; // 默认总排行
     
-    // 使用用户设置的自定义头像，如果没有则使用默认头像
-    const avatarUrl = user.customAvatarUrl || '';
+    // 使用用户设置的自定义头像（兼容新旧字段）
+    const avatarUrl = user.customAvatarUrl || user.avatarUrl || '';
     
     list.push({
       userId: userId,
