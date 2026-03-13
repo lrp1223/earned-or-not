@@ -21,8 +21,8 @@
 .record-bottom { display: flex; justify-content: space-between; align-items: center; }
 .record-date { font-size: 24rpx; color: #999; }
 .record-result { font-size: 26rpx; font-weight: bold; }
-.record-result.win { color: #52c41a; }
-.record-result.lose { color: #ff4d4f; }
+.record-result.win { color: #1890ff; }
+.record-result.lose { color: #ff6b9d; }
 .record-arrow { font-size: 40rpx; color: #ccc; margin-left: 16rpx; }
 
 .empty { text-align: center; color: #999; padding: 40rpx; }

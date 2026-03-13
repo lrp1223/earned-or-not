@@ -16,9 +16,9 @@ input:focus { border-color: #ff6b6b; background: #fff; }
 .preview { display: flex; justify-content: space-between; align-items: center; padding: 40rpx; border-radius: 16rpx; margin: 40rpx 0; background: #f5f5f5; }
 .preview-label { font-size: 30rpx; color: #666; }
 .preview-amount { font-size: 48rpx; font-weight: bold; }
-.preview.positive { background: #f6ffed; }
-.preview.positive .preview-amount { color: #52c41a; }
-.preview.negative { background: #fff2f0; }
-.preview.negative .preview-amount { color: #ff4d4f; }
+.preview.positive { background: #e6f7ff; }
+.preview.positive .preview-amount { color: #1890ff; }
+.preview.negative { background: #fff0f6; }
+.preview.negative .preview-amount { color: #ff6b9d; }
 
 .btn-primary { margin-top: 20rpx; }
