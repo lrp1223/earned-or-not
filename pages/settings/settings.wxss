@@ -18,3 +18,5 @@
 .preview-label { font-size: 30rpx; color: #666; }
 .preview-win { font-size: 36rpx; font-weight: bold; }
 .preview-lose { font-size: 36rpx; font-weight: bold; }
+
+.tips { text-align: center; padding: 30rpx; font-size: 26rpx; color: #999; }

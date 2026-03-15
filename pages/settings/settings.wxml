@@ -35,11 +35,14 @@
     <view class="section-title">效果预览</view>
     <view class="preview-item">
       <text class="preview-label">盈利示例</text>
-      <text class="preview-win">+100.00元</text>
+      <text class="preview-win" style="color: {{winColor}}">+100.00元</text>
     </view>
     <view class="preview-item">
       <text class="preview-label">亏损示例</text>
-      <text class="preview-lose">-50.00元</text>
+      <text class="preview-lose" style="color: {{loseColor}}">-50.00元</text>
     </view>
   </view>
+  
+  <!-- 提示 -->
+  <view class="tips">点击颜色即可保存，返回后生效</view>
 </view>
