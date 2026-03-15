@@ -23,7 +23,7 @@
     <view class="stats-simple">
       <view class="stats-main">
         <text class="stats-label">总盈亏</text>
-        <text class="stats-value {{totalNet >= 0 ? 'positive' : 'negative'}}">{{totalNetStr}}元</text>
+        <text class="stats-value" style="color: {{totalNet >= 0 ? winColor : loseColor}}">{{totalNetStr}}元</text>
       </view>
       <view class="stats-divider"></view>
       <view class="stats-main">

@@ -15,8 +15,17 @@ Page({
   },
 
   onShow() {
+    this.loadSettings();
     this.loadUserProfile();
     this.loadStats();
+  },
+
+  loadSettings() {
+    const settings = wx.getStorageSync('userSettings') || {};
+    this.setData({
+      winColor: settings.winColor || '#52c41a',
+      loseColor: settings.loseColor || '#ff4d4f'
+    });
   },
 
   loadUserProfile() {

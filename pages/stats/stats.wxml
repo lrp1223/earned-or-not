@@ -3,7 +3,7 @@
   <!-- 总盈亏 -->
   <view class="card summary-card">
     <view class="summary-title">年度总盈亏</view>
-    <view class="summary-amount {{stats.totalNet >= 0 ? 'amount-positive' : 'amount-negative'}}">
+    <view class="summary-amount" style="color: {{stats.totalNet >= 0 ? winColor : loseColor}}">
       {{stats.totalNet >= 0 ? '+' : ''}}{{stats.totalNet}} 元
     </view>
   </view>
@@ -12,7 +12,7 @@
   <view class="card">
     <view class="stat-row">
       <text class="stat-title">🎰 彩票</text>
-      <text class="stat-net {{stats.lottery.net >= 0 ? 'amount-positive' : 'amount-negative'}}">
+      <text class="stat-net" style="color: {{stats.lottery.net >= 0 ? winColor : loseColor}}">
         {{stats.lottery.net >= 0 ? '+' : ''}}{{stats.lottery.net}} 元
       </text>
     </view>
@@ -22,7 +22,7 @@
   <view class="card">
     <view class="stat-row">
       <text class="stat-title">🎫 刮刮乐</text>
-      <text class="stat-net {{stats.scratch.net >= 0 ? 'amount-positive' : 'amount-negative'}}">
+      <text class="stat-net" style="color: {{stats.scratch.net >= 0 ? winColor : loseColor}}">
         {{stats.scratch.net >= 0 ? '+' : ''}}{{stats.scratch.net}} 元
       </text>
     </view>
@@ -32,7 +32,7 @@
   <view class="card">
     <view class="stat-row">
       <text class="stat-title">🀄 麻将</text>
-      <text class="stat-net {{stats.mahjong.net >= 0 ? 'amount-positive' : 'amount-negative'}}">
+      <text class="stat-net" style="color: {{stats.mahjong.net >= 0 ? winColor : loseColor}}">
         {{stats.mahjong.net >= 0 ? '+' : ''}}{{stats.mahjong.net}} 元
       </text>
     </view>

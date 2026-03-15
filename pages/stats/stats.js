@@ -6,10 +6,13 @@ Page({
       scratch: { net: 0 },
       mahjong: { net: 0 },
       totalNet: 0
-    }
+    },
+    winColor: '#52c41a',
+    loseColor: '#ff4d4f'
   },
 
   onShow() {
+    this.loadSettings();
     wx.showLoading({ title: '加载中...' });
     
     wx.cloud.callFunction({
@@ -30,6 +33,14 @@ Page({
       wx.hideLoading();
       console.error('stats错误:', err);
       wx.showToast({ title: '加载失败', icon: 'none' });
+    });
+  },
+
+  loadSettings() {
+    const settings = wx.getStorageSync('userSettings') || {};
+    this.setData({
+      winColor: settings.winColor || '#52c41a',
+      loseColor: settings.loseColor || '#ff4d4f'
     });
   }
 });

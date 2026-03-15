@@ -19,7 +19,7 @@
         <text wx:if="{{item.isMe}}" class="rank-tag">我</text>
       </view>
       <view class="rank-right">
-        <text class="rank-amount {{item.net >= 0 ? 'amount-positive' : 'amount-negative'}}">
+        <text class="rank-amount" style="color: {{item.net >= 0 ? winColor : loseColor}}">
           {{item.net >= 0 ? '+' : ''}}{{item.netStr}}
         </text>
       </view>

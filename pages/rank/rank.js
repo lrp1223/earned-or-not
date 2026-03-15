@@ -1,8 +1,24 @@
 // pages/rank/rank.js
 Page({
-  data: { currentTab: 'total', rankList: [] },
+  data: { 
+    currentTab: 'total', 
+    rankList: [],
+    winColor: '#52c41a',
+    loseColor: '#ff4d4f'
+  },
   
-  onShow() { this.loadRank(this.data.currentTab); },
+  onShow() { 
+    this.loadSettings();
+    this.loadRank(this.data.currentTab); 
+  },
+
+  loadSettings() {
+    const settings = wx.getStorageSync('userSettings') || {};
+    this.setData({
+      winColor: settings.winColor || '#52c41a',
+      loseColor: settings.loseColor || '#ff4d4f'
+    });
+  },
   
   switchTab(e) { 
     const tab = e.currentTarget.dataset.tab; 

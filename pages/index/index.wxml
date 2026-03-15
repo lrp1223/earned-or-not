@@ -8,7 +8,7 @@
       <view class="avatar" style="background: linear-gradient(135deg, #ff6b6b, #ffd93d); display: flex; align-items: center; justify-content: center; font-size: 80rpx; color: white; width: 140rpx; height: 140rpx; border-radius: 50%; margin-bottom: 20rpx;">🎰</view>
     </block>
     <text class="nickname">{{nickname}}</text>
-    <view class="total-net {{totalNet >= 0 ? 'amount-positive' : 'amount-negative'}}">
+    <view class="total-net" style="color: {{totalNet >= 0 ? winColor : loseColor}}">
       年度盈亏：{{totalNetStr}} 元
     </view>
   </view>
@@ -37,11 +37,11 @@
         <view class="record-info">
           <view class="record-top">
             <text class="record-type">{{item.typeText}}</text>
-            <text class="record-amount {{item.net >= 0 ? 'amount-positive' : 'amount-negative'}}">{{item.netStr}}</text>
+            <text class="record-amount" style="color: {{item.net >= 0 ? winColor : loseColor}}">{{item.netStr}}</text>
           </view>
           <view class="record-bottom">
             <text class="record-date">{{item.timeStr}}</text>
-            <text class="record-result {{item.net >= 0 ? 'win' : 'lose'}}">{{item.net >= 0 ? '赚了' : '亏了'}}</text>
+            <text class="record-result" style="color: {{item.net >= 0 ? winColor : loseColor}}">{{item.net >= 0 ? '赚了' : '亏了'}}</text>
           </view>
         </view>
         <view class="record-arrow">›</view>
