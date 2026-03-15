@@ -26,6 +26,10 @@
 .stats-value.negative { color: #ff4d4f; }
 .stats-divider { width: 2rpx; height: 80rpx; background: #f0f0f0; }
 
+.settings-card { display: flex; align-items: center; justify-content: space-between; padding: 40rpx; margin: 20rpx; background: white; border-radius: 24rpx; box-shadow: 0 4rpx 20rpx rgba(0,0,0,0.08); }
+.settings-card:active { background: #f5f5f5; }
+.settings-title { font-size: 32rpx; font-weight: bold; color: #333; }
+
 .about-card { padding: 40rpx; margin: 20rpx; background: white; border-radius: 24rpx; box-shadow: 0 4rpx 20rpx rgba(0,0,0,0.08); }
 .about-title { font-size: 32rpx; font-weight: bold; color: #333; margin-bottom: 20rpx; display: flex; align-items: center; }
 .about-title::before { content: "ℹ️"; margin-right: 12rpx; }

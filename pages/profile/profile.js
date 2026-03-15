@@ -106,6 +106,10 @@ Page({
     });
   },
 
+  goSettings() {
+    wx.navigateTo({ url: '/pages/settings/settings' });
+  },
+
   editNickname() {
     wx.showModal({
       title: '修改昵称',

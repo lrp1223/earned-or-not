@@ -4,7 +4,8 @@
     "pages/record/record",
     "pages/stats/stats",
     "pages/rank/rank",
-    "pages/profile/profile"
+    "pages/profile/profile",
+    "pages/settings/settings"
   ],
   "window": {
     "backgroundTextStyle": "light",

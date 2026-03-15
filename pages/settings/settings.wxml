@@ -1,0 +1,45 @@
+<!--pages/settings/settings.wxml-->
+<view class="container">
+  <!-- 赢色设置 -->
+  <view class="settings-card">
+    <view class="section-title">赢色设置</view>
+    <view class="color-grid">
+      <view class="color-item {{winColor === item.value ? 'active' : ''}}" 
+            wx:for="{{colorOptions}}" 
+            wx:key="value"
+            bindtap="selectWinColor"
+            data-color="{{item.value}}">
+        <view class="color-circle" style="background: {{item.value}}"></view>
+        <text class="color-name">{{item.name}}</text>
+      </view>
+    </view>
+  </view>
+  
+  <!-- 亏色设置 -->
+  <view class="settings-card">
+    <view class="section-title">亏色设置</view>
+    <view class="color-grid">
+      <view class="color-item {{loseColor === item.value ? 'active' : ''}}" 
+            wx:for="{{colorOptions}}" 
+            wx:key="value"
+            bindtap="selectLoseColor"
+            data-color="{{item.value}}">
+        <view class="color-circle" style="background: {{item.value}}"></view>
+        <text class="color-name">{{item.name}}</text>
+      </view>
+    </view>
+  </view>
+  
+  <!-- 预览 -->
+  <view class="preview-card">
+    <view class="section-title">效果预览</view>
+    <view class="preview-item">
+      <text class="preview-label">盈利示例</text>
+      <text class="preview-win">+100.00元</text>
+    </view>
+    <view class="preview-item">
+      <text class="preview-label">亏损示例</text>
+      <text class="preview-lose">-50.00元</text>
+    </view>
+  </view>
+</view>
