@@ -21,4 +21,23 @@ input:focus { border-color: #ff6b6b; background: #fff; }
 .preview.negative { background: #fff0f6; }
 .preview.negative .preview-amount { color: #ff6b9d; }
 
+/* 彩票类型选择器 */
+.picker {
+  height: 88rpx;
+  line-height: 88rpx;
+  border: 2rpx solid #e8e8e8;
+  border-radius: 12rpx;
+  padding: 0 24rpx;
+  font-size: 32rpx;
+  background: #fafafa;
+  color: #333;
+}
+
+.hint {
+  font-size: 24rpx;
+  color: #999;
+  margin-top: 8rpx;
+  display: block;
+}
+
 .btn-primary { margin-top: 20rpx; }

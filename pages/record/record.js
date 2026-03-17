@@ -10,7 +10,11 @@ Page({
     previewNetStr: '+0.00',
     mode: 'add',
     recordId: '',
-    submitting: false
+    submitting: false,
+    // 彩票类型
+    lotteryTypes: ['大乐透', '双色球', '快乐8', '七星彩', '排列5', '其他'],
+    lotteryTypeIndex: 0,
+    lotteryType: '大乐透'
   },
 
   onLoad(options) {
@@ -18,22 +22,73 @@ Page({
     const mode = options.mode || 'add';
     const map = { lottery: '彩票', scratch: '刮刮乐', mahjong: '麻将' };
     const remarkPlaceholder = {
-      lottery: '例如：大乐透、双色球...',
+      lottery: '例如：追加投注、复式...',
       scratch: '例如：好运十倍、点球大战...',
       mahjong: '例如：跟大饼打麻将赢了100'
     };
+
+    // 根据日期智能选择彩票类型
+    const defaultLotteryType = this.getDefaultLotteryType();
+    const lotteryTypeIndex = this.data.lotteryTypes.indexOf(defaultLotteryType);
 
     this.setData({
       type,
       typeText: map[type],
       remarkPlaceholder: remarkPlaceholder[type],
       mode,
-      recordId: options.id || ''
+      recordId: options.id || '',
+      lotteryTypeIndex: lotteryTypeIndex >= 0 ? lotteryTypeIndex : 0,
+      lotteryType: defaultLotteryType
     });
+
+    // 新增模式，查询上一期中奖金额
+    if (mode === 'add' && type === 'lottery') {
+      this.loadLastWinAmount(defaultLotteryType);
+    }
 
     // 编辑模式，加载原有数据
     if (mode === 'edit' && options.id) {
       this.loadRecord(options.id, type);
+    }
+  },
+
+  // 根据日期获取默认彩票类型
+  getDefaultLotteryType() {
+    const day = new Date().getDay(); // 0=周日, 1=周一, ..., 6=周六
+    // 周一(1)、三(3)、五(5) -> 双色球
+    // 其他 -> 大乐透
+    if (day === 1 || day === 3 || day === 5) {
+      return '双色球';
+    }
+    return '大乐透';
+  },
+
+  // 加载上一期同类型的中奖金额
+  loadLastWinAmount(lotteryType) {
+    wx.cloud.callFunction({
+      name: 'lottery',
+      data: { action: 'getLastWinAmount', lotteryType }
+    }).then(res => {
+      if (res.result.success && res.result.winAmount > 0) {
+        this.setData({
+          winAmount: res.result.winAmount.toString()
+        });
+        this.calc();
+      }
+    });
+  },
+
+  // 切换彩票类型
+  onLotteryTypeChange(e) {
+    const index = parseInt(e.detail.value);
+    const lotteryType = this.data.lotteryTypes[index];
+    this.setData({
+      lotteryTypeIndex: index,
+      lotteryType
+    });
+    // 查询该类型上一期中奖金额
+    if (this.data.mode === 'add') {
+      this.loadLastWinAmount(lotteryType);
     }
   },
 
@@ -46,11 +101,26 @@ Page({
         // 中奖金额为0时显示空
         const winAmount = data.winAmount === 0 ? '' : (data.winAmount || '').toString();
         
-        this.setData({
+        const updateData = {
           cost,
           winAmount,
-          mahjongType: data.amount >= 0 ? 'win' : 'lose'
-        });
+          remark: data.remark || ''
+        };
+        
+        // 彩票类型
+        if (type === 'lottery' && data.lotteryType) {
+          const index = this.data.lotteryTypes.indexOf(data.lotteryType);
+          if (index >= 0) {
+            updateData.lotteryTypeIndex = index;
+            updateData.lotteryType = data.lotteryType;
+          }
+        }
+        
+        if (type === 'mahjong') {
+          updateData.mahjongType = data.amount >= 0 ? 'win' : 'lose';
+        }
+        
+        this.setData(updateData);
         this.calc();
       }
     });
@@ -91,7 +161,7 @@ Page({
   },
 
   submit() {
-    const { type, cost, winAmount, remark, mahjongType, mode, recordId, submitting } = this.data;
+    const { type, cost, winAmount, remark, mahjongType, mode, recordId, submitting, lotteryType } = this.data;
     if (submitting) return; // 防止重复提交
     if (!cost) {
       wx.showToast({ title: '请输入金额', icon: 'none' });
@@ -103,6 +173,12 @@ Page({
 
     const action = mode === 'edit' ? 'update' : 'add';
     const data = { action, cost, winAmount: winAmount || '0', remark, mahjongType };
+    
+    // 彩票类型
+    if (type === 'lottery') {
+      data.lotteryType = lotteryType;
+    }
+    
     if (mode === 'edit') data.id = recordId;
 
     wx.cloud.callFunction({ name: type, data })

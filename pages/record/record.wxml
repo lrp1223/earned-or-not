@@ -3,8 +3,27 @@
   <view class="card">
     <view class="title">{{typeText}}记账</view>
     
-    <!-- 彩票/刮刮乐：花费 + 中奖 -->
-    <block wx:if="{{type !== 'mahjong'}}">
+    <!-- 彩票：类型选择 + 花费 + 中奖 -->
+    <block wx:if="{{type === 'lottery'}}">
+      <view class="form-item">
+        <text class="label">彩票类型</text>
+        <picker bindchange="onLotteryTypeChange" value="{{lotteryTypeIndex}}" range="{{lotteryTypes}}">
+          <view class="picker">{{lotteryTypes[lotteryTypeIndex]}}</view>
+        </picker>
+      </view>
+      <view class="form-item">
+        <text class="label">花费金额（元）</text>
+        <input type="digit" value="{{cost}}" bindinput="onCostInput" placeholder="请输入购买金额"/>
+      </view>
+      <view class="form-item">
+        <text class="label">中奖金额（元）</text>
+        <input type="digit" value="{{winAmount}}" bindinput="onWinInput" placeholder="未中奖填0"/>
+        <text class="hint" wx:if="{{!isEdit}}">默认使用上一期{{lotteryTypes[lotteryTypeIndex]}}的中奖金额</text>
+      </view>
+    </block>
+    
+    <!-- 刮刮乐：花费 + 中奖 -->
+    <block wx:if="{{type === 'scratch'}}">
       <view class="form-item">
         <text class="label">花费金额（元）</text>
         <input type="digit" value="{{cost}}" bindinput="onCostInput" placeholder="请输入购买金额"/>

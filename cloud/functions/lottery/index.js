@@ -19,7 +19,7 @@ async function ensureUser(OPENID) {
 }
 
 exports.main = async (event, context) => {
-  const { action, id, cost, winAmount } = event;
+  const { action, id, cost, winAmount, lotteryType } = event;
   const { OPENID } = cloud.getWXContext();
 
   if (action === 'add') {
@@ -27,6 +27,7 @@ exports.main = async (event, context) => {
     await db.collection('lottery').add({
       data: {
         _openid: OPENID,
+        lotteryType: lotteryType || '其他',
         cost: parseFloat(cost) || 0,
         winAmount: parseFloat(winAmount) || 0,
         remark: event.remark || '',
@@ -44,6 +45,7 @@ exports.main = async (event, context) => {
     }
     await db.collection('lottery').doc(id).update({
       data: {
+        lotteryType: lotteryType || record.data.lotteryType || '其他',
         cost: parseFloat(cost) || 0,
         winAmount: parseFloat(winAmount) || 0,
         remark: event.remark || '',
@@ -64,6 +66,29 @@ exports.main = async (event, context) => {
     } catch (err) {
       console.error('删除失败:', err);
       return { success: false, message: err.message || '删除失败' };
+    }
+  }
+
+  // 查询上一期同类型的中奖金额
+  if (action === 'getLastWinAmount') {
+    const { lotteryType } = event;
+    if (!lotteryType) {
+      return { success: true, winAmount: 0 };
+    }
+    
+    try {
+      const res = await db.collection('lottery')
+        .where({ _openid: OPENID, lotteryType })
+        .orderBy('createTime', 'desc')
+        .limit(1)
+        .get();
+      
+      if (res.data.length > 0) {
+        return { success: true, winAmount: res.data[0].winAmount || 0 };
+      }
+      return { success: true, winAmount: 0 };
+    } catch (err) {
+      return { success: true, winAmount: 0 };
     }
   }
 

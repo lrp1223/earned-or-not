@@ -33,6 +33,7 @@ exports.main = async (event, context) => {
           _id: i._id,
           type: 'lottery',
           typeText: '彩票',
+          lotteryType: i.lotteryType || '其他',
           net: (i.winAmount || 0) - (i.cost || 0),
           createTime: i.createTime
         });
@@ -95,6 +96,7 @@ exports.main = async (event, context) => {
             _id: i._id,
             type: type,
             typeText: type === 'lottery' ? '彩票' : '刮刮乐',
+            lotteryType: i.lotteryType || '其他',
             cost: i.cost || 0,
             winAmount: i.winAmount || 0,
             net: (i.winAmount || 0) - (i.cost || 0),
