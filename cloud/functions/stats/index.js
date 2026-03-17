@@ -21,10 +21,10 @@ exports.main = async (event, context) => {
 
   if (action === 'getRecentRecords') {
     try {
-      // 获取各集合数据
-      const lotteryRes = await db.collection('lottery').where({ _openid: OPENID }).limit(10).get();
-      const scratchRes = await db.collection('scratch').where({ _openid: OPENID }).limit(10).get();
-      const mahjongRes = await db.collection('mahjong').where({ _openid: OPENID }).limit(10).get();
+      // 获取各集合数据（按时间倒序）
+      const lotteryRes = await db.collection('lottery').where({ _openid: OPENID }).orderBy('createTime', 'desc').limit(10).get();
+      const scratchRes = await db.collection('scratch').where({ _openid: OPENID }).orderBy('createTime', 'desc').limit(10).get();
+      const mahjongRes = await db.collection('mahjong').where({ _openid: OPENID }).orderBy('createTime', 'desc').limit(10).get();
 
       // 合并记录
       let records = [];
@@ -64,6 +64,66 @@ exports.main = async (event, context) => {
       
       records = records.slice(0, limit);
       return { success: true, data: records };
+    } catch (err) {
+      return { success: false, message: err.message };
+    }
+  }
+
+  // 获取分类详细记录（支持分页）
+  if (action === 'getTypeRecords') {
+    const { type, page = 1, pageSize = 10 } = event;
+    const skip = (page - 1) * pageSize;
+    
+    try {
+      let collection;
+      if (type === 'lottery') collection = 'lottery';
+      else if (type === 'scratch') collection = 'scratch';
+      else if (type === 'mahjong') collection = 'mahjong';
+      else return { success: false, message: '未知类型' };
+      
+      const totalRes = await db.collection(collection).where({ _openid: OPENID }).count();
+      const recordsRes = await db.collection(collection)
+        .where({ _openid: OPENID })
+        .orderBy('createTime', 'desc')
+        .skip(skip)
+        .limit(pageSize)
+        .get();
+      
+      const records = recordsRes.data.map(i => {
+        if (type === 'lottery' || type === 'scratch') {
+          return {
+            _id: i._id,
+            type: type,
+            typeText: type === 'lottery' ? '彩票' : '刮刮乐',
+            cost: i.cost || 0,
+            winAmount: i.winAmount || 0,
+            net: (i.winAmount || 0) - (i.cost || 0),
+            remark: i.remark || '',
+            createTime: i.createTime
+          };
+        } else {
+          return {
+            _id: i._id,
+            type: 'mahjong',
+            typeText: '麻将',
+            amount: i.amount || 0,
+            net: i.amount || 0,
+            remark: i.remark || '',
+            createTime: i.createTime
+          };
+        }
+      });
+      
+      return { 
+        success: true, 
+        data: records,
+        pagination: {
+          page,
+          pageSize,
+          total: totalRes.total,
+          hasMore: skip + records.length < totalRes.total
+        }
+      };
     } catch (err) {
       return { success: false, message: err.message };
     }
