@@ -69,6 +69,7 @@ Page({
       name: 'stats',
       data: { action: 'getRecentRecords', limit: 5 }
     }).then(res => {
+      console.log('首页加载记录:', res.result);
       if (res.result && res.result.success) {
         const records = res.result.data.map(item => {
           const net = parseFloat(item.net) || 0;
@@ -176,7 +177,7 @@ Page({
   // 分享到朋友圈
   onShareTimeline() {
     return {
-      title: '赚了么 - 记录你的彩票、刮刮乐、麻将盈亏',
+      title: '赚了么 - 记录你的彩、刮、麻盈亏',
       query: '',
       imageUrl: '/images/logo.png'
     };

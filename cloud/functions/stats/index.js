@@ -32,7 +32,7 @@ exports.main = async (event, context) => {
         records.push({
           _id: i._id,
           type: 'lottery',
-          typeText: '彩票',
+          typeText: '彩',
           lotteryType: i.lotteryType || '其他',
           net: (i.winAmount || 0) - (i.cost || 0),
           createTime: i.createTime
@@ -42,7 +42,7 @@ exports.main = async (event, context) => {
         records.push({
           _id: i._id,
           type: 'scratch',
-          typeText: '刮刮乐',
+          typeText: '刮',
           net: (i.winAmount || 0) - (i.cost || 0),
           createTime: i.createTime
         });
@@ -95,7 +95,7 @@ exports.main = async (event, context) => {
           return {
             _id: i._id,
             type: type,
-            typeText: type === 'lottery' ? '彩票' : '刮刮乐',
+            typeText: type === 'lottery' ? '彩' : '刮',
             lotteryType: i.lotteryType || '其他',
             cost: i.cost || 0,
             winAmount: i.winAmount || 0,

@@ -17,10 +17,10 @@
     <view class="title">快速记账</view>
     <view class="quick-actions">
       <view class="action-item" bindtap="goRecord" data-type="lottery">
-        <view class="action-icon lottery">🎰</view><text>彩票</text>
+        <view class="action-icon lottery">🎰</view><text>彩</text>
       </view>
       <view class="action-item" bindtap="goRecord" data-type="scratch">
-        <view class="action-icon scratch">🎫</view><text>刮刮乐</text>
+        <view class="action-icon scratch">🎫</view><text>刮</text>
       </view>
       <view class="action-item" bindtap="goRecord" data-type="mahjong">
         <view class="action-icon mahjong">🀄</view><text>麻将</text>

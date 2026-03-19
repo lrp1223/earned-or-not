@@ -8,20 +8,20 @@
     </view>
   </view>
   
-  <!-- 彩票 -->
+  <!-- 彩 -->
   <view class="card">
     <view class="stat-row">
-      <text class="stat-title">🎰 彩票</text>
+      <text class="stat-title">🎰 彩</text>
       <text class="stat-net" style="color: {{stats.lottery.net >= 0 ? winColor : loseColor}}">
         {{stats.lottery.net >= 0 ? '+' : ''}}{{stats.lottery.net}} 元
       </text>
     </view>
   </view>
   
-  <!-- 刮刮乐 -->
+  <!-- 刮 -->
   <view class="card">
     <view class="stat-row">
-      <text class="stat-title">🎫 刮刮乐</text>
+      <text class="stat-title">🎫 刮</text>
       <text class="stat-net" style="color: {{stats.scratch.net >= 0 ? winColor : loseColor}}">
         {{stats.scratch.net >= 0 ? '+' : ''}}{{stats.scratch.net}} 元
       </text>

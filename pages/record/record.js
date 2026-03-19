@@ -20,7 +20,7 @@ Page({
   onLoad(options) {
     const type = options.type || 'lottery';
     const mode = options.mode || 'add';
-    const map = { lottery: '彩票', scratch: '刮刮乐', mahjong: '麻将' };
+    const map = { lottery: '彩', scratch: '刮', mahjong: '麻' };
     const remarkPlaceholder = {
       lottery: '例如：追加投注、复式...',
       scratch: '例如：好运十倍、点球大战...',

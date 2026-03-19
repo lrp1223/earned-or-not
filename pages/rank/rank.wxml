@@ -3,8 +3,8 @@
   <!-- 标签切换 -->
   <view class="tab-bar">
     <view class="tab-item {{currentTab === 'total' ? 'active' : ''}}" bindtap="switchTab" data-tab="total">🏆 总排行</view>
-    <view class="tab-item {{currentTab === 'lottery' ? 'active' : ''}}" bindtap="switchTab" data-tab="lottery">🎰 彩票</view>
-    <view class="tab-item {{currentTab === 'scratch' ? 'active' : ''}}" bindtap="switchTab" data-tab="scratch">🎫 刮刮乐</view>
+    <view class="tab-item {{currentTab === 'lottery' ? 'active' : ''}}" bindtap="switchTab" data-tab="lottery">🎰 彩</view>
+    <view class="tab-item {{currentTab === 'scratch' ? 'active' : ''}}" bindtap="switchTab" data-tab="scratch">🎫 刮</view>
     <view class="tab-item {{currentTab === 'mahjong' ? 'active' : ''}}" bindtap="switchTab" data-tab="mahjong">🀄 麻将</view>
   </view>
   

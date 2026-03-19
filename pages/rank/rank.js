@@ -90,7 +90,7 @@ Page({
 
   // 分享给朋友
   onShareAppMessage() {
-    const tabNames = { total: '总排行', lottery: '彩票排行', scratch: '刮刮乐排行', mahjong: '麻将排行' };
+    const tabNames = { total: '总排行', lottery: '彩排行', scratch: '刮排行', mahjong: '麻排行' };
     return {
       title: `来看看${tabNames[this.data.currentTab]}，你排第几？`,
       path: '/pages/rank/rank',

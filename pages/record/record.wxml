@@ -3,10 +3,10 @@
   <view class="card">
     <view class="title">{{typeText}}记账</view>
     
-    <!-- 彩票：类型选择 + 花费 + 中奖 -->
+    <!-- 彩：类型选择 + 花费 + 中奖 -->
     <block wx:if="{{type === 'lottery'}}">
       <view class="form-item">
-        <text class="label">彩票类型</text>
+        <text class="label">彩类型</text>
         <picker bindchange="onLotteryTypeChange" value="{{lotteryTypeIndex}}" range="{{lotteryTypes}}">
           <view class="picker">{{lotteryTypes[lotteryTypeIndex]}}</view>
         </picker>
@@ -22,7 +22,7 @@
       </view>
     </block>
     
-    <!-- 刮刮乐：花费 + 中奖 -->
+    <!-- 刮：花费 + 中奖 -->
     <block wx:if="{{type === 'scratch'}}">
       <view class="form-item">
         <text class="label">花费金额（元）</text>
