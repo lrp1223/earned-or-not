@@ -1,4 +1,4 @@
-.fortune-card { background: linear-gradient(135deg, #722ed1, #9254de); }
+.fortune-card { background: linear-gradient(135deg, #ff6b6b, #ff8e8e); }
 .fortune-content { display: flex; align-items: center; }
 .fortune-icon { font-size: 60rpx; margin-right: 20rpx; }
 .fortune-text { flex: 1; }
