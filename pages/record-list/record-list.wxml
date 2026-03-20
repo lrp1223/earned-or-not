@@ -16,8 +16,8 @@
         </view>
       </view>
       <view class="record-right">
-        <text class="record-amount {{item.net >= 0 ? 'win' : 'lose'}}">
-          {{item.net >= 0 ? '+' : ''}}{{item.netStr}}元
+        <text class="record-amount" style="color: {{item.net >= 0 ? winColor : loseColor}}">
+          {{item.netStr}}元
         </text>
         <text class="record-detail" wx:if="{{item.cost !== undefined}}">
           花{{item.cost}}中{{item.winAmount || 0}}

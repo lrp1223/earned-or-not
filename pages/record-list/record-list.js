@@ -55,7 +55,7 @@ Page({
       if (res.result && res.result.success) {
         const newRecords = res.result.data.map(item => ({
           ...item,
-          netStr: (item.net >= 0 ? '+' : '') + item.net.toFixed(2),
+          netStr: item.net.toFixed(2),
           timeStr: this.formatTime(item.createTime)
         }));
         

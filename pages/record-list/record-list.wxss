@@ -18,8 +18,8 @@
 
 .record-right { text-align: right; }
 .record-amount { font-size: 36rpx; font-weight: bold; }
-.record-amount.win { color: #1890ff; }
-.record-amount.lose { color: #ff6b9d; }
+.record-amount.win { }
+.record-amount.lose { }
 .record-detail { font-size: 24rpx; color: #999; margin-top: 6rpx; display: block; }
 
 .load-more, .no-more { text-align: center; padding: 40rpx; font-size: 28rpx; color: #999; }
