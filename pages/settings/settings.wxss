@@ -22,7 +22,11 @@
 .tips { text-align: center; padding: 30rpx; font-size: 26rpx; color: #999; }
 
 /* 生日设置 */
-.birthday-row { display: flex; align-items: center; justify-content: space-between; }
-.picker { flex: 1; height: 88rpx; line-height: 88rpx; border: 2rpx solid #e8e8e8; border-radius: 12rpx; padding: 0 24rpx; font-size: 32rpx; background: #fafafa; color: #333; }
-.picker.placeholder { color: #999; }
-.constellation { margin-left: 20rpx; padding: 12rpx 24rpx; background: linear-gradient(135deg, #ff6b6b, #ff8e8e); color: white; border-radius: 24rpx; font-size: 28rpx; font-weight: bold; }
+.birthday-content { padding: 10rpx 0; }
+.birthday-picker { display: flex; align-items: center; background: #f8f8f8; border-radius: 16rpx; padding: 30rpx; }
+.birthday-display { flex: 1; display: flex; align-items: center; }
+.birthday-date { font-size: 34rpx; color: #333; font-weight: 500; }
+.birthday-display.placeholder .birthday-date { color: #999; }
+.birthday-constellation { margin-left: 20rpx; padding: 8rpx 20rpx; background: linear-gradient(135deg, #ff6b6b, #ff8e8e); color: white; border-radius: 20rpx; font-size: 26rpx; font-weight: bold; }
+.birthday-arrow { font-size: 40rpx; color: #ccc; margin-left: 20rpx; }
+.birthday-hint { font-size: 26rpx; color: #999; margin-top: 16rpx; display: block; padding-left: 10rpx; }

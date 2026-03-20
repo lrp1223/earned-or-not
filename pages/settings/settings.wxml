@@ -2,14 +2,18 @@
 <view class="container">
   <!-- 生日设置 -->
   <view class="settings-card">
-    <view class="section-title">生日设置</view>
-    <view class="birthday-row">
-      <picker mode="date" value="{{birthday}}" bindchange="onBirthdayChange">
-        <view class="picker {{birthday ? '' : 'placeholder'}}">
-          {{birthday || '请选择出生日期'}}
+    <view class="section-title">🎂 生日设置</view>
+    <view class="birthday-content">
+      <picker mode="date" value="{{birthday}}" bindchange="onBirthdayChange" end="{{today}}">
+        <view class="birthday-picker">
+          <view class="birthday-display {{birthday ? '' : 'placeholder'}}">
+            <text class="birthday-date">{{birthday || '请选择出生日期'}}</text>
+            <text class="birthday-constellation" wx:if="{{constellation}}">{{constellation}}</text>
+          </view>
+          <text class="birthday-arrow">›</text>
         </view>
       </picker>
-      <text class="constellation" wx:if="{{constellation}}">{{constellation}}</text>
+      <text class="birthday-hint" wx:if="{{!constellation}}">设置生日可查看每日运势</text>
     </view>
   </view>
   
