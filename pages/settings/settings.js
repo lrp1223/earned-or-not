@@ -36,37 +36,59 @@ Page({
       winColor: settings.winColor || '#52c41a',
       loseColor: settings.loseColor || '#ff4d4f',
       birthday: settings.birthday || '',
-      constellation: settings.constellation || ''
+      constellation: settings.constellation || '',
+      constellationIcon: settings.constellationIcon || ''
     });
     this.updatePreviewColors();
   },
 
   onBirthdayChange(e) {
     const birthday = e.detail.value;
-    const constellation = this.getConstellation(birthday);
-    this.setData({ birthday, constellation });
+    const constellationData = this.getConstellation(birthday);
+    this.setData({ 
+      birthday, 
+      constellation: constellationData.name,
+      constellationIcon: constellationData.icon
+    });
     this.saveSettings();
   },
 
   getConstellation(dateStr) {
-    if (!dateStr) return '';
+    if (!dateStr) return { name: '', icon: '' };
     const date = new Date(dateStr);
     const month = date.getMonth() + 1;
     const day = date.getDate();
     
-    // 星座日期划分
-    if ((month === 1 && day >= 20) || (month === 2 && day <= 18)) return '水瓶座';
-    if ((month === 2 && day >= 19) || (month === 3 && day <= 20)) return '双鱼座';
-    if ((month === 3 && day >= 21) || (month === 4 && day <= 19)) return '白羊座';
-    if ((month === 4 && day >= 20) || (month === 5 && day <= 20)) return '金牛座';
-    if ((month === 5 && day >= 21) || (month === 6 && day <= 21)) return '双子座';
-    if ((month === 6 && day >= 22) || (month === 7 && day <= 22)) return '巨蟹座';
-    if ((month === 7 && day >= 23) || (month === 8 && day <= 22)) return '狮子座';
-    if ((month === 8 && day >= 23) || (month === 9 && day <= 22)) return '处女座';
-    if ((month === 9 && day >= 23) || (month === 10 && day <= 23)) return '天秤座';
-    if ((month === 10 && day >= 24) || (month === 11 && day <= 22)) return '天蝎座';
-    if ((month === 11 && day >= 23) || (month === 12 && day <= 21)) return '射手座';
-    return '摩羯座'; // 12月22日 - 1月19日
+    const constellations = [
+      { name: '摩羯座', icon: '♑', start: [12, 22], end: [1, 19] },
+      { name: '水瓶座', icon: '♒', start: [1, 20], end: [2, 18] },
+      { name: '双鱼座', icon: '♓', start: [2, 19], end: [3, 20] },
+      { name: '白羊座', icon: '♈', start: [3, 21], end: [4, 19] },
+      { name: '金牛座', icon: '♉', start: [4, 20], end: [5, 20] },
+      { name: '双子座', icon: '♊', start: [5, 21], end: [6, 21] },
+      { name: '巨蟹座', icon: '♋', start: [6, 22], end: [7, 22] },
+      { name: '狮子座', icon: '♌', start: [7, 23], end: [8, 22] },
+      { name: '处女座', icon: '♍', start: [8, 23], end: [9, 22] },
+      { name: '天秤座', icon: '♎', start: [9, 23], end: [10, 23] },
+      { name: '天蝎座', icon: '♏', start: [10, 24], end: [11, 22] },
+      { name: '射手座', icon: '♐', start: [11, 23], end: [12, 21] }
+    ];
+    
+    for (let c of constellations) {
+      const [startMonth, startDay] = c.start;
+      const [endMonth, endDay] = c.end;
+      // 处理跨年的摩羯座
+      if (startMonth > endMonth) {
+        if ((month === startMonth && day >= startDay) || (month === endMonth && day <= endDay)) {
+          return c;
+        }
+      } else {
+        if ((month === startMonth && day >= startDay) || (month === endMonth && day <= endDay)) {
+          return c;
+        }
+      }
+    }
+    return { name: '', icon: '' };
   },
 
   selectWinColor(e) {
@@ -88,7 +110,8 @@ Page({
       winColor: this.data.winColor,
       loseColor: this.data.loseColor,
       birthday: this.data.birthday,
-      constellation: this.data.constellation
+      constellation: this.data.constellation,
+      constellationIcon: this.data.constellationIcon
     };
     wx.setStorageSync('userSettings', settings);
     // 同步到全局

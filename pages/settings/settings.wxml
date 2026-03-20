@@ -8,7 +8,7 @@
         <view class="birthday-picker">
           <view class="birthday-display {{birthday ? '' : 'placeholder'}}">
             <text class="birthday-date">{{birthday || '请选择出生日期'}}</text>
-            <text class="birthday-constellation" wx:if="{{constellation}}">{{constellation}}</text>
+            <text class="birthday-constellation" wx:if="{{constellation}}">{{constellationIcon}} {{constellation}}</text>
           </view>
           <text class="birthday-arrow">›</text>
         </view>
