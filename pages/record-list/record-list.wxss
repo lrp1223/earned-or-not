@@ -1,0 +1,30 @@
+/**pages/record-list/record-list.wxss**/
+.container { padding: 20rpx; }
+
+.header { padding: 30rpx; margin-bottom: 20rpx; }
+.title { font-size: 40rpx; font-weight: bold; color: #333; display: block; }
+.subtitle { font-size: 28rpx; color: #999; margin-top: 10rpx; display: block; }
+
+.record-list { background: white; border-radius: 24rpx; padding: 20rpx; }
+.record-item { display: flex; justify-content: space-between; align-items: center; padding: 30rpx 20rpx; border-bottom: 1rpx solid #f0f0f0; }
+.record-item:last-child { border-bottom: none; }
+
+.record-left { display: flex; align-items: center; flex: 1; }
+.record-icon { font-size: 48rpx; margin-right: 20rpx; }
+.record-info { flex: 1; }
+.record-type { font-size: 32rpx; font-weight: bold; color: #333; display: block; }
+.record-date { font-size: 24rpx; color: #999; margin-top: 6rpx; display: block; }
+.record-remark { font-size: 24rpx; color: #666; margin-top: 6rpx; display: block; }
+
+.record-right { text-align: right; }
+.record-amount { font-size: 36rpx; font-weight: bold; }
+.record-amount.win { color: #1890ff; }
+.record-amount.lose { color: #ff6b9d; }
+.record-detail { font-size: 24rpx; color: #999; margin-top: 6rpx; display: block; }
+
+.load-more, .no-more { text-align: center; padding: 40rpx; font-size: 28rpx; color: #999; }
+.load-more:active { color: #ff6b6b; }
+
+.empty { text-align: center; padding: 100rpx 40rpx; }
+.empty-icon { font-size: 80rpx; display: block; margin-bottom: 20rpx; }
+.empty-text { font-size: 30rpx; color: #999; }

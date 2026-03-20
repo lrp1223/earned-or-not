@@ -42,5 +42,12 @@ Page({
       winColor: settings.winColor || '#52c41a',
       loseColor: settings.loseColor || '#ff4d4f'
     });
+  },
+
+  goRecordList(e) {
+    const type = e.currentTarget.dataset.type;
+    wx.navigateTo({
+      url: `/pages/record-list/record-list?type=${type}`
+    });
   }
 });
