@@ -165,6 +165,10 @@ Page({
     wx.switchTab({ url: '/pages/stats/stats' });
   },
 
+  goFortune() {
+    wx.navigateTo({ url: '/pages/fortune/fortune' });
+  },
+
   // 分享给朋友
   onShareAppMessage() {
     return {

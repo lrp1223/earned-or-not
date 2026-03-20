@@ -13,6 +13,18 @@
     </view>
   </view>
   
+  <!-- 运势入口 -->
+  <view class="card fortune-card" bindtap="goFortune">
+    <view class="fortune-content">
+      <text class="fortune-icon">🔮</text>
+      <view class="fortune-text">
+        <text class="fortune-title">今日运势</text>
+        <text class="fortune-subtitle">点击查看你的幸运指数</text>
+      </view>
+      <text class="fortune-arrow">›</text>
+    </view>
+  </view>
+
   <view class="card">
     <view class="title">快速记账</view>
     <view class="quick-actions">

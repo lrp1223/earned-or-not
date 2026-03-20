@@ -6,7 +6,8 @@
     "pages/rank/rank",
     "pages/profile/profile",
     "pages/settings/settings",
-    "pages/record-list/record-list"
+    "pages/record-list/record-list",
+    "pages/fortune/fortune"
   ],
   "window": {
     "backgroundTextStyle": "light",
