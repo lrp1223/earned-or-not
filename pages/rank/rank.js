@@ -4,12 +4,17 @@ Page({
     currentTab: 'total', 
     rankList: [],
     winColor: '#52c41a',
-    loseColor: '#ff4d4f'
+    loseColor: '#ff4d4f',
+    page: 1,
+    pageSize: 20,
+    hasMore: false,
+    loading: false
   },
   
   onShow() { 
     this.loadSettings();
-    this.loadRank(this.data.currentTab); 
+    this.setData({ page: 1, rankList: [] });
+    this.loadRank(this.data.currentTab, 1); 
   },
 
   loadSettings() {
@@ -22,11 +27,14 @@ Page({
   
   switchTab(e) { 
     const tab = e.currentTarget.dataset.tab; 
-    this.setData({ currentTab: tab }); 
-    this.loadRank(tab); 
+    this.setData({ currentTab: tab, page: 1, rankList: [] }); 
+    this.loadRank(tab, 1); 
   },
   
-  loadRank(type) {
+  loadRank(type, page = 1) {
+    if (this.data.loading) return;
+    this.setData({ loading: true });
+    
     const actionMap = {
       'total': 'getTotalRank',
       'lottery': 'getLotteryRank',
@@ -36,8 +44,13 @@ Page({
 
     wx.cloud.callFunction({
       name: 'rank',
-      data: { action: actionMap[type] || 'getTotalRank' }
+      data: { 
+        action: actionMap[type] || 'getTotalRank',
+        page: page,
+        pageSize: this.data.pageSize
+      }
     }).then(res => {
+      this.setData({ loading: false });
       if (res.result.success) {
         const list = res.result.data.map(item => {
           const net = parseFloat(item.net) || 0;
@@ -46,13 +59,24 @@ Page({
             net: net,
             netStr: net.toFixed(2),
             avatarError: false,
-            // 使用本地缓存的头像URL
             avatarUrl: this.getCachedAvatar(item.userId, item.avatarUrl)
           };
         });
-        this.setData({ rankList: list });
+        
+        this.setData({ 
+          rankList: page === 1 ? list : [...this.data.rankList, ...list],
+          page: page,
+          hasMore: res.result.pagination.hasMore
+        });
       }
+    }).catch(() => {
+      this.setData({ loading: false });
     });
+  },
+
+  loadMore() {
+    if (!this.data.hasMore || this.data.loading) return;
+    this.loadRank(this.data.currentTab, this.data.page + 1);
   },
 
   // 获取缓存的头像URL
@@ -62,12 +86,10 @@ Page({
     const cacheKey = `avatar_${userId}`;
     const cached = wx.getStorageSync(cacheKey);
     
-    // 如果有缓存且未过期（7天），使用缓存
     if (cached && cached.url && Date.now() - cached.time < 7 * 24 * 60 * 60 * 1000) {
       return cached.url;
     }
     
-    // 否则缓存新URL
     wx.setStorageSync(cacheKey, {
       url: serverUrl,
       time: Date.now()
@@ -81,14 +103,12 @@ Page({
     const list = this.data.rankList;
     const item = list[index];
     
-    // 标记错误并从缓存中删除
     item.avatarError = true;
     wx.removeStorageSync(`avatar_${item.userId}`);
     
     this.setData({ rankList: list });
   },
 
-  // 分享给朋友
   onShareAppMessage() {
     const tabNames = { total: '总排行', lottery: '彩排行', scratch: '刮排行', mahjong: '麻排行' };
     return {
@@ -98,7 +118,6 @@ Page({
     };
   },
 
-  // 分享到朋友圈
   onShareTimeline() {
     return {
       title: '赚了么排行榜 - 看看谁是大赢家',

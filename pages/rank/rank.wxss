@@ -28,3 +28,6 @@
 .empty-icon { font-size: 80rpx; margin-bottom: 20rpx; }
 .empty-text { font-size: 32rpx; color: #333; margin-bottom: 12rpx; }
 .empty-hint { font-size: 26rpx; color: #999; }
+
+.load-more, .no-more { text-align: center; padding: 40rpx; font-size: 28rpx; color: #999; }
+.load-more:active { color: #ff6b6b; }

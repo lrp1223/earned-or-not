@@ -26,6 +26,15 @@
     </view>
   </view>
   
+  <!-- 加载更多 -->
+  <view class="load-more" wx:if="{{hasMore}}" bindtap="loadMore">
+    <text wx:if="{{!loading}}">点击加载更多</text>
+    <text wx:if="{{loading}}">加载中...</text>
+  </view>
+  <view class="no-more" wx:if="{{!hasMore && rankList.length > 0}}">
+    <text>没有更多了</text>
+  </view>
+
   <!-- 空状态 -->
   <view wx:if="{{rankList.length === 0}}" class="empty-state">
     <text class="empty-icon">📊</text>
