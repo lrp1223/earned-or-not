@@ -119,26 +119,26 @@ Page({
 
     if (isDaLeTou) {
       // 大乐透：前区 1-35 选5个，后区 1-12 选2个
-      const redBalls = this.generateUniqueNumbers(random, 5, 1, 35);
-      const blueBalls = this.generateUniqueNumbers(random, 2, 1, 12);
+      const redBalls = this.generateUniqueNumbers(seed, 5, 1, 35);
+      const blueBalls = this.generateUniqueNumbers(seed + 100, 2, 1, 12);
       return { type: '大乐透', redBalls, blueBalls };
     } else {
       // 双色球：红球 1-33 选6个，蓝球 1-16 选1个
-      const redBalls = this.generateUniqueNumbers(random, 6, 1, 33);
-      const blueBalls = this.generateUniqueNumbers(random, 1, 1, 16);
+      const redBalls = this.generateUniqueNumbers(seed, 6, 1, 33);
+      const blueBalls = this.generateUniqueNumbers(seed + 100, 1, 1, 16);
       return { type: '双色球', redBalls, blueBalls };
     }
   },
 
   // 生成不重复的随机号码
-  generateUniqueNumbers(randomFunc, count, min, max) {
+  generateUniqueNumbers(seed, count, min, max) {
     const numbers = new Set();
-    let seedOffset = 0;
+    let offset = 0;
     while (numbers.size < count) {
-      const num = Math.floor(randomFunc * (max - min + 1)) + min;
+      const random = this.seededRandom(seed + offset);
+      const num = Math.floor(random * (max - min + 1)) + min;
       numbers.add(num);
-      // 如果重复，稍微调整随机种子
-      seedOffset++;
+      offset++;
     }
     return Array.from(numbers).sort((a, b) => a - b);
   },
