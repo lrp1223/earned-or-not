@@ -11,8 +11,8 @@ Page({
     total: 0,
     hasMore: false,
     loading: false,
-    winColor: '#1890ff',
-    loseColor: '#ff6b9d'
+    winColor: '#52c41a',
+    loseColor: '#ff4d4f'
   },
 
   onLoad(options) {
@@ -29,8 +29,8 @@ Page({
   loadSettings() {
     const settings = wx.getStorageSync('userSettings') || {};
     this.setData({
-      winColor: settings.winColor || '#1890ff',
-      loseColor: settings.loseColor || '#ff6b9d'
+      winColor: settings.winColor || '#52c41a',
+      loseColor: settings.loseColor || '#ff4d4f'
     });
   },
 

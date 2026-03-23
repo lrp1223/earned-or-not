@@ -42,10 +42,4 @@
   text-align: right;
 }
 
-.amount-positive {
-  color: #52c41a;
-}
 
-.amount-negative {
-  color: #ff4d4f;
-}

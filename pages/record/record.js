@@ -18,6 +18,9 @@ Page({
   },
 
   onLoad(options) {
+    // 加载用户颜色设置
+    this.loadColorSettings();
+    
     const type = options.type || 'lottery';
     const mode = options.mode || 'add';
     const map = { lottery: '彩', scratch: '刮', mahjong: '麻' };
@@ -50,6 +53,16 @@ Page({
     if (mode === 'edit' && options.id) {
       this.loadRecord(options.id, type);
     }
+  },
+
+  loadColorSettings() {
+    const settings = wx.getStorageSync('userSettings') || {};
+    const winColor = settings.winColor || '#52c41a';
+    const loseColor = settings.loseColor || '#ff4d4f';
+    // 生成半透明背景色
+    const winBgColor = winColor + '15'; // 添加透明度
+    const loseBgColor = loseColor + '15';
+    this.setData({ winColor, loseColor, winBgColor, loseBgColor });
   },
 
   // 根据日期获取默认彩票类型

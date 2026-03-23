@@ -5,5 +5,5 @@ page { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-
 .btn-primary { background: linear-gradient(135deg, #ff6b6b, #ff8e8e); color: white; border-radius: 40rpx; font-size: 32rpx; font-weight: bold; }
 .btn-primary::after { border: none; }
 .title { font-size: 36rpx; font-weight: bold; color: #333; margin-bottom: 20rpx; }
-.amount-positive { color: #1890ff; font-weight: bold; }
-.amount-negative { color: #ff6b9d; font-weight: bold; }
+.amount-positive { font-weight: bold; }
+.amount-negative { font-weight: bold; }
