@@ -27,9 +27,15 @@
       <text class="detail-label">忌</text>
       <text class="detail-value bad">{{unsuitable}}</text>
     </view>
-    <view class="detail-row">
-      <text class="detail-label">幸运数字</text>
-      <text class="detail-value luck">{{luckyNumber}}</text>
+    <!-- 幸运号码 -->
+    <view class="lottery-numbers" wx:if="{{lotteryType}}">
+      <view class="lottery-type">今日{{lotteryType}}</view>
+      <view class="lottery-balls">
+        <text class="red-ball" wx:for="{{redBalls}}" wx:key="*this">{{item}}</text>
+      </view>
+      <view class="lottery-balls blue-row">
+        <text class="blue-ball" wx:for="{{blueBalls}}" wx:key="*this">{{item}}</text>
+      </view>
     </view>
     <view class="detail-row">
       <text class="detail-label">幸运方位</text>

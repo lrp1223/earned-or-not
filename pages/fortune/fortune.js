@@ -79,27 +79,68 @@ Page({
     const suitableList = ['小额投注', '追加投注', '观望', '休息', '请客吃饭'];
     const unsuitableList = ['倍投', '大额投注', '借钱买彩', '冲动消费', '追号'];
     
-    // 幸运数字（1-33）
-    const luckyNum = Math.floor(random * 33) + 1;
-    
     // 幸运方位
     const directions = ['东', '南', '西', '北', '东南', '东北', '西南', '西北'];
     const luckyDir = directions[Math.floor(random * directions.length)];
-    
-    // 开运色
+
+    // 幸运色
     const colors = ['红色', '黄色', '蓝色', '绿色', '紫色', '金色'];
     const luckyCol = colors[Math.floor(random * colors.length)];
-    
+
+    // 生成幸运号码
+    const lotteryNumbers = this.generateLotteryNumbers(dateStr, constellation);
+
     return {
       fortuneScore: totalScore,
       fortuneLevel: level,
       fortuneText: texts[level - 1] || texts[2],
       suitable: suitableList[Math.floor(random * suitableList.length)],
       unsuitable: unsuitableList[Math.floor(random * unsuitableList.length)],
-      luckyNumber: luckyNum,
       luckyDirection: luckyDir,
-      luckyColor: luckyCol
+      luckyColor: luckyCol,
+      lotteryType: lotteryNumbers.type,
+      redBalls: lotteryNumbers.redBalls,
+      blueBalls: lotteryNumbers.blueBalls
     };
+  },
+
+  // 生成幸运号码（大乐透或双色球）
+  generateLotteryNumbers(dateStr, constellation) {
+    const date = new Date(dateStr);
+    const day = date.getDay(); // 0=周日, 1=周一, ..., 6=周六
+
+    // 周一(1)、三(3)、五(5)、六(6) -> 大乐透
+    // 周二(2)、四(4)、日(0) -> 双色球
+    const isDaLeTou = [1, 3, 5, 6].includes(day);
+
+    // 用日期+星座做种子，保证同一天结果一致
+    const seed = this.hashCode(dateStr + constellation + 'lottery');
+    const random = this.seededRandom(seed);
+
+    if (isDaLeTou) {
+      // 大乐透：前区 1-35 选5个，后区 1-12 选2个
+      const redBalls = this.generateUniqueNumbers(random, 5, 1, 35);
+      const blueBalls = this.generateUniqueNumbers(random, 2, 1, 12);
+      return { type: '大乐透', redBalls, blueBalls };
+    } else {
+      // 双色球：红球 1-33 选6个，蓝球 1-16 选1个
+      const redBalls = this.generateUniqueNumbers(random, 6, 1, 33);
+      const blueBalls = this.generateUniqueNumbers(random, 1, 1, 16);
+      return { type: '双色球', redBalls, blueBalls };
+    }
+  },
+
+  // 生成不重复的随机号码
+  generateUniqueNumbers(randomFunc, count, min, max) {
+    const numbers = new Set();
+    let seedOffset = 0;
+    while (numbers.size < count) {
+      const num = Math.floor(randomFunc * (max - min + 1)) + min;
+      numbers.add(num);
+      // 如果重复，稍微调整随机种子
+      seedOffset++;
+    }
+    return Array.from(numbers).sort((a, b) => a - b);
   },
 
   // 字符串哈希
