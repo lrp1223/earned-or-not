@@ -2,122 +2,94 @@
 .container {
   background: linear-gradient(180deg, #fff5f5 0%, #ffffff 100%);
   min-height: 100vh;
-  padding: 30rpx;
+  padding: 20rpx;
 }
 
 /* 头部 */
 .header {
   text-align: center;
-  padding: 40rpx 0;
+  padding: 20rpx 0 10rpx;
 }
 .date {
-  font-size: 28rpx;
+  font-size: 24rpx;
   color: #999;
   display: block;
 }
 .constellation {
-  font-size: 48rpx;
+  font-size: 40rpx;
   font-weight: bold;
   color: #ff6b6b;
-  margin-top: 10rpx;
   display: block;
 }
 
 /* 运势卡片 */
 .fortune-card {
   background: linear-gradient(135deg, #ff6b6b 0%, #ff8e8e 100%);
-  border-radius: 32rpx;
-  padding: 60rpx 40rpx;
-  margin: 20rpx 0;
+  border-radius: 24rpx;
+  padding: 30rpx;
+  margin: 10rpx 0;
   text-align: center;
-  box-shadow: 0 20rpx 60rpx rgba(255, 107, 107, 0.3);
-  position: relative;
-  overflow: hidden;
-}
-.fortune-card::before {
-  content: '';
-  position: absolute;
-  top: -50%;
-  left: -50%;
-  width: 200%;
-  height: 200%;
-  background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 60%);
+  box-shadow: 0 12rpx 40rpx rgba(255, 107, 107, 0.3);
 }
 .fortune-title {
-  font-size: 32rpx;
+  font-size: 26rpx;
   color: rgba(255,255,255,0.9);
-  margin-bottom: 30rpx;
+  margin-bottom: 16rpx;
 }
 .stars {
   display: flex;
   justify-content: center;
-  gap: 16rpx;
-  margin-bottom: 30rpx;
+  gap: 12rpx;
+  margin-bottom: 16rpx;
 }
 .star {
-  font-size: 48rpx;
+  font-size: 36rpx;
   opacity: 0.3;
-  transition: all 0.3s;
 }
 .star.active {
   opacity: 1;
-  animation: twinkle 1s ease-in-out infinite;
-}
-@keyframes twinkle {
-  0%, 100% { transform: scale(1); }
-  50% { transform: scale(1.2); }
 }
 .fortune-score {
-  font-size: 72rpx;
+  font-size: 56rpx;
   font-weight: bold;
   color: white;
-  margin-bottom: 20rpx;
+  margin-bottom: 12rpx;
 }
 .fortune-text {
-  font-size: 32rpx;
+  font-size: 26rpx;
   color: rgba(255,255,255,0.95);
-  padding: 20rpx 30rpx;
+  padding: 12rpx 24rpx;
   background: rgba(255,255,255,0.15);
-  border-radius: 16rpx;
+  border-radius: 12rpx;
   display: inline-block;
 }
 
 /* 宜忌卡片 */
 .yiji-card {
   display: flex;
-  gap: 20rpx;
-  margin: 30rpx 0;
+  gap: 16rpx;
+  margin: 16rpx 0;
 }
 .yiji-item {
   flex: 1;
   background: white;
-  border-radius: 24rpx;
-  padding: 30rpx;
+  border-radius: 20rpx;
+  padding: 20rpx;
   text-align: center;
-  box-shadow: 0 8rpx 32rpx rgba(0,0,0,0.06);
+  box-shadow: 0 4rpx 20rpx rgba(0,0,0,0.06);
 }
 .yiji-icon {
-  width: 80rpx;
-  height: 80rpx;
-  line-height: 80rpx;
-  border-radius: 50%;
-  font-size: 40rpx;
-  margin: 0 auto 16rpx;
-}
-.yiji-item.good .yiji-icon {
-  background: #f6ffed;
-}
-.yiji-item.bad .yiji-icon {
-  background: #fff2f0;
+  font-size: 32rpx;
+  margin-bottom: 8rpx;
 }
 .yiji-label {
-  font-size: 28rpx;
+  font-size: 22rpx;
   color: #999;
   display: block;
-  margin-bottom: 10rpx;
+  margin-bottom: 6rpx;
 }
 .yiji-value {
-  font-size: 32rpx;
+  font-size: 28rpx;
   font-weight: bold;
 }
 .yiji-item.good .yiji-value {
@@ -127,45 +99,32 @@
   color: #ff4d4f;
 }
 
-/* 幸运信息卡片 */
-.lucky-info-card {
-  background: white;
-  border-radius: 24rpx;
-  padding: 30rpx;
-  margin: 20rpx 0;
-  box-shadow: 0 8rpx 32rpx rgba(0,0,0,0.06);
-}
-.lucky-info-title {
-  font-size: 28rpx;
-  color: #666;
-  margin-bottom: 20rpx;
+/* 幸运信息 - 横向排列 */
+.lucky-info-row {
   display: flex;
-  align-items: center;
-  gap: 10rpx;
-}
-.lucky-info-grid {
-  display: flex;
-  gap: 20rpx;
+  gap: 16rpx;
+  margin: 16rpx 0;
 }
 .lucky-info-item {
   flex: 1;
+  background: white;
+  border-radius: 20rpx;
+  padding: 20rpx;
   text-align: center;
-  padding: 30rpx 20rpx;
-  background: #f8f8f8;
-  border-radius: 16rpx;
+  box-shadow: 0 4rpx 20rpx rgba(0,0,0,0.06);
 }
 .lucky-info-icon {
-  font-size: 48rpx;
-  margin-bottom: 10rpx;
+  font-size: 36rpx;
+  margin-bottom: 6rpx;
 }
 .lucky-info-label {
-  font-size: 24rpx;
+  font-size: 20rpx;
   color: #999;
   display: block;
-  margin-bottom: 8rpx;
+  margin-bottom: 4rpx;
 }
 .lucky-info-value {
-  font-size: 32rpx;
+  font-size: 28rpx;
   font-weight: bold;
   color: #333;
 }
@@ -173,70 +132,49 @@
 /* 幸运号码 */
 .lottery-numbers {
   background: white;
-  border-radius: 32rpx;
-  padding: 50rpx 40rpx;
-  margin: 30rpx 0;
+  border-radius: 24rpx;
+  padding: 30rpx;
+  margin: 16rpx 0;
   text-align: center;
-  box-shadow: 0 12rpx 48rpx rgba(0,0,0,0.08);
+  box-shadow: 0 8rpx 32rpx rgba(0,0,0,0.08);
 }
 .lottery-type {
-  font-size: 32rpx;
+  font-size: 28rpx;
   font-weight: bold;
   color: #333;
-  margin-bottom: 40rpx;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 16rpx;
-}
-.lottery-type::before,
-.lottery-type::after {
-  content: '';
-  width: 60rpx;
-  height: 2rpx;
-  background: linear-gradient(90deg, transparent, #ff6b6b);
-}
-.lottery-type::after {
-  background: linear-gradient(90deg, #ff6b6b, transparent);
+  margin-bottom: 24rpx;
 }
 .lottery-balls {
   display: flex;
   justify-content: center;
-  gap: 20rpx;
-  margin-bottom: 30rpx;
+  gap: 12rpx;
+  margin-bottom: 16rpx;
 }
 .blue-row {
-  margin-top: 10rpx;
+  margin-top: 8rpx;
 }
 .red-ball, .blue-ball {
-  width: 88rpx;
-  height: 88rpx;
-  line-height: 88rpx;
+  width: 64rpx;
+  height: 64rpx;
+  line-height: 64rpx;
   border-radius: 50%;
-  font-size: 36rpx;
+  font-size: 28rpx;
   font-weight: bold;
   color: white;
-  box-shadow: 0 8rpx 24rpx rgba(0,0,0,0.15);
-  animation: bounceIn 0.6s ease-out;
 }
 .red-ball {
   background: linear-gradient(135deg, #ff4d4f 0%, #ff7875 100%);
-  box-shadow: 0 8rpx 24rpx rgba(255, 77, 79, 0.4);
+  box-shadow: 0 4rpx 12rpx rgba(255, 77, 79, 0.4);
 }
 .blue-ball {
   background: linear-gradient(135deg, #1890ff 0%, #69c0ff 100%);
-  box-shadow: 0 8rpx 24rpx rgba(24, 144, 255, 0.4);
-}
-@keyframes bounceIn {
-  0% { transform: scale(0); opacity: 0; }
-  50% { transform: scale(1.1); }
-  100% { transform: scale(1); opacity: 1; }
+  box-shadow: 0 4rpx 12rpx rgba(24, 144, 255, 0.4);
 }
 
 /* 提示 */
 .tips {
   text-align: center;
-  padding: 40rpx;
-  font-size: 24rpx;
+  padding: 20rpx;
+  font-size: 22rpx;
   color: #999;
 }
