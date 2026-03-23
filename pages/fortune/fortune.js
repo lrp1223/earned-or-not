@@ -22,9 +22,17 @@ Page({
     const today = new Date();
     const dateStr = `${today.getFullYear()}-${(today.getMonth()+1).toString().padStart(2,'0')}-${today.getDate().toString().padStart(2,'0')}`;
     
-    this.setData({ 
+    // 星座图标映射
+    const constellationIcons = {
+      '白羊座': '♈', '金牛座': '♉', '双子座': '♊', '巨蟹座': '♋',
+      '狮子座': '♌', '处女座': '♍', '天秤座': '♎', '天蝎座': '♏',
+      '射手座': '♐', '摩羯座': '♑', '水瓶座': '♒', '双鱼座': '♓'
+    };
+
+    this.setData({
       today: dateStr,
-      constellation: settings.constellation || ''
+      constellation: settings.constellation || '',
+      constellationIcon: constellationIcons[settings.constellation] || ''
     });
 
     if (!settings.constellation) {

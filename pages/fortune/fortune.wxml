@@ -1,14 +1,14 @@
 <!--pages/fortune/fortune.wxml-->
 <view class="container">
-  <!-- 日期和星座 -->
+  <!-- 头部 -->
   <view class="header">
     <text class="date">{{today}}</text>
-    <text class="constellation" wx:if="{{constellation}}">{{constellation}}</text>
+    <text class="constellation" wx:if="{{constellation}}">{{constellationIcon}} {{constellation}}</text>
     <text class="constellation" wx:if="{{!constellation}}">请先设置生日</text>
   </view>
-  
+
   <!-- 运势卡片 -->
-  <view class="fortune-card">
+  <view class="fortune-card" wx:if="{{constellation}}">
     <view class="fortune-title">今日运势</view>
     <view class="stars">
       <text wx:for="{{5}}" wx:key="*this" class="star {{index < fortuneLevel ? 'active' : ''}}">⭐</text>
@@ -16,37 +16,49 @@
     <view class="fortune-score">{{fortuneScore}}分</view>
     <view class="fortune-text">{{fortuneText}}</view>
   </view>
-  
-  <!-- 详细信息 -->
-  <view class="detail-card">
-    <view class="detail-row">
-      <text class="detail-label">宜</text>
-      <text class="detail-value good">{{suitable}}</text>
+
+  <!-- 宜忌 -->
+  <view class="yiji-card" wx:if="{{constellation}}">
+    <view class="yiji-item good">
+      <view class="yiji-icon">✅</view>
+      <text class="yiji-label">宜</text>
+      <text class="yiji-value">{{suitable}}</text>
     </view>
-    <view class="detail-row">
-      <text class="detail-label">忌</text>
-      <text class="detail-value bad">{{unsuitable}}</text>
-    </view>
-    <!-- 幸运号码 -->
-    <view class="lottery-numbers" wx:if="{{lotteryType}}">
-      <view class="lottery-type">今日{{lotteryType}}</view>
-      <view class="lottery-balls">
-        <text class="red-ball" wx:for="{{redBalls}}" wx:key="*this">{{item}}</text>
-      </view>
-      <view class="lottery-balls blue-row">
-        <text class="blue-ball" wx:for="{{blueBalls}}" wx:key="*this">{{item}}</text>
-      </view>
-    </view>
-    <view class="detail-row">
-      <text class="detail-label">幸运方位</text>
-      <text class="detail-value luck">{{luckyDirection}}</text>
-    </view>
-    <view class="detail-row">
-      <text class="detail-label">幸运色</text>
-      <text class="detail-value luck">{{luckyColor}}</text>
+    <view class="yiji-item bad">
+      <view class="yiji-icon">❌</view>
+      <text class="yiji-label">忌</text>
+      <text class="yiji-value">{{unsuitable}}</text>
     </view>
   </view>
-  
+
+  <!-- 幸运信息 -->
+  <view class="lucky-info-card" wx:if="{{constellation}}">
+    <view class="lucky-info-title">🎯 幸运指南</view>
+    <view class="lucky-info-grid">
+      <view class="lucky-info-item">
+        <view class="lucky-info-icon">🧭</view>
+        <text class="lucky-info-label">幸运方位</text>
+        <text class="lucky-info-value">{{luckyDirection}}</text>
+      </view>
+      <view class="lucky-info-item">
+        <view class="lucky-info-icon">🎨</view>
+        <text class="lucky-info-label">幸运色</text>
+        <text class="lucky-info-value">{{luckyColor}}</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 幸运号码 -->
+  <view class="lottery-numbers" wx:if="{{lotteryType}}">
+    <view class="lottery-type">今日{{lotteryType}}</view>
+    <view class="lottery-balls">
+      <text class="red-ball" wx:for="{{redBalls}}" wx:key="*this" style="animation-delay: {{index * 0.1}}s">{{item}}</text>
+    </view>
+    <view class="lottery-balls blue-row">
+      <text class="blue-ball" wx:for="{{blueBalls}}" wx:key="*this" style="animation-delay: {{(redBalls.length + index) * 0.1}}s">{{item}}</text>
+    </view>
+  </view>
+
   <!-- 提示 -->
-  <view class="tips">运势仅供娱乐，理性购彩</view>
+  <view class="tips" wx:if="{{constellation}}">运势仅供娱乐，理性购彩</view>
 </view>
