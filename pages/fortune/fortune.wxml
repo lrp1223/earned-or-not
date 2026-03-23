@@ -36,7 +36,7 @@
       <text class="detail-value luck">{{luckyDirection}}</text>
     </view>
     <view class="detail-row">
-      <text class="detail-label">开运色</text>
+      <text class="detail-label">幸运色</text>
       <text class="detail-value luck">{{luckyColor}}</text>
     </view>
   </view>
