@@ -6,6 +6,7 @@
     "pages/rank/rank",
     "pages/fun/fun",
     "pages/game24/game24",
+    "pages/climbGame/climbGame",
     "pages/profile/profile",
     "pages/settings/settings",
     "pages/record-list/record-list",
