@@ -1,0 +1,61 @@
+.container {
+  min-height: 100vh;
+  background: linear-gradient(180deg, #fff5f5 0%, #ffffff 100%);
+  padding: 40rpx;
+}
+.header {
+  text-align: center;
+  padding: 60rpx 0;
+}
+.title {
+  font-size: 52rpx;
+  font-weight: bold;
+  color: #ff6b6b;
+  display: block;
+}
+.subtitle {
+  font-size: 28rpx;
+  color: #999;
+  margin-top: 16rpx;
+  display: block;
+}
+.game-list {
+  margin-top: 40rpx;
+}
+.game-card {
+  background: white;
+  border-radius: 28rpx;
+  padding: 40rpx;
+  display: flex;
+  align-items: center;
+  box-shadow: 0 12rpx 40rpx rgba(255, 107, 107, 0.15);
+}
+.game-icon {
+  font-size: 72rpx;
+  margin-right: 30rpx;
+}
+.game-info {
+  flex: 1;
+}
+.game-name {
+  font-size: 36rpx;
+  font-weight: bold;
+  color: #333;
+  display: block;
+}
+.game-desc {
+  font-size: 26rpx;
+  color: #999;
+  margin-top: 10rpx;
+  display: block;
+}
+.arrow {
+  font-size: 48rpx;
+  color: #ccc;
+}
+.footer {
+  text-align: center;
+  padding: 80rpx 0;
+  font-size: 26rpx;
+  color: #bbb;
+}
