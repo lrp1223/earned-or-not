@@ -22,7 +22,7 @@ Page({
     highScore: 0,
     
     // 倒计时
-    timeLeft: 10,
+    timeLeft: 30,
     timer: null,
     
     // 历史记录
@@ -66,7 +66,7 @@ Page({
       targetChar: idiom[idiom.length - 1],
       inputValue: '',
       combo: 0,
-      timeLeft: 10,
+      timeLeft: 30,
       history: [idiom],
       title: this.getTitle(0),
       result: null
@@ -154,7 +154,7 @@ Page({
       targetChar: input[input.length - 1],
       inputValue: '',
       combo,
-      timeLeft: 10,
+      timeLeft: 30,
       history,
       title: this.getTitle(combo)
     });
@@ -178,7 +178,7 @@ Page({
       currentIdiom: aiIdiom,
       targetChar: aiIdiom[aiIdiom.length - 1],
       history,
-      timeLeft: 10
+      timeLeft: 30
     });
   },
 
