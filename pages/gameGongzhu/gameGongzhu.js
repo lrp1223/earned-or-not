@@ -302,9 +302,8 @@ Page({
       if (tc.card.suit === '♥') heartCards.push(cardId);
     }
     
-    // 检查是否收齐所有有分的红桃
-    const scoringHearts = ['♥A', '♥K', '♥Q', '♥J', '♥10', '♥9', '♥8', '♥7', '♥6', '♥5'];
-    const allScoringHearts = scoringHearts.every(h => heartCards.includes(h));
+    // 检查是否满红（收齐全部13张红桃）
+    const allHearts = heartCards.length === 13;
     
     // 计算基础分
     for (const tc of tableCards) {
@@ -314,13 +313,15 @@ Page({
       }
     }
     
-    // 全红：红桃分数变正
-    if (allScoringHearts) {
+    // 满红：收齐13张红桃得+200分
+    if (allHearts) {
+      // 满红时红桃部分固定+200分
       let heartScore = 0;
       for (const h of heartCards) {
         if (SCORE_CARDS[h]) heartScore += SCORE_CARDS[h];
       }
-      score = score - heartScore + Math.abs(heartScore);
+      // 减去原来的红桃负分，加上满红的+200
+      score = score - heartScore + 200;
     }
     
     // 变压器规则
