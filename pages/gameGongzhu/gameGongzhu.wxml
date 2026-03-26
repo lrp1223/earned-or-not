@@ -55,7 +55,7 @@
           <text>第{{currentRound}}/13轮</text>
           <text wx:if="{{leadSuit}}">主{{leadSuit}}</text>
           <text wx:if="{{teams}}">队伍已分</text>
-          <text wx:else">等猪羊</text>
+          <text wx:if="{{!teams}}">等猪羊</text>
         </view>
         <view class="table-cards">
           <view class="played-card {{item.player === 0 ? 'bottom' : item.player === 1 ? 'left' : item.player === 2 ? 'top' : 'right'}}" 
