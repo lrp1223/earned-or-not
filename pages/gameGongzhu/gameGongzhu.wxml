@@ -6,8 +6,8 @@
       <text class="intro-icon">🐷</text>
       <text class="intro-title">拱猪</text>
       <view class="intro-rules">
-        <text>♠Q 猪=-100 ♥J 羊=+100</text>
-        <text>♥ 红桃=-10至-50 (2-4=0)</text>
+        <text>♠Q 猪=-100 ♦J 羊=+100</text>
+        <text>♥ 红桃=-10至-50</text>
         <text>♣10 变压器=×2 或 +50</text>
         <text>满红(13张)=+200分</text>
       </view>

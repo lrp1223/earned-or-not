@@ -9,20 +9,21 @@ const RANKS = ['2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K', 'A']
 // 特殊牌分值（腾讯拱猪规则）
 const SCORE_CARDS = {
   '♠Q': -100,  // 猪
-  '♥J': 100,   // 羊（正分）
+  '♦J': 100,   // 羊（正分）
   '♣10': 0,    // 变压器（本身0分，作用是翻倍）
   '♥A': -50,
   '♥K': -40,
   '♥Q': -30,
+  '♥J': -20,
   '♥10': -10,
   '♥9': -10,
   '♥8': -10,
   '♥7': -10,
   '♥6': -10,
   '♥5': -10,
-  '♥2': 0,     // 2-4无分
-  '♥3': 0,
-  '♥4': 0,
+  '♥4': -10,
+  '♥3': -10,
+  '♥2': -10,
 };
 
 Page({
@@ -298,7 +299,7 @@ Page({
       const cardId = tc.card.id;
       if (cardId === '♣10') hasTransformer = true;
       if (cardId === '♠Q') hasPig = true;
-      if (cardId === '♥J') hasSheep = true;
+      if (cardId === '♦J') hasSheep = true;
       if (tc.card.suit === '♥') heartCards.push(cardId);
     }
     
