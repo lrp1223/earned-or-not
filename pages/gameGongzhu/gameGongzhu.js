@@ -35,6 +35,19 @@ Page({
 
   onLoad() {
     this.initGame();
+    this.adjustLayout();
+  },
+
+  // 根据屏幕尺寸调整布局
+  adjustLayout() {
+    const sysInfo = wx.getSystemInfoSync();
+    const isLandscape = sysInfo.windowWidth > sysInfo.windowHeight;
+    const scale = isLandscape ? sysInfo.windowHeight / 750 : 1;
+    
+    this.setData({
+      layoutScale: scale,
+      isLandscape: isLandscape
+    });
   },
 
   initGame() {

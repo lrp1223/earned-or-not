@@ -12,44 +12,44 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: 20rpx;
+  padding: 2vh;
 }
 .ready-content {
   text-align: center;
 }
 .ready-title {
-  font-size: 80rpx;
+  font-size: 8vh;
   color: #fff;
   display: block;
 }
 .ready-subtitle {
-  font-size: 36rpx;
+  font-size: 3vh;
   color: #ccc;
   display: block;
-  margin: 10rpx 0 30rpx;
+  margin: 1vh 0 3vh;
 }
 .ready-rules {
   background: rgba(255,255,255,0.15);
-  border-radius: 16rpx;
-  padding: 20rpx 30rpx;
+  border-radius: 2vh;
+  padding: 2vh 3vh;
 }
 .ready-rules text {
   display: block;
-  font-size: 28rpx;
+  font-size: 2.5vh;
   color: #fff;
-  margin: 8rpx 0;
+  margin: 1vh 0;
 }
 .ready-btn {
-  margin-top: 40rpx;
-  width: 240rpx;
-  height: 80rpx;
+  margin-top: 4vh;
+  width: 20vh;
+  height: 6vh;
   background: linear-gradient(135deg, #4caf50, #81c784);
-  border-radius: 40rpx;
+  border-radius: 3vh;
   display: flex;
   align-items: center;
   justify-content: center;
   color: #fff;
-  font-size: 32rpx;
+  font-size: 2.5vh;
   font-weight: bold;
 }
 
@@ -63,19 +63,19 @@
 
 /* 顶部栏 */
 .top-bar {
-  height: 50rpx;
+  height: 6vh;
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 20rpx;
+  gap: 2vh;
   background: rgba(0,0,0,0.2);
 }
 .top-bar text {
-  font-size: 24rpx;
+  font-size: 2vh;
   color: #fff;
   background: rgba(0,0,0,0.3);
-  padding: 6rpx 16rpx;
-  border-radius: 12rpx;
+  padding: 0.5vh 1.5vh;
+  border-radius: 1vh;
 }
 
 /* 游戏区 */
@@ -85,6 +85,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  min-height: 0;
 }
 
 /* 玩家标签 */
@@ -92,36 +93,36 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 10rpx 20rpx;
+  padding: 1vh 2vh;
   background: rgba(255,255,255,0.1);
-  border-radius: 12rpx;
+  border-radius: 1vh;
 }
 .player-tag.active {
   background: rgba(255,215,0,0.3);
-  border: 2rpx solid #ffd700;
+  border: 0.2vh solid #ffd700;
 }
 .player-tag text {
-  font-size: 22rpx;
+  font-size: 1.8vh;
   color: #fff;
 }
 .player-tag .score {
-  font-size: 28rpx;
+  font-size: 2.5vh;
   font-weight: bold;
   color: #ffd700;
 }
 .player-tag .team-mark {
-  font-size: 18rpx;
+  font-size: 1.5vh;
   color: #4caf50;
   background: #e8f5e9;
-  padding: 2rpx 8rpx;
-  border-radius: 8rpx;
-  margin-top: 4rpx;
+  padding: 0.2vh 0.8vh;
+  border-radius: 0.5vh;
+  margin-top: 0.5vh;
 }
 
 /* 对家 */
 .player-top {
   position: absolute;
-  top: 10rpx;
+  top: 2vh;
   left: 50%;
   transform: translateX(-50%);
   display: flex;
@@ -129,15 +130,15 @@
   align-items: center;
 }
 .player-top .card-num {
-  font-size: 20rpx;
+  font-size: 1.8vh;
   color: #ccc;
-  margin-top: 8rpx;
+  margin-top: 1vh;
 }
 
 /* 左右家 */
 .player-left {
   position: absolute;
-  left: 20rpx;
+  left: 2vh;
   top: 50%;
   transform: translateY(-50%);
   display: flex;
@@ -146,7 +147,7 @@
 }
 .player-right {
   position: absolute;
-  right: 20rpx;
+  right: 2vh;
   top: 50%;
   transform: translateY(-50%);
   display: flex;
@@ -154,15 +155,15 @@
   align-items: center;
 }
 .player-left .card-num, .player-right .card-num {
-  font-size: 20rpx;
+  font-size: 1.8vh;
   color: #ccc;
-  margin-top: 8rpx;
+  margin-top: 1vh;
 }
 
 /* 桌面 */
 .table {
-  width: 360rpx;
-  height: 200rpx;
+  width: 50vh;
+  height: 30vh;
   position: relative;
 }
 .table-card-wrap {
@@ -171,25 +172,25 @@
   position: relative;
 }
 .table-card {
-  width: 80rpx;
-  height: 110rpx;
+  width: 8vh;
+  height: 11vh;
   background: #fff;
-  border-radius: 10rpx;
+  border-radius: 1vh;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   position: absolute;
-  box-shadow: 0 4rpx 12rpx rgba(0,0,0,0.3);
+  box-shadow: 0 0.5vh 1.5vh rgba(0,0,0,0.3);
 }
 .table-card .suit {
-  font-size: 36rpx;
+  font-size: 3.5vh;
 }
 .table-card .suit.red {
   color: #f44336;
 }
 .table-card .rank {
-  font-size: 28rpx;
+  font-size: 2.8vh;
   font-weight: bold;
   color: #333;
 }
@@ -216,25 +217,26 @@
 
 /* 底部区域 */
 .bottom-area {
-  height: 160rpx;
-  padding: 10rpx 20rpx;
+  height: 22vh;
+  padding: 2vh;
+  flex-shrink: 0;
 }
 .my-info {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 20rpx;
+  margin-bottom: 2vh;
 }
 .play-btn {
-  width: 140rpx;
-  height: 70rpx;
+  width: 14vh;
+  height: 6vh;
   background: #ccc;
-  border-radius: 35rpx;
+  border-radius: 3vh;
   display: flex;
   align-items: center;
   justify-content: center;
   color: #fff;
-  font-size: 32rpx;
+  font-size: 2.5vh;
   font-weight: bold;
 }
 .play-btn.active {
@@ -245,39 +247,39 @@
 /* 手牌 */
 .hand-scroll {
   width: 100%;
-  height: 100rpx;
+  height: 12vh;
   white-space: nowrap;
 }
 .hand {
   display: inline-flex;
-  gap: 10rpx;
+  gap: 1vh;
 }
 .hand-card {
-  width: 70rpx;
-  height: 95rpx;
+  width: 8vh;
+  height: 11vh;
   background: #fff;
-  border-radius: 8rpx;
+  border-radius: 1vh;
   display: inline-flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  border: 2rpx solid transparent;
+  border: 0.3vh solid transparent;
 }
 .hand-card.selected {
   border-color: #ffd700;
-  transform: translateY(-8rpx);
+  transform: translateY(-1vh);
 }
 .hand-card.disabled {
   opacity: 0.4;
 }
 .hand-card .suit {
-  font-size: 36rpx;
+  font-size: 3.5vh;
 }
 .hand-card .suit.red {
   color: #f44336;
 }
 .hand-card .rank {
-  font-size: 28rpx;
+  font-size: 2.5vh;
   font-weight: bold;
   color: #333;
 }
@@ -296,17 +298,17 @@
   justify-content: center;
 }
 .over-icon {
-  font-size: 100rpx;
-  margin-bottom: 20rpx;
+  font-size: 10vh;
+  margin-bottom: 2vh;
 }
 .over-title {
-  font-size: 56rpx;
+  font-size: 5vh;
   font-weight: bold;
   color: #fff;
-  margin-bottom: 20rpx;
+  margin-bottom: 2vh;
 }
 .over-score {
-  font-size: 40rpx;
+  font-size: 4vh;
   color: #ffd700;
-  margin-bottom: 40rpx;
+  margin-bottom: 4vh;
 }
