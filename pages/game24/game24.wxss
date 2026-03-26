@@ -103,6 +103,11 @@
   color: #666;
   font-size: 28rpx;
 }
+.key.backspace {
+  background: #fff7e6;
+  color: #fa8c16;
+  font-size: 32rpx;
+}
 .key.check {
   background: linear-gradient(135deg, #ff6b6b 0%, #ff8e8e 100%);
   color: white;

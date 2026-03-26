@@ -33,8 +33,11 @@
     <view class="key-row">
       <view class="key op" data-op="(" bindtap="inputOp">(</view>
       <view class="key op" data-op=")" bindtap="inputOp">)</view>
-      <view class="key clear" bindtap="clear">清空</view>
-      <view class="key check" bindtap="check">验证</view>
+      <view class="key backspace" bindtap="backspace">⌫</view>
+      <view class="key clear" bindtap="clear">C</view>
+    </view>
+    <view class="key-row">
+      <view class="key check" bindtap="check" style="width: 100%;">验证</view>
     </view>
   </view>
 

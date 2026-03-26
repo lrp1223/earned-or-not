@@ -64,6 +64,28 @@ Page({
     this.setData({ expression: '', result: null, usedCards: [false, false, false, false] });
   },
 
+  backspace() {
+    const { expression, usedCards, cards } = this.data;
+    if (!expression) return;
+
+    // 删除最后一个字符
+    const newExpression = expression.slice(0, -1);
+
+    // 检查是否删除了数字，如果是，恢复该数字的使用状态
+    const lastChar = expression.slice(-1);
+    const newUsedCards = [...usedCards];
+
+    // 检查删除的是哪个数字
+    for (let i = 0; i < 4; i++) {
+      if (lastChar === String(cards[i]) && usedCards[i]) {
+        newUsedCards[i] = false;
+        break;
+      }
+    }
+
+    this.setData({ expression: newExpression, usedCards: newUsedCards });
+  },
+
   check() {
     const { expression, cards } = this.data;
     if (!expression) {
