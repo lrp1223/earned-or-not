@@ -235,16 +235,18 @@ Page({
   endRound() {
     const { tableCards, leadSuit } = this.data;
     
-    // 找出最大牌
-    let winner = 0;
-    let maxCard = tableCards[0];
+    // 找出最大牌（必须是首家花色）
+    let winner = tableCards[0].player;
+    let maxRank = this.cardRankValue(tableCards[0].card.rank);
     
     for (let i = 1; i < 4; i++) {
-      const c = tableCards[i];
-      if (c.card.suit === leadSuit) {
-        if (this.cardRankValue(c.card.rank) > this.cardRankValue(maxCard.card.rank)) {
-          maxCard = c;
-          winner = i;
+      const tc = tableCards[i];
+      // 只有跟了首家花色的牌才能比较大小
+      if (tc.card.suit === leadSuit) {
+        const rank = this.cardRankValue(tc.card.rank);
+        if (rank > maxRank) {
+          maxRank = rank;
+          winner = tc.player;
         }
       }
     }
