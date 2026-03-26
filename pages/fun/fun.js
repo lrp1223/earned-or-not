@@ -12,5 +12,8 @@ Page({
   },
   goGame24() {
     wx.navigateTo({ url: '/pages/game24/game24' });
+  },
+  goGameGongzhu() {
+    wx.navigateTo({ url: '/pages/gameGongzhu/gameGongzhu' });
   }
 });

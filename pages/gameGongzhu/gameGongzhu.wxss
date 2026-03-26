@@ -1,0 +1,267 @@
+.container {
+  min-height: 100vh;
+  background: linear-gradient(180deg, #e8f5e9 0%, #ffffff 100%);
+  padding: 30rpx;
+}
+.header {
+  text-align: center;
+  padding: 20rpx 0;
+}
+.title {
+  font-size: 48rpx;
+  font-weight: bold;
+  color: #4caf50;
+  display: block;
+}
+.subtitle {
+  font-size: 26rpx;
+  color: #999;
+  margin-top: 10rpx;
+  display: block;
+}
+
+/* 准备界面 */
+.ready-screen {
+  text-align: center;
+  padding: 60rpx 0;
+}
+.intro {
+  background: white;
+  border-radius: 24rpx;
+  padding: 50rpx 40rpx;
+  margin-bottom: 50rpx;
+  box-shadow: 0 8rpx 32rpx rgba(0,0,0,0.06);
+}
+.intro-icon {
+  font-size: 80rpx;
+  display: block;
+  margin-bottom: 20rpx;
+}
+.intro-title {
+  font-size: 40rpx;
+  font-weight: bold;
+  color: #333;
+  display: block;
+  margin-bottom: 30rpx;
+}
+.intro-rules {
+  text-align: left;
+  padding: 0 40rpx;
+}
+.intro-rules text {
+  display: block;
+  font-size: 30rpx;
+  color: #666;
+  margin: 16rpx 0;
+}
+.btn-start {
+  width: 80%;
+  height: 100rpx;
+  line-height: 100rpx;
+  background: linear-gradient(135deg, #4caf50 0%, #81c784 100%);
+  color: white;
+  font-size: 36rpx;
+  font-weight: bold;
+  border-radius: 50rpx;
+  border: none;
+}
+
+/* 游戏界面 */
+.game-screen {
+  padding: 20rpx 0;
+}
+
+/* 分数板 */
+.score-board {
+  display: flex;
+  justify-content: space-around;
+  background: white;
+  border-radius: 16rpx;
+  padding: 20rpx;
+  margin-bottom: 20rpx;
+}
+.score-item {
+  text-align: center;
+  padding: 10rpx 20rpx;
+  border-radius: 12rpx;
+}
+.score-item.active {
+  background: #e8f5e9;
+}
+.score-name {
+  font-size: 24rpx;
+  color: #666;
+  display: block;
+}
+.score-value {
+  font-size: 36rpx;
+  font-weight: bold;
+  color: #333;
+  display: block;
+  margin-top: 8rpx;
+}
+
+/* 轮次信息 */
+.round-info {
+  text-align: center;
+  margin: 20rpx 0;
+}
+.round-info text {
+  font-size: 28rpx;
+  color: #666;
+  margin: 0 20rpx;
+}
+
+/* AI区域 */
+.ai-area {
+  display: flex;
+  justify-content: space-around;
+  margin: 30rpx 0;
+}
+.ai-player {
+  text-align: center;
+}
+.ai-name {
+  font-size: 26rpx;
+  color: #666;
+  display: block;
+}
+.ai-cards {
+  font-size: 32rpx;
+  font-weight: bold;
+  color: #4caf50;
+  display: block;
+  margin-top: 10rpx;
+}
+
+/* 桌面区域 */
+.table-area {
+  background: #f5f5f5;
+  border-radius: 20rpx;
+  padding: 40rpx;
+  margin: 30rpx 0;
+  min-height: 200rpx;
+  display: flex;
+  justify-content: center;
+  gap: 20rpx;
+}
+.table-card {
+  width: 120rpx;
+  height: 160rpx;
+  background: white;
+  border-radius: 16rpx;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4rpx 16rpx rgba(0,0,0,0.1);
+}
+.table-card.player {
+  border: 4rpx solid #4caf50;
+}
+.card-suit {
+  font-size: 48rpx;
+}
+.card-suit.red {
+  color: #f44336;
+}
+.card-rank {
+  font-size: 36rpx;
+  font-weight: bold;
+  color: #333;
+}
+.card-player {
+  font-size: 20rpx;
+  color: #999;
+  margin-top: 10rpx;
+}
+
+/* 玩家手牌 */
+.player-hand {
+  margin-top: 40rpx;
+}
+.hand-label {
+  font-size: 28rpx;
+  color: #666;
+  text-align: center;
+  display: block;
+  margin-bottom: 20rpx;
+}
+.hand-cards {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 16rpx;
+}
+.hand-card {
+  width: 100rpx;
+  height: 140rpx;
+  background: white;
+  border-radius: 12rpx;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4rpx 12rpx rgba(0,0,0,0.1);
+  border: 2rpx solid transparent;
+}
+.hand-card.selected {
+  border-color: #4caf50;
+  background: #e8f5e9;
+}
+.hand-card.disabled {
+  opacity: 0.5;
+}
+.btn-confirm {
+  width: 80%;
+  height: 88rpx;
+  line-height: 88rpx;
+  background: linear-gradient(135deg, #4caf50 0%, #81c784 100%);
+  color: white;
+  font-size: 32rpx;
+  font-weight: bold;
+  border-radius: 44rpx;
+  border: none;
+  margin-top: 40rpx;
+}
+
+/* 游戏结束 */
+.game-over {
+  text-align: center;
+  padding: 60rpx 0;
+}
+.over-icon {
+  font-size: 100rpx;
+  display: block;
+  margin-bottom: 30rpx;
+}
+.over-title {
+  font-size: 48rpx;
+  font-weight: bold;
+  color: #333;
+  display: block;
+  margin-bottom: 20rpx;
+}
+.over-score {
+  font-size: 36rpx;
+  color: #666;
+  display: block;
+  margin-bottom: 10rpx;
+}
+.over-rank {
+  font-size: 32rpx;
+  color: #4caf50;
+  display: block;
+  margin-bottom: 40rpx;
+}
+.btn-restart {
+  width: 80%;
+  height: 100rpx;
+  line-height: 100rpx;
+  background: linear-gradient(135deg, #4caf50 0%, #81c784 100%);
+  color: white;
+  font-size: 36rpx;
+  font-weight: bold;
+  border-radius: 50rpx;
+  border: none;
+}
