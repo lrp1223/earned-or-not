@@ -89,9 +89,9 @@
       <text class="intro-title">拱猪</text>
       <view class="intro-rules">
         <text>♠Q 猪 = -100分</text>
+        <text>♦J 羊 = +100分</text>
         <text>♥ 红桃 = -10至-50分</text>
-        <text>♦J 变压器 = +100分</text>
-        <text>收齐所有红桃变正分</text>
+        <text>♣10 变压器：无猪羊红桃+50，否则×2</text>
       </view>
     </view>
     <view class="btn-wrapper" bindtap="startGame">

@@ -9,7 +9,9 @@ const RANKS = ['2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K', 'A']
 // 特殊牌分值
 const SCORE_CARDS = {
   '♠Q': -100,  // 猪
-  '♥A': -50,   // 羊（正分）
+  '♦J': 100,   // 羊
+  '♣10': 50,   // 变压器（基础分）
+  '♥A': -50,
   '♥K': -40,
   '♥Q': -30,
   '♥J': -20,
@@ -22,7 +24,6 @@ const SCORE_CARDS = {
   '♥4': -10,
   '♥3': -10,
   '♥2': -10,
-  '♦J': 100,   // 变压器
 };
 
 Page({
@@ -288,12 +289,41 @@ Page({
   // 计算本轮得分
   calculateRoundScore(tableCards) {
     let score = 0;
+    let hasTransformer = false;
+    let hasPig = false;
+    let hasSheep = false;
+    let hasHeart = false;
+    
+    // 先检查有哪些特殊牌
+    for (const tc of tableCards) {
+      const cardId = tc.card.id;
+      if (cardId === '♣10') hasTransformer = true;
+      if (cardId === '♠Q') hasPig = true;
+      if (cardId === '♦J') hasSheep = true;
+      if (tc.card.suit === '♥') hasHeart = true;
+    }
+    
+    // 计算基础分
     for (const tc of tableCards) {
       const cardId = tc.card.id;
       if (SCORE_CARDS[cardId]) {
+        // 变压器单独处理
+        if (cardId === '♣10') continue;
         score += SCORE_CARDS[cardId];
       }
     }
+    
+    // 变压器规则
+    if (hasTransformer) {
+      if (!hasPig && !hasSheep && !hasHeart) {
+        // 没有猪、羊、红桃，变压器+50
+        score += 50;
+      } else {
+        // 有猪/羊/红桃（哪怕红桃2是0分），所有分数×2
+        score *= 2;
+      }
+    }
+    
     return score;
   },
 
