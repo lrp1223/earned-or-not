@@ -103,10 +103,16 @@
 
     <!-- 游戏结束 -->
     <view class="game-over" wx:if="{{gameState === 'over'}}">
-      <text class="over-icon">{{gameResult.playerScore > 0 ? '🎉' : '😅'}}</text>
-      <text class="over-title">{{gameResult.result}}</text>
+      <text class="over-icon" wx:if="{{gameResult.rank === 1}}">🏆</text>
+      <text class="over-icon" wx:if="{{gameResult.rank === 2}}">🥈</text>
+      <text class="over-icon" wx:if="{{gameResult.rank === 3}}">🥉</text>
+      <text class="over-icon" wx:if="{{gameResult.rank === 4}}">💔</text>
+      <text class="over-title" wx:if="{{gameResult.rank === 1}}">冠军！</text>
+      <text class="over-title" wx:if="{{gameResult.rank === 2}}">亚军</text>
+      <text class="over-title" wx:if="{{gameResult.rank === 3}}">季军</text>
+      <text class="over-title" wx:if="{{gameResult.rank === 4}}">垫底...</text>
       <text class="over-score">得分: {{gameResult.playerScore}}</text>
-      <text class="over-rank">排名: 第{{gameResult.rank}}名</text>
+      <text class="over-rank">第{{gameResult.rank}}名</text>
       <view class="btn-wrapper" bindtap="restart">
         <text class="btn-start-text">再来一局</text>
       </view>
