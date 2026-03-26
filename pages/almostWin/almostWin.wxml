@@ -1,8 +1,8 @@
 <!--pages/almostWin/almostWin.wxml-->
 <view class="container">
   <view class="header">
-    <text class="title">差一点就中</text>
-    <text class="subtitle">刮开3个数，满20就中奖！</text>
+    <text class="title">🎲 手气测试</text>
+    <text class="subtitle">刮开3个数，测测今天手气！</text>
   </view>
 
   <!-- 目标 -->
