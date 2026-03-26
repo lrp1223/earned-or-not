@@ -36,25 +36,28 @@
   flex: 1;
   display: flex;
   flex-direction: column;
+  min-height: 0;
 }
 
 /* 顶部玩家 */
 .top-player {
-  height: 120rpx;
+  height: 100rpx;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
+  flex-shrink: 0;
 }
 
 /* 底部玩家 */
 .bottom-player {
-  height: 220rpx;
+  height: 180rpx;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: flex-end;
-  padding-bottom: 10rpx;
+  padding-bottom: 20rpx;
+  flex-shrink: 0;
 }
 
 /* 玩家头像 */
@@ -115,11 +118,12 @@
   align-items: center;
   justify-content: center;
   position: relative;
+  min-height: 0;
 }
 
 .table-center {
-  width: 400rpx;
-  height: 240rpx;
+  width: 360rpx;
+  height: 160rpx;
   position: relative;
 }
 
@@ -204,8 +208,12 @@
 /* 玩家手牌 */
 .player-hand {
   display: flex;
-  gap: 10rpx;
+  gap: 6rpx;
   margin-bottom: 10rpx;
+  flex-wrap: nowrap;
+  overflow-x: auto;
+  max-width: 100%;
+  padding: 0 10rpx;
 }
 
 .hand-card {
