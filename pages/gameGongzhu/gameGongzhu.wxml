@@ -100,9 +100,9 @@
   <!-- 游戏结束 -->
   <view class="game-over" wx:if="{{gameState === 'over'}}">
     <text class="over-icon">{{scores[0] > 0 ? '🎉' : '😅'}}</text>
-    <text class="over-title">{{scores[0] > 0 ? '你赢了！' : '你输了...'}}</text>
-    <text class="over-score">你的得分: {{scores[0]}}</text>
-    <text class="over-rank">排名: 第{{[...scores].sort((a,b)=>b-a).indexOf(scores[0])+1}}名</text>
+    <text class="over-title">{{gameResult.result}}</text>
+    <text class="over-score">你的得分: {{gameResult.playerScore}}</text>
+    <text class="over-rank">排名: 第{{gameResult.rank}}名</text>
     <button class="btn-restart" bindtap="restart">再来一局</button>
   </view>
 </view>
