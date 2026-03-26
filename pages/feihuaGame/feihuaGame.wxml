@@ -1,0 +1,91 @@
+<!--pages/feihuaGame/feihuaGame.wxml-->
+<view class="container">
+  <view class="header">
+    <text class="title">🌸 飞花令</text>
+    <text class="subtitle">世界读书日特别版</text>
+  </view>
+
+  <!-- 准备界面 -->
+  <view class="ready-screen" wx:if="{{gameState === 'ready'}}">
+    <view class="intro">
+      <text class="intro-icon">🌸</text>
+      <text class="intro-title">飞花令挑战</text>
+      <text class="intro-text">系统给出一个字</text>
+      <text class="intro-text">轮流说出含该字的诗句</text>
+      <text class="intro-text">15秒限时，不能重复</text>
+    </view>
+    <button class="btn-start" bindtap="startGame">开始挑战</button>
+    <view class="keys-preview">
+      <text class="keys-label">可能出现的字：</text>
+      <view class="keys-list">
+        <text class="key-item" wx:for="{{['春','花','月','风','雨','山','水','人','天','云']}}" wx:key="index">{{item}}</text>
+      </view>
+    </view>
+    <view class="high-score" wx:if="{{highScore > 0}}">历史最高：{{highScore}}连击</view>
+  </view>
+
+  <!-- 游戏界面 -->
+  <view class="game-screen" wx:if="{{gameState === 'playing'}}">
+    <!-- 状态栏 -->
+    <view class="status-bar">
+      <view class="status-item">
+        <text class="status-label">连击</text>
+        <text class="status-value">{{combo}}</text>
+      </view>
+      <view class="status-item">
+        <text class="status-label">称号</text>
+        <text class="status-value title">{{title}}</text>
+      </view>
+      <view class="status-item">
+        <text class="status-label">时间</text>
+        <text class="status-value {{timeLeft <= 5 ? 'danger' : ''}}">{{timeLeft}}s</text>
+      </view>
+    </view>
+
+    <!-- 当前关键字 -->
+    <view class="key-box">
+      <text class="key-label">当前关键字</text>
+      <text class="key-char">{{currentKey}}</text>
+      <text class="key-hint">说出包含"{{currentKey}}"字的诗句</text>
+    </view>
+
+    <!-- 输入区 -->
+    <view class="input-area">
+      <input
+        class="poem-input"
+        placeholder="输入含关键字诗句..."
+        value="{{inputValue}}"
+        bindinput="onInput"
+        confirm-type="done"
+        bindconfirm="submitAnswer"
+      />
+      <button class="btn-submit" bindtap="submitAnswer">提交</button>
+    </view>
+
+    <!-- 换字按钮 -->
+    <button class="btn-change" bindtap="changeKey">🔄 换一个字</button>
+
+    <!-- 历史记录 -->
+    <view class="history" wx:if="{{history.length > 0}}">
+      <text class="history-label">已接龙 {{history.length}} 句</text>
+      <scroll-view class="history-scroll" scroll-y>
+        <view class="history-item {{item.type}}" wx:for="{{history}}" wx:key="index">
+          <text class="history-type">{{item.type === 'player' ? '你' : 'AI'}}</text>
+          <text class="history-text">{{item.text}}</text>
+        </view>
+      </scroll-view>
+    </view>
+  </view>
+
+  <!-- 结束界面 -->
+  <view class="over-screen" wx:if="{{gameState === 'over'}}">
+    <text class="over-icon">{{result.icon}}</text>
+    <text class="over-title">{{result.title}}</text>
+    <text class="over-text">{{result.text}}</text>
+    <view class="over-stats" wx:if="{{combo >= 3}}">
+      <text class="stats-title">🏆 获得称号</text>
+      <text class="stats-value">{{title}}</text>
+    </view>
+    <button class="btn-restart" bindtap="restart">{{result.btnText}}</button>
+  </view>
+</view>
