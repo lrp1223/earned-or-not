@@ -49,10 +49,12 @@
 
 /* 底部玩家 */
 .bottom-player {
-  height: 200rpx;
+  height: 220rpx;
   display: flex;
   flex-direction: column;
   align-items: center;
+  justify-content: flex-end;
+  padding-bottom: 10rpx;
 }
 
 /* 玩家头像 */
@@ -159,18 +161,28 @@
   transform: translateY(-50%);
 }
 
-.card-suit {
-  font-size: 36rpx;
+.hand-card .card-suit {
+  font-size: 28rpx;
+}
+
+.hand-card .card-rank {
+  font-size: 22rpx;
+  font-weight: bold;
+  color: #333;
+}
+
+.played-card .card-suit {
+  font-size: 32rpx;
+}
+
+.played-card .card-rank {
+  font-size: 24rpx;
+  font-weight: bold;
+  color: #333;
 }
 
 .card-suit.red {
   color: #f44336;
-}
-
-.card-rank {
-  font-size: 28rpx;
-  font-weight: bold;
-  color: #333;
 }
 
 /* 轮次信息 */
@@ -197,8 +209,8 @@
 }
 
 .hand-card {
-  width: 70rpx;
-  height: 105rpx;
+  width: 60rpx;
+  height: 90rpx;
   background: white;
   border-radius: 8rpx;
   display: flex;
