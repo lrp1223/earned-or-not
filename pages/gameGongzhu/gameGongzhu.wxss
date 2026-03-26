@@ -93,29 +93,30 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 1vh 2vh;
-  background: rgba(255,255,255,0.1);
+  padding: 0.8vh 1.5vh;
+  background: rgba(255,255,255,0.15);
   border-radius: 1vh;
+  min-width: 8vh;
 }
 .player-tag.active {
-  background: rgba(255,215,0,0.3);
-  border: 0.2vh solid #ffd700;
+  background: rgba(255,215,0,0.4);
+  border: 0.3vh solid #ffd700;
 }
 .player-tag text {
-  font-size: 1.8vh;
+  font-size: 2vh;
   color: #fff;
 }
 .player-tag .score {
-  font-size: 2.5vh;
+  font-size: 3vh;
   font-weight: bold;
   color: #ffd700;
 }
 .player-tag .team-mark {
-  font-size: 1.5vh;
+  font-size: 1.6vh;
   color: #4caf50;
   background: #e8f5e9;
-  padding: 0.2vh 0.8vh;
-  border-radius: 0.5vh;
+  padding: 0.3vh 1vh;
+  border-radius: 0.6vh;
   margin-top: 0.5vh;
 }
 
@@ -162,8 +163,8 @@
 
 /* 桌面 */
 .table {
-  width: 50vh;
-  height: 30vh;
+  width: 40vh;
+  height: 24vh;
   position: relative;
 }
 .table-card-wrap {
@@ -217,27 +218,28 @@
 
 /* 底部区域 */
 .bottom-area {
-  height: 22vh;
-  padding: 2vh;
+  height: 20vh;
+  padding: 1vh 2vh 4vh;
   flex-shrink: 0;
 }
 .my-info {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 2vh;
+  margin-bottom: 1vh;
 }
 .play-btn {
-  width: 14vh;
-  height: 6vh;
+  width: 12vh;
+  height: 5vh;
   background: #ccc;
-  border-radius: 3vh;
+  border-radius: 2.5vh;
   display: flex;
   align-items: center;
   justify-content: center;
   color: #fff;
-  font-size: 2.5vh;
+  font-size: 2.2vh;
   font-weight: bold;
+  margin-right: 2vh;
 }
 .play-btn.active {
   background: linear-gradient(135deg, #ffd700, #ffaa00);
