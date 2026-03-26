@@ -1,15 +1,92 @@
 <!--pages/gameGongzhu/gameGongzhu.wxml-->
 <view class="container">
-  <view class="header">
-    <text class="title">🐷 拱猪</text>
-    <text class="subtitle">单机版 - 你 vs 3个AI</text>
+  <!-- 横屏布局 -->
+  <view class="landscape-layout">
+    <!-- 左侧玩家 AI-1（上家） -->
+    <view class="side-player left-player">
+      <view class="player-avatar {{currentPlayer === 1 ? 'active' : ''}}">
+        <text class="avatar-icon">🤖</text>
+        <text class="player-name">上家</text>
+        <text class="player-score">{{scores[1]}}</text>
+      </view>
+      <view class="card-back-stack">
+        <text class="card-count">{{aiHands[0] ? aiHands[0].length : 13}}张</text>
+      </view>
+    </view>
+
+    <!-- 中间区域 -->
+    <view class="center-area">
+      <!-- 顶部玩家 AI-2（对家） -->
+      <view class="top-player">
+        <view class="player-avatar {{currentPlayer === 2 ? 'active' : ''}}">
+          <text class="avatar-icon">🤖</text>
+          <text class="player-name">对家</text>
+          <text class="player-score">{{scores[2]}}</text>
+        </view>
+        <view class="card-back-stack">
+          <text class="card-count">{{aiHands[1] ? aiHands[1].length : 13}}张</text>
+        </view>
+      </view>
+
+      <!-- 桌面出牌区 -->
+      <view class="table-area">
+        <view class="table-center">
+          <view class="played-card {{item.player === 0 ? 'player-card' : ''}} {{item.player === 1 ? 'left-card' : ''}} {{item.player === 2 ? 'top-card' : ''}} {{item.player === 3 ? 'right-card' : ''}}" 
+                wx:for="{{tableCards}}" 
+                wx:key="index">
+            <text class="card-suit {{item.card.suit === '♥' || item.card.suit === '♦' ? 'red' : ''}}">{{item.card.suit}}</text>
+            <text class="card-rank">{{item.card.rank}}</text>
+          </view>
+        </view>
+        
+        <!-- 轮次信息 -->
+        <view class="round-info" wx:if="{{gameState === 'playing'}}">
+          <text>第 {{currentRound}}/13 轮</text>
+          <text wx:if="{{leadSuit}}">主:{{leadSuit}}</text>
+        </view>
+      </view>
+
+      <!-- 底部玩家（你） -->
+      <view class="bottom-player" wx:if="{{gameState === 'playing'}}">
+        <view class="player-hand">
+          <view class="hand-card {{selectedCard === index ? 'selected' : ''}} {{!isValidPlay(item, playerHand) ? 'disabled' : ''}}" 
+                wx:for="{{playerHand}}" 
+                wx:key="index"
+                bindtap="selectCard"
+                data-index="{{index}}">
+            <text class="card-suit {{item.suit === '♥' || item.suit === '♦' ? 'red' : ''}}">{{item.suit}}</text>
+            <text class="card-rank">{{item.rank}}</text>
+          </view>
+        </view>
+        <view class="player-info">
+          <view class="player-avatar {{currentPlayer === 0 ? 'active' : ''}}">
+            <text class="avatar-icon">😀</text>
+            <text class="player-name">你</text>
+            <text class="player-score">{{scores[0]}}</text>
+          </view>
+          <button class="btn-play" bindtap="confirmPlay" disabled="{{selectedCard === null}}">出牌</button>
+        </view>
+      </view>
+    </view>
+
+    <!-- 右侧玩家 AI-3（下家） -->
+    <view class="side-player right-player">
+      <view class="player-avatar {{currentPlayer === 3 ? 'active' : ''}}">
+        <text class="avatar-icon">🤖</text>
+        <text class="player-name">下家</text>
+        <text class="player-score">{{scores[3]}}</text>
+      </view>
+      <view class="card-back-stack">
+        <text class="card-count">{{aiHands[2] ? aiHands[2].length : 13}}张</text>
+      </view>
+    </view>
   </view>
 
   <!-- 准备界面 -->
   <view class="ready-screen" wx:if="{{gameState === 'ready'}}">
     <view class="intro">
       <text class="intro-icon">🐷</text>
-      <text class="intro-title">拱猪游戏规则</text>
+      <text class="intro-title">拱猪</text>
       <view class="intro-rules">
         <text>♠Q 猪 = -100分</text>
         <text>♥ 红桃 = -10至-50分</text>
@@ -20,74 +97,12 @@
     <button class="btn-start" bindtap="startGame">开始游戏</button>
   </view>
 
-  <!-- 游戏界面 -->
-  <view class="game-screen" wx:if="{{gameState === 'playing' || gameState === 'over'}}">
-    <!-- 分数板 -->
-    <view class="score-board">
-      <view class="score-item {{currentPlayer === 0 ? 'active' : ''}}">
-        <text class="score-name">你</text>
-        <text class="score-value">{{scores[0]}}</text>
-      </view>
-      <view class="score-item {{currentPlayer === 1 ? 'active' : ''}}">
-        <text class="score-name">AI-1</text>
-        <text class="score-value">{{scores[1]}}</text>
-      </view>
-      <view class="score-item {{currentPlayer === 2 ? 'active' : ''}}">
-        <text class="score-name">AI-2</text>
-        <text class="score-value">{{scores[2]}}</text>
-      </view>
-      <view class="score-item {{currentPlayer === 3 ? 'active' : ''}}">
-        <text class="score-name">AI-3</text>
-        <text class="score-value">{{scores[3]}}</text>
-      </view>
-    </view>
-
-    <!-- 轮次信息 -->
-    <view class="round-info">
-      <text>第 {{currentRound}}/13 轮</text>
-      <text wx:if="{{leadSuit}}">主花色: {{leadSuit}}</text>
-    </view>
-
-    <!-- AI 手牌示意 -->
-    <view class="ai-area">
-      <view class="ai-player" wx:for="[1, 2, 3]" wx:key="index">
-        <text class="ai-name">AI-{{item}}</text>
-        <text class="ai-cards">{{aiHands && aiHands[item-1] ? aiHands[item-1].length : 13}}张</text>
-      </view>
-    </view>
-
-    <!-- 桌面出牌区 -->
-    <view class="table-area">
-      <view class="table-card {{item.player === 0 ? 'player' : ''}}" wx:for="{{tableCards}}" wx:key="index">
-        <text class="card-suit {{item.card.suit === '♥' || item.card.suit === '♦' ? 'red' : ''}}">{{item.card.suit}}</text>
-        <text class="card-rank">{{item.card.rank}}</text>
-        <text class="card-player">{{players[item.player]}}</text>
-      </view>
-    </view>
-
-    <!-- 玩家手牌 -->
-    <view class="player-hand" wx:if="{{gameState === 'playing'}}">
-      <text class="hand-label">你的手牌（点击选择）</text>
-      <view class="hand-cards">
-        <view class="hand-card {{selectedCard === index ? 'selected' : ''}} {{!isValidPlay(item, playerHand) ? 'disabled' : ''}}" 
-              wx:for="{{playerHand}}" 
-              wx:key="index"
-              bindtap="selectCard"
-              data-index="{{index}}">
-          <text class="card-suit {{item.suit === '♥' || item.suit === '♦' ? 'red' : ''}}">{{item.suit}}</text>
-          <text class="card-rank">{{item.rank}}</text>
-        </view>
-      </view>
-      <button class="btn-confirm" bindtap="confirmPlay" disabled="{{selectedCard === null}}">出牌</button>
-    </view>
-
-    <!-- 游戏结束 -->
-    <view class="game-over" wx:if="{{gameState === 'over'}}">
-      <text class="over-icon">{{gameResult.result.includes('赢') ? '🎉' : '😅'}}</text>
-      <text class="over-title">{{gameResult.result}}</text>
-      <text class="over-score">你的得分: {{gameResult.playerScore}}</text>
-      <text class="over-rank">排名: 第{{gameResult.rank}}名</text>
-      <button class="btn-restart" bindtap="restart">再来一局</button>
-    </view>
+  <!-- 游戏结束 -->
+  <view class="game-over" wx:if="{{gameState === 'over'}}">
+    <text class="over-icon">{{scores[0] > 0 ? '🎉' : '😅'}}</text>
+    <text class="over-title">{{scores[0] > 0 ? '你赢了！' : '你输了...'}}</text>
+    <text class="over-score">你的得分: {{scores[0]}}</text>
+    <text class="over-rank">排名: 第{{[...scores].sort((a,b)=>b-a).indexOf(scores[0])+1}}名</text>
+    <button class="btn-restart" bindtap="restart">再来一局</button>
   </view>
 </view>

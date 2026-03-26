@@ -1,267 +1,352 @@
 .container {
-  min-height: 100vh;
-  background: linear-gradient(180deg, #e8f5e9 0%, #ffffff 100%);
-  padding: 30rpx;
-}
-.header {
-  text-align: center;
-  padding: 20rpx 0;
-}
-.title {
-  font-size: 48rpx;
-  font-weight: bold;
-  color: #4caf50;
-  display: block;
-}
-.subtitle {
-  font-size: 26rpx;
-  color: #999;
-  margin-top: 10rpx;
-  display: block;
+  width: 100vw;
+  height: 100vh;
+  background: linear-gradient(135deg, #1a5f1a 0%, #2d7a2d 50%, #1a5f1a 100%);
+  overflow: hidden;
 }
 
-/* 准备界面 */
-.ready-screen {
-  text-align: center;
-  padding: 60rpx 0;
-}
-.intro {
-  background: white;
-  border-radius: 24rpx;
-  padding: 50rpx 40rpx;
-  margin-bottom: 50rpx;
-  box-shadow: 0 8rpx 32rpx rgba(0,0,0,0.06);
-}
-.intro-icon {
-  font-size: 80rpx;
-  display: block;
-  margin-bottom: 20rpx;
-}
-.intro-title {
-  font-size: 40rpx;
-  font-weight: bold;
-  color: #333;
-  display: block;
-  margin-bottom: 30rpx;
-}
-.intro-rules {
-  text-align: left;
-  padding: 0 40rpx;
-}
-.intro-rules text {
-  display: block;
-  font-size: 30rpx;
-  color: #666;
-  margin: 16rpx 0;
-}
-.btn-start {
-  width: 80%;
-  height: 100rpx;
-  line-height: 100rpx;
-  background: linear-gradient(135deg, #4caf50 0%, #81c784 100%);
-  color: white;
-  font-size: 36rpx;
-  font-weight: bold;
-  border-radius: 50rpx;
-  border: none;
-}
-
-/* 游戏界面 */
-.game-screen {
-  padding: 20rpx 0;
-}
-
-/* 分数板 */
-.score-board {
+/* 横屏布局 */
+.landscape-layout {
   display: flex;
-  justify-content: space-around;
-  background: white;
-  border-radius: 16rpx;
+  width: 100%;
+  height: 100%;
   padding: 20rpx;
-  margin-bottom: 20rpx;
-}
-.score-item {
-  text-align: center;
-  padding: 10rpx 20rpx;
-  border-radius: 12rpx;
-}
-.score-item.active {
-  background: #e8f5e9;
-}
-.score-name {
-  font-size: 24rpx;
-  color: #666;
-  display: block;
-}
-.score-value {
-  font-size: 36rpx;
-  font-weight: bold;
-  color: #333;
-  display: block;
-  margin-top: 8rpx;
+  box-sizing: border-box;
 }
 
-/* 轮次信息 */
-.round-info {
-  text-align: center;
-  margin: 20rpx 0;
-}
-.round-info text {
-  font-size: 28rpx;
-  color: #666;
-  margin: 0 20rpx;
-}
-
-/* AI区域 */
-.ai-area {
+/* 侧边玩家 */
+.side-player {
+  width: 120rpx;
   display: flex;
-  justify-content: space-around;
-  margin: 30rpx 0;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
 }
-.ai-player {
-  text-align: center;
+
+.left-player {
+  margin-right: 20rpx;
 }
-.ai-name {
-  font-size: 26rpx;
-  color: #666;
-  display: block;
+
+.right-player {
+  margin-left: 20rpx;
 }
-.ai-cards {
-  font-size: 32rpx;
+
+/* 中间区域 */
+.center-area {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+/* 顶部玩家 */
+.top-player {
+  height: 120rpx;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+/* 底部玩家 */
+.bottom-player {
+  height: 200rpx;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* 玩家头像 */
+.player-avatar {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 10rpx 20rpx;
+  border-radius: 16rpx;
+  background: rgba(255,255,255,0.1);
+}
+
+.player-avatar.active {
+  background: rgba(255,215,0,0.3);
+  border: 2rpx solid #ffd700;
+}
+
+.avatar-icon {
+  font-size: 48rpx;
+}
+
+.player-name {
+  font-size: 22rpx;
+  color: #fff;
+  margin-top: 4rpx;
+}
+
+.player-score {
+  font-size: 28rpx;
   font-weight: bold;
-  color: #4caf50;
-  display: block;
+  color: #ffd700;
+  margin-top: 4rpx;
+}
+
+/* 牌背 */
+.card-back-stack {
+  width: 60rpx;
+  height: 90rpx;
+  background: linear-gradient(135deg, #8b0000 0%, #a52a2a 100%);
+  border-radius: 8rpx;
+  border: 2rpx solid #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   margin-top: 10rpx;
+}
+
+.card-count {
+  font-size: 20rpx;
+  color: #fff;
 }
 
 /* 桌面区域 */
 .table-area {
-  background: #f5f5f5;
-  border-radius: 20rpx;
-  padding: 40rpx;
-  margin: 30rpx 0;
-  min-height: 200rpx;
-  display: flex;
-  justify-content: center;
-  gap: 20rpx;
-}
-.table-card {
-  width: 120rpx;
-  height: 160rpx;
-  background: white;
-  border-radius: 16rpx;
+  flex: 1;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 4rpx 16rpx rgba(0,0,0,0.1);
+  position: relative;
 }
-.table-card.player {
-  border: 4rpx solid #4caf50;
+
+.table-center {
+  width: 300rpx;
+  height: 200rpx;
+  position: relative;
 }
+
+/* 打出的牌 */
+.played-card {
+  width: 80rpx;
+  height: 120rpx;
+  background: white;
+  border-radius: 10rpx;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  position: absolute;
+  box-shadow: 0 4rpx 12rpx rgba(0,0,0,0.3);
+}
+
+.player-card {
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.top-card {
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.left-card {
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.right-card {
+  right: 0;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
 .card-suit {
-  font-size: 48rpx;
+  font-size: 36rpx;
 }
+
 .card-suit.red {
   color: #f44336;
 }
+
 .card-rank {
-  font-size: 36rpx;
+  font-size: 28rpx;
   font-weight: bold;
   color: #333;
 }
-.card-player {
-  font-size: 20rpx;
-  color: #999;
-  margin-top: 10rpx;
+
+/* 轮次信息 */
+.round-info {
+  position: absolute;
+  top: 20rpx;
+  display: flex;
+  gap: 30rpx;
+}
+
+.round-info text {
+  font-size: 24rpx;
+  color: #fff;
+  background: rgba(0,0,0,0.3);
+  padding: 8rpx 16rpx;
+  border-radius: 20rpx;
 }
 
 /* 玩家手牌 */
 .player-hand {
-  margin-top: 40rpx;
-}
-.hand-label {
-  font-size: 28rpx;
-  color: #666;
-  text-align: center;
-  display: block;
-  margin-bottom: 20rpx;
-}
-.hand-cards {
   display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 16rpx;
+  gap: 10rpx;
+  margin-bottom: 10rpx;
 }
+
 .hand-card {
-  width: 100rpx;
-  height: 140rpx;
+  width: 70rpx;
+  height: 105rpx;
   background: white;
-  border-radius: 12rpx;
+  border-radius: 8rpx;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 4rpx 12rpx rgba(0,0,0,0.1);
+  box-shadow: 0 4rpx 8rpx rgba(0,0,0,0.2);
   border: 2rpx solid transparent;
 }
+
 .hand-card.selected {
-  border-color: #4caf50;
-  background: #e8f5e9;
+  border-color: #ffd700;
+  transform: translateY(-10rpx);
 }
+
 .hand-card.disabled {
-  opacity: 0.5;
+  opacity: 0.4;
 }
-.btn-confirm {
-  width: 80%;
-  height: 88rpx;
-  line-height: 88rpx;
+
+/* 玩家信息 */
+.player-info {
+  display: flex;
+  align-items: center;
+  gap: 20rpx;
+}
+
+.btn-play {
+  width: 120rpx;
+  height: 60rpx;
+  line-height: 60rpx;
+  background: linear-gradient(135deg, #ffd700 0%, #ffaa00 100%);
+  color: #333;
+  font-size: 28rpx;
+  font-weight: bold;
+  border-radius: 30rpx;
+  border: none;
+}
+
+/* 准备界面 */
+.ready-screen {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.8);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+}
+
+.intro {
+  text-align: center;
+  padding: 40rpx;
+}
+
+.intro-icon {
+  font-size: 100rpx;
+  display: block;
+}
+
+.intro-title {
+  font-size: 48rpx;
+  font-weight: bold;
+  color: #fff;
+  display: block;
+  margin: 20rpx 0;
+}
+
+.intro-rules {
+  background: rgba(255,255,255,0.1);
+  border-radius: 16rpx;
+  padding: 30rpx;
+  margin: 30rpx 0;
+}
+
+.intro-rules text {
+  display: block;
+  font-size: 28rpx;
+  color: #fff;
+  margin: 10rpx 0;
+}
+
+.btn-start {
+  width: 300rpx;
+  height: 80rpx;
+  line-height: 80rpx;
   background: linear-gradient(135deg, #4caf50 0%, #81c784 100%);
   color: white;
   font-size: 32rpx;
   font-weight: bold;
-  border-radius: 44rpx;
+  border-radius: 40rpx;
   border: none;
-  margin-top: 40rpx;
 }
 
 /* 游戏结束 */
 .game-over {
-  text-align: center;
-  padding: 60rpx 0;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.9);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
 }
+
 .over-icon {
   font-size: 100rpx;
   display: block;
-  margin-bottom: 30rpx;
+  margin-bottom: 20rpx;
 }
+
 .over-title {
   font-size: 48rpx;
   font-weight: bold;
-  color: #333;
+  color: #fff;
   display: block;
   margin-bottom: 20rpx;
 }
+
 .over-score {
   font-size: 36rpx;
-  color: #666;
+  color: #ffd700;
   display: block;
   margin-bottom: 10rpx;
 }
+
 .over-rank {
   font-size: 32rpx;
-  color: #4caf50;
+  color: #fff;
   display: block;
   margin-bottom: 40rpx;
 }
+
 .btn-restart {
-  width: 80%;
-  height: 100rpx;
-  line-height: 100rpx;
+  width: 300rpx;
+  height: 80rpx;
+  line-height: 80rpx;
   background: linear-gradient(135deg, #4caf50 0%, #81c784 100%);
   color: white;
-  font-size: 36rpx;
+  font-size: 32rpx;
   font-weight: bold;
-  border-radius: 50rpx;
+  border-radius: 40rpx;
   border: none;
 }
