@@ -63,11 +63,11 @@
 
 /* 顶部栏 */
 .top-bar {
-  height: 60rpx;
+  height: 50rpx;
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 30rpx;
+  gap: 20rpx;
   background: rgba(0,0,0,0.2);
 }
 .top-bar text {
@@ -121,7 +121,7 @@
 /* 对家 */
 .player-top {
   position: absolute;
-  top: 20rpx;
+  top: 10rpx;
   left: 50%;
   transform: translateX(-50%);
   display: flex;
@@ -161,8 +161,8 @@
 
 /* 桌面 */
 .table {
-  width: 400rpx;
-  height: 280rpx;
+  width: 360rpx;
+  height: 200rpx;
   position: relative;
 }
 .table-card-wrap {
@@ -216,8 +216,8 @@
 
 /* 底部区域 */
 .bottom-area {
-  height: 200rpx;
-  padding: 20rpx;
+  height: 160rpx;
+  padding: 10rpx 20rpx;
 }
 .my-info {
   display: flex;
@@ -245,7 +245,7 @@
 /* 手牌 */
 .hand-scroll {
   width: 100%;
-  height: 130rpx;
+  height: 100rpx;
   white-space: nowrap;
 }
 .hand {
@@ -253,15 +253,15 @@
   gap: 10rpx;
 }
 .hand-card {
-  width: 85rpx;
-  height: 120rpx;
+  width: 70rpx;
+  height: 95rpx;
   background: #fff;
-  border-radius: 10rpx;
+  border-radius: 8rpx;
   display: inline-flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  border: 3rpx solid transparent;
+  border: 2rpx solid transparent;
 }
 .hand-card.selected {
   border-color: #ffd700;
