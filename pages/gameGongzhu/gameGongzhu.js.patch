@@ -1,0 +1,53 @@
+  // 计算本轮得分（腾讯拱猪规则）
+  calculateRoundScore(tableCards) {
+    let score = 0;
+    let hasTransformer = false;
+    let hasPig = false;
+    let hasSheep = false;
+    let heartCards = []; // 收集红桃牌
+    
+    // 先检查有哪些牌
+    for (const tc of tableCards) {
+      const cardId = tc.card.id;
+      if (cardId === '♣10') hasTransformer = true;
+      if (cardId === '♠Q') hasPig = true;
+      if (cardId === '♥J') hasSheep = true;
+      if (tc.card.suit === '♥') heartCards.push(cardId);
+    }
+    
+    // 检查是否收齐所有有分的红桃（8张：A,K,Q,J,10,9,8,7,6,5）
+    const scoringHearts = ['♥A', '♥K', '♥Q', '♥J', '♥10', '♥9', '♥8', '♥7', '♥6', '♥5'];
+    const allScoringHearts = scoringHearts.every(h => heartCards.includes(h));
+    
+    // 计算基础分
+    for (const tc of tableCards) {
+      const cardId = tc.card.id;
+      if (SCORE_CARDS[cardId] !== undefined && cardId !== '♣10') {
+        score += SCORE_CARDS[cardId];
+      }
+    }
+    
+    // 全红（收齐所有有分红桃）：红桃分数变正
+    if (allScoringHearts) {
+      // 红桃部分变正
+      let heartScore = 0;
+      for (const h of heartCards) {
+        if (SCORE_CARDS[h]) heartScore += SCORE_CARDS[h];
+      }
+      // 减去原来的红桃分数，加上正的
+      score = score - heartScore + Math.abs(heartScore);
+    }
+    
+    // 变压器规则：所有分数×2
+    if (hasTransformer) {
+      if (score === 0) {
+        // 只有变压器，没有其他分牌
+        score = 50;
+      } else {
+        // 有变压器且有其他分牌，分数×2
+        score *= 2;
+      }
+    }
+    
+    return score;
+  },

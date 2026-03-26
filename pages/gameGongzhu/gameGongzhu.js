@@ -6,24 +6,23 @@
 const SUITS = ['♠', '♥', '♣', '♦'];
 const RANKS = ['2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K', 'A'];
 
-// 特殊牌分值
+// 特殊牌分值（腾讯拱猪规则）
 const SCORE_CARDS = {
   '♠Q': -100,  // 猪
-  '♦J': 100,   // 羊
-  '♣10': 50,   // 变压器（基础分）
+  '♥J': 100,   // 羊（正分）
+  '♣10': 0,    // 变压器（本身0分，作用是翻倍）
   '♥A': -50,
   '♥K': -40,
   '♥Q': -30,
-  '♥J': -20,
   '♥10': -10,
   '♥9': -10,
   '♥8': -10,
   '♥7': -10,
   '♥6': -10,
   '♥5': -10,
-  '♥4': -10,
-  '♥3': -10,
-  '♥2': -10,
+  '♥2': 0,     // 2-4无分
+  '♥3': 0,
+  '♥4': 0,
 };
 
 Page({
@@ -286,40 +285,49 @@ Page({
     return values[rank];
   },
 
-  // 计算本轮得分
+  // 计算本轮得分（腾讯拱猪规则）
   calculateRoundScore(tableCards) {
     let score = 0;
     let hasTransformer = false;
     let hasPig = false;
     let hasSheep = false;
-    let hasHeart = false;
+    let heartCards = [];
     
-    // 先检查有哪些特殊牌
+    // 先检查有哪些牌
     for (const tc of tableCards) {
       const cardId = tc.card.id;
       if (cardId === '♣10') hasTransformer = true;
       if (cardId === '♠Q') hasPig = true;
-      if (cardId === '♦J') hasSheep = true;
-      if (tc.card.suit === '♥') hasHeart = true;
+      if (cardId === '♥J') hasSheep = true;
+      if (tc.card.suit === '♥') heartCards.push(cardId);
     }
+    
+    // 检查是否收齐所有有分的红桃
+    const scoringHearts = ['♥A', '♥K', '♥Q', '♥J', '♥10', '♥9', '♥8', '♥7', '♥6', '♥5'];
+    const allScoringHearts = scoringHearts.every(h => heartCards.includes(h));
     
     // 计算基础分
     for (const tc of tableCards) {
       const cardId = tc.card.id;
-      if (SCORE_CARDS[cardId]) {
-        // 变压器单独处理
-        if (cardId === '♣10') continue;
+      if (SCORE_CARDS[cardId] !== undefined && cardId !== '♣10') {
         score += SCORE_CARDS[cardId];
       }
     }
     
+    // 全红：红桃分数变正
+    if (allScoringHearts) {
+      let heartScore = 0;
+      for (const h of heartCards) {
+        if (SCORE_CARDS[h]) heartScore += SCORE_CARDS[h];
+      }
+      score = score - heartScore + Math.abs(heartScore);
+    }
+    
     // 变压器规则
     if (hasTransformer) {
-      if (!hasPig && !hasSheep && !hasHeart) {
-        // 没有猪、羊、红桃，变压器+50
-        score += 50;
+      if (score === 0) {
+        score = 50;
       } else {
-        // 有猪/羊/红桃（哪怕红桃2是0分），所有分数×2
         score *= 2;
       }
     }
