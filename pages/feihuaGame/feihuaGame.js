@@ -8,7 +8,7 @@ Page({
     inputValue: '',
     combo: 0,
     highScore: 0,
-    timeLeft: 15,
+    timeLeft: 30,
     timer: null,
     history: [],
     usedPoems: [],
@@ -43,7 +43,7 @@ Page({
       currentKey: key,
       inputValue: '',
       combo: 0,
-      timeLeft: 15,
+      timeLeft: 30,
       history: [],
       usedPoems: [],
       title: '诗词新手',
@@ -110,7 +110,7 @@ Page({
     this.setData({
       inputValue: '',
       combo,
-      timeLeft: 15,
+      timeLeft: 30,
       history,
       usedPoems: newUsedPoems,
       title: this.getTitle(combo)
@@ -133,7 +133,7 @@ Page({
     this.setData({
       history,
       usedPoems: [...usedPoems, aiPoem],
-      timeLeft: 15
+      timeLeft: 30
     });
   },
 
