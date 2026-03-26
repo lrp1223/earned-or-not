@@ -192,7 +192,8 @@ Page({
     if (tableCards.length === 4) {
       setTimeout(() => this.endRound(), 1500);
     } else {
-      const nextPlayer = (playerIndex + 1) % 4;
+      // 顺时针：你(0) -> 下家(3) -> 对家(2) -> 上家(1) -> 你(0)
+      const nextPlayer = playerIndex === 0 ? 3 : playerIndex === 3 ? 2 : playerIndex === 2 ? 1 : 0;
       this.setData({ currentPlayer: nextPlayer });
       if (nextPlayer !== 0) {
         setTimeout(() => this.aiPlay(), 1000);
