@@ -33,15 +33,15 @@
 
     <!-- 中间：桌面 + 左右家 -->
     <view class="middle-section">
-      <!-- 左家 -->
+      <!-- 左家（下家） -->
       <view class="side-player">
-        <view class="player-avatar {{currentPlayer === 1 ? 'active' : ''}}">
+        <view class="player-avatar {{currentPlayer === 3 ? 'active' : ''}}">
           <text class="avatar-icon">🤖</text>
-          <text class="player-name">上家</text>
-          <text class="player-score">{{scores[1]}}</text>
+          <text class="player-name">下家</text>
+          <text class="player-score">{{scores[3]}}</text>
         </view>
         <view class="card-back small">
-          <text class="card-count">{{aiHands[0] ? aiHands[0].length : 13}}</text>
+          <text class="card-count">{{aiHands[2] ? aiHands[2].length : 13}}</text>
         </view>
       </view>
 
@@ -61,15 +61,15 @@
         </view>
       </view>
 
-      <!-- 右家 -->
+      <!-- 右家（上家） -->
       <view class="side-player">
-        <view class="player-avatar {{currentPlayer === 3 ? 'active' : ''}}">
+        <view class="player-avatar {{currentPlayer === 1 ? 'active' : ''}}">
           <text class="avatar-icon">🤖</text>
-          <text class="player-name">下家</text>
-          <text class="player-score">{{scores[3]}}</text>
+          <text class="player-name">上家</text>
+          <text class="player-score">{{scores[1]}}</text>
         </view>
         <view class="card-back small">
-          <text class="card-count">{{aiHands[2] ? aiHands[2].length : 13}}</text>
+          <text class="card-count">{{aiHands[0] ? aiHands[0].length : 13}}</text>
         </view>
       </view>
     </view>
