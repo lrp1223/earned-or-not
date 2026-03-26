@@ -19,10 +19,10 @@
   <!-- 键盘 -->
   <view class="keypad">
     <view class="key-row">
-      <view class="key num" data-val="{{cards[0]}}" bindtap="inputNum">{{cards[0]}}</view>
-      <view class="key num" data-val="{{cards[1]}}" bindtap="inputNum">{{cards[1]}}</view>
-      <view class="key num" data-val="{{cards[2]}}" bindtap="inputNum">{{cards[2]}}</view>
-      <view class="key num" data-val="{{cards[3]}}" bindtap="inputNum">{{cards[3]}}</view>
+      <view class="key num {{usedCards[0] ? 'used' : ''}}" data-index="0" bindtap="inputNum">{{cards[0]}}</view>
+      <view class="key num {{usedCards[1] ? 'used' : ''}}" data-index="1" bindtap="inputNum">{{cards[1]}}</view>
+      <view class="key num {{usedCards[2] ? 'used' : ''}}" data-index="2" bindtap="inputNum">{{cards[2]}}</view>
+      <view class="key num {{usedCards[3] ? 'used' : ''}}" data-index="3" bindtap="inputNum">{{cards[3]}}</view>
     </view>
     <view class="key-row">
       <view class="key op" data-op="+" bindtap="inputOp">+</view>

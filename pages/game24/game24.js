@@ -6,7 +6,8 @@ Page({
     expression: '',
     result: null,
     showHint: false,
-    hint: ''
+    hint: '',
+    usedCards: [false, false, false, false] // 记录每个数字是否已使用
   },
 
   onLoad() {
@@ -21,7 +22,8 @@ Page({
       expression: '',
       result: null,
       showHint: false,
-      hint: hint || '暂无解法'
+      hint: hint || '暂无解法',
+      usedCards: [false, false, false, false]
     });
   },
 
@@ -37,8 +39,20 @@ Page({
   },
 
   inputNum(e) {
-    const val = e.currentTarget.dataset.val;
-    this.setData({ expression: this.data.expression + val });
+    const index = e.currentTarget.dataset.index;
+    const val = this.data.cards[index];
+    const usedCards = this.data.usedCards;
+    
+    if (usedCards[index]) {
+      wx.showToast({ title: '该数字已使用', icon: 'none' });
+      return;
+    }
+    
+    usedCards[index] = true;
+    this.setData({ 
+      expression: this.data.expression + val,
+      usedCards: usedCards
+    });
   },
 
   inputOp(e) {
@@ -47,7 +61,7 @@ Page({
   },
 
   clear() {
-    this.setData({ expression: '', result: null });
+    this.setData({ expression: '', result: null, usedCards: [false, false, false, false] });
   },
 
   check() {
