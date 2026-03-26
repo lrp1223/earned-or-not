@@ -1,69 +1,60 @@
 // pages/gameGongzhu/gameGongzhu.js
-// 拱猪游戏
-// 拱猪游戏 - 单机版（玩家 vs 3 AI）
+// 拱猪游戏 - 2v2组队版
 
-// 牌型定义
 const SUITS = ['♠', '♥', '♣', '♦'];
 const RANKS = ['2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K', 'A'];
 
-// 特殊牌分值（腾讯拱猪规则）
+// 特殊牌分值
 const SCORE_CARDS = {
   '♠Q': -100,  // 猪
-  '♦J': 100,   // 羊（正分）
-  '♣10': 0,    // 变压器（本身0分，作用是翻倍）
-  '♥A': -50,
-  '♥K': -40,
-  '♥Q': -30,
-  '♥J': -20,
-  '♥10': -10,
-  '♥9': -10,
-  '♥8': -10,
-  '♥7': -10,
-  '♥6': -10,
-  '♥5': -10,
-  '♥4': -10,
-  '♥3': -10,
-  '♥2': -10,
+  '♦J': 100,   // 羊
+  '♣10': 0,    // 变压器
+  '♥A': -50, '♥K': -40, '♥Q': -30, '♥J': -20,
+  '♥10': -10, '♥9': -10, '♥8': -10, '♥7': -10,
+  '♥6': -10, '♥5': -10, '♥4': -10, '♥3': -10, '♥2': -10,
 };
 
 Page({
   data: {
-    gameState: 'ready', // ready, dealing, playing, scoring, over
-    players: [],
+    gameState: 'ready',
+    players: ['你', '左家', '对家', '右家'],
     currentPlayer: 0,
     currentRound: 1,
     maxRounds: 13,
-    tableCards: [], // 当前轮出的牌
+    tableCards: [],
     playerHand: [],
-    scores: [0, 0, 0, 0],
-    roundScores: [0, 0, 0, 0],
+    aiHands: [[], [], []],
+    rawScores: [0, 0, 0, 0],
+    teamScores: [0, 0, 0, 0],
+    teams: null,
     selectedCard: null,
     leadSuit: null,
-    gameResult: null
+    gameResult: null,
+    collectedCards: [[], [], [], []]
   },
 
   onLoad() {
     this.initGame();
   },
 
-  // 初始化游戏
   initGame() {
     this.setData({
       gameState: 'ready',
-      players: ['你', 'AI-1', 'AI-2', 'AI-3'],
       currentPlayer: 0,
       currentRound: 1,
       tableCards: [],
       playerHand: [],
-      scores: [0, 0, 0, 0],
-      roundScores: [0, 0, 0, 0],
+      aiHands: [[], [], []],
+      rawScores: [0, 0, 0, 0],
+      teamScores: [0, 0, 0, 0],
+      teams: null,
       selectedCard: null,
       leadSuit: null,
-      gameResult: null
+      gameResult: null,
+      collectedCards: [[], [], [], []]
     });
   },
 
-  // 开始游戏
   startGame() {
     const deck = this.createDeck();
     const hands = this.dealCards(deck);
@@ -74,16 +65,17 @@ Page({
       aiHands: [hands[1], hands[2], hands[3]],
       currentPlayer: this.findFirstPlayer(hands),
       tableCards: [],
-      roundScores: [0, 0, 0, 0]
+      rawScores: [0, 0, 0, 0],
+      teamScores: [0, 0, 0, 0],
+      teams: null,
+      collectedCards: [[], [], [], []]
     });
 
-    // 如果AI先出，自动执行
     if (this.data.currentPlayer !== 0) {
       setTimeout(() => this.aiPlay(), 1000);
     }
   },
 
-  // 创建牌组
   createDeck() {
     const deck = [];
     for (const suit of SUITS) {
@@ -91,7 +83,6 @@ Page({
         deck.push({ suit, rank, id: `${suit}${rank}` });
       }
     }
-    // 洗牌
     for (let i = deck.length - 1; i > 0; i--) {
       const j = Math.floor(Math.random() * (i + 1));
       [deck[i], deck[j]] = [deck[j], deck[i]];
@@ -99,7 +90,6 @@ Page({
     return deck;
   },
 
-  // 发牌
   dealCards(deck) {
     const hands = [[], [], [], []];
     for (let i = 0; i < 52; i++) {
@@ -108,7 +98,6 @@ Page({
     return hands;
   },
 
-  // 找先出牌的玩家（有♣2的先出）
   findFirstPlayer(hands) {
     for (let i = 0; i < 4; i++) {
       if (hands[i].some(c => c.suit === '♣' && c.rank === '2')) {
@@ -118,52 +107,38 @@ Page({
     return 0;
   },
 
-  // 牌的排序值
   cardSortValue(card) {
     const suitOrder = { '♣': 0, '♦': 1, '♠': 2, '♥': 3 };
     const rankOrder = { '2': 0, '3': 1, '4': 2, '5': 3, '6': 4, '7': 5, '8': 6, '9': 7, '10': 8, 'J': 9, 'Q': 10, 'K': 11, 'A': 12 };
     return suitOrder[card.suit] * 13 + rankOrder[card.rank];
   },
 
-  // 玩家选择牌
   selectCard(e) {
     if (this.data.currentPlayer !== 0 || this.data.gameState !== 'playing') return;
-    
     const index = e.currentTarget.dataset.index;
     const card = this.data.playerHand[index];
-    
-    // 检查是否符合出牌规则
     if (!this.isValidPlay(card, this.data.playerHand)) {
       wx.showToast({ title: '请跟花色', icon: 'none' });
       return;
     }
-    
     this.setData({ selectedCard: index });
   },
 
-  // 检查出牌是否合法
   isValidPlay(card, hand) {
-    const { tableCards, leadSuit } = this.data;
+    const { tableCards, leadSuit, currentRound } = this.data;
     
-    // 第一轮必须出♣2
-    if (this.data.currentRound === 1 && tableCards.length === 0) {
+    if (currentRound === 1 && tableCards.length === 0) {
       return card.suit === '♣' && card.rank === '2';
     }
     
-    // 首家出牌
     if (tableCards.length === 0) {
-      // 第一轮不能出猪、羊、变压器
-      if (this.data.currentRound === 1) {
-        if (card.id === '♠Q' || card.id === '♥A' || card.id === '♦J') {
-          return false;
-        }
+      if (currentRound === 1) {
+        if (card.id === '♠Q' || card.id === '♦J' || card.id === '♣10') return false;
       }
       return true;
     }
     
-    // 跟牌
     if (leadSuit && card.suit !== leadSuit) {
-      // 检查手牌是否有该花色
       const hasSuit = hand.some(c => c.suit === leadSuit);
       if (hasSuit) return false;
     }
@@ -171,19 +146,15 @@ Page({
     return true;
   },
 
-  // 玩家确认出牌
   confirmPlay() {
     if (this.data.selectedCard === null) return;
-    
     const card = this.data.playerHand[this.data.selectedCard];
     this.playCard(0, card);
   },
 
-  // 出牌
   playCard(playerIndex, card) {
     const tableCards = [...this.data.tableCards, { player: playerIndex, card }];
     
-    // 更新手牌
     let playerHand = this.data.playerHand;
     let aiHands = this.data.aiHands;
     
@@ -193,7 +164,6 @@ Page({
       aiHands[playerIndex - 1] = aiHands[playerIndex - 1].filter(c => c.id !== card.id);
     }
     
-    // 设置首家花色
     const leadSuit = tableCards.length === 1 ? card.suit : this.data.leadSuit;
     
     this.setData({
@@ -204,45 +174,34 @@ Page({
       selectedCard: null
     });
     
-    // 检查本轮是否结束
     if (tableCards.length === 4) {
       setTimeout(() => this.endRound(), 1500);
     } else {
-      // 下一个玩家
       const nextPlayer = (playerIndex + 1) % 4;
       this.setData({ currentPlayer: nextPlayer });
-      
       if (nextPlayer !== 0) {
         setTimeout(() => this.aiPlay(), 1000);
       }
     }
   },
 
-  // AI出牌
   aiPlay() {
     const playerIndex = this.data.currentPlayer;
     const hand = this.data.aiHands[playerIndex - 1];
-    
-    // 找出所有合法出牌
     const validCards = hand.filter(c => this.isValidPlay(c, hand));
-    
-    // AI策略：简单随机
     const card = validCards[Math.floor(Math.random() * validCards.length)];
-    
     this.playCard(playerIndex, card);
   },
 
-  // 结束本轮
   endRound() {
-    const { tableCards, leadSuit } = this.data;
+    const { tableCards, leadSuit, collectedCards, rawScores } = this.data;
     
-    // 找出最大牌（必须是首家花色）
+    // 找出赢家
     let winner = tableCards[0].player;
     let maxRank = this.cardRankValue(tableCards[0].card.rank);
     
     for (let i = 1; i < 4; i++) {
       const tc = tableCards[i];
-      // 只有跟了首家花色的牌才能比较大小
       if (tc.card.suit === leadSuit) {
         const rank = this.cardRankValue(tc.card.rank);
         if (rank > maxRank) {
@@ -252,27 +211,34 @@ Page({
       }
     }
     
-    // 计算本轮得分
-    const roundScore = this.calculateRoundScore(tableCards);
-    const roundScores = [...this.data.roundScores];
-    roundScores[winner] += roundScore;
+    // 赢家收走所有牌
+    const newCollected = [...collectedCards];
+    for (const tc of tableCards) {
+      newCollected[winner].push(tc.card);
+    }
     
-    // 更新总分
-    const scores = [...this.data.scores];
-    scores[winner] += roundScore;
+    // 计算本轮原始分
+    const roundRawScore = this.calculateRoundScore(tableCards);
+    const newRawScores = [...rawScores];
+    newRawScores[winner] += roundRawScore;
     
-    // 检查游戏是否结束
+    // 判断队伍并计算队伍分
+    const teams = this.determineTeams(newCollected);
+    const teamScores = this.calculateTeamScores(newRawScores, teams);
+    
     const isOver = this.data.currentRound >= this.data.maxRounds;
     
     this.setData({
       tableCards: [],
       currentPlayer: winner,
       leadSuit: null,
-      roundScores,
-      scores,
+      collectedCards: newCollected,
+      rawScores: newRawScores,
+      teamScores,
+      teams,
       currentRound: this.data.currentRound + 1,
       gameState: isOver ? 'over' : 'playing',
-      gameResult: isOver ? this.calculateFinalResult(scores) : null
+      gameResult: isOver ? this.calculateFinalResult(teamScores) : null
     });
     
     if (!isOver && winner !== 0) {
@@ -280,13 +246,70 @@ Page({
     }
   },
 
-  // 牌面值
   cardRankValue(rank) {
     const values = { '2': 2, '3': 3, '4': 4, '5': 5, '6': 6, '7': 7, '8': 8, '9': 9, '10': 10, 'J': 11, 'Q': 12, 'K': 13, 'A': 14 };
     return values[rank];
   },
 
-  // 计算本轮得分（腾讯拱猪规则）
+  // 判断队伍：猪和羊在谁手里
+  determineTeams(collectedCards) {
+    let pigOwner = null;
+    let sheepOwner = null;
+    
+    for (let i = 0; i < 4; i++) {
+      for (const card of collectedCards[i]) {
+        if (card.id === '♠Q') pigOwner = i;
+        if (card.id === '♦J') sheepOwner = i;
+      }
+    }
+    
+    // 如果还没收到猪或羊，返回null
+    if (pigOwner === null || sheepOwner === null) return null;
+    
+    const teams = {};
+    if (pigOwner === sheepOwner) {
+      // 猪羊同一人，跟对家一队
+      teams[pigOwner] = (pigOwner + 2) % 4;
+      teams[(pigOwner + 2) % 4] = pigOwner;
+      const other1 = (pigOwner + 1) % 4;
+      const other2 = (pigOwner + 3) % 4;
+      teams[other1] = other2;
+      teams[other2] = other1;
+    } else {
+      // 猪羊不同人，这两人一队
+      teams[pigOwner] = sheepOwner;
+      teams[sheepOwner] = pigOwner;
+      const other1 = [0,1,2,3].find(i => i !== pigOwner && i !== sheepOwner);
+      const other2 = [0,1,2,3].find(i => i !== pigOwner && i !== sheepOwner && i !== other1);
+      teams[other1] = other2;
+      teams[other2] = other1;
+    }
+    
+    return teams;
+  },
+
+  // 计算队伍分数
+  calculateTeamScores(rawScores, teams) {
+    if (!teams) return [...rawScores];
+    
+    const teamScores = [0, 0, 0, 0];
+    const processed = new Set();
+    
+    for (let i = 0; i < 4; i++) {
+      if (processed.has(i)) continue;
+      const teammate = teams[i];
+      const teamTotal = rawScores[i] + rawScores[teammate];
+      const avgScore = Math.round(teamTotal / 2);
+      teamScores[i] = avgScore;
+      teamScores[teammate] = avgScore;
+      processed.add(i);
+      processed.add(teammate);
+    }
+    
+    return teamScores;
+  },
+
+  // 计算本轮原始分
   calculateRoundScore(tableCards) {
     let score = 0;
     let hasTransformer = false;
@@ -294,7 +317,6 @@ Page({
     let hasSheep = false;
     let heartCards = [];
     
-    // 先检查有哪些牌
     for (const tc of tableCards) {
       const cardId = tc.card.id;
       if (cardId === '♣10') hasTransformer = true;
@@ -303,64 +325,51 @@ Page({
       if (tc.card.suit === '♥') heartCards.push(cardId);
     }
     
-    // 检查是否满红（收齐全部13张红桃）
-    const allHearts = heartCards.length === 13;
+    // 大满贯检查
+    const grandSlam = hasPig && hasSheep && heartCards.length === 13;
     
-    // 计算基础分
     for (const tc of tableCards) {
       const cardId = tc.card.id;
-      if (SCORE_CARDS[cardId] !== undefined && cardId !== '♣10') {
-        score += SCORE_CARDS[cardId];
+      if (cardId === '♣10') continue;
+      
+      if (grandSlam) {
+        // 大满贯：猪变+100，羊+100，红桃+200
+        if (cardId === '♠Q') score += 100;
+        else if (cardId === '♦J') score += 100;
+        else if (SCORE_CARDS[cardId]) score += Math.abs(SCORE_CARDS[cardId]);
+      } else {
+        if (SCORE_CARDS[cardId] !== undefined) {
+          score += SCORE_CARDS[cardId];
+        }
       }
     }
     
-    // 满红：收齐13张红桃得+200分
-    if (allHearts) {
-      // 满红时红桃部分固定+200分
+    // 满红（非大满贯情况）
+    if (!grandSlam && heartCards.length === 13) {
       let heartScore = 0;
       for (const h of heartCards) {
         if (SCORE_CARDS[h]) heartScore += SCORE_CARDS[h];
       }
-      // 减去原来的红桃负分，加上满红的+200
       score = score - heartScore + 200;
     }
     
-    // 变压器规则
+    // 变压器
     if (hasTransformer) {
-      if (score === 0) {
-        score = 50;
-      } else {
-        score *= 2;
-      }
+      if (score === 0) score = 50;
+      else score *= 2;
     }
     
     return score;
   },
 
-  // 计算最终结果
-  calculateFinalResult(scores) {
-    const playerScore = scores[0];
-    const aiScores = scores.slice(1);
-    const maxScore = Math.max(...scores);
-    const minScore = Math.min(...scores);
+  calculateFinalResult(teamScores) {
+    const playerScore = teamScores[0];
+    const sorted = [...teamScores].sort((a, b) => b - a);
+    const rank = sorted.indexOf(playerScore) + 1;
     
-    let result = '';
-    if (playerScore === maxScore) {
-      result = '🎉 你赢了！';
-    } else if (playerScore === minScore) {
-      result = '😅 你输了...';
-    } else {
-      result = '🤝 平局';
-    }
-    
-    return {
-      result,
-      playerScore,
-      rank: scores.filter(s => s > playerScore).length + 1
-    };
+    return { playerScore, rank };
   },
 
-  // 重新开始
   restart() {
     this.initGame();
     this.startGame();

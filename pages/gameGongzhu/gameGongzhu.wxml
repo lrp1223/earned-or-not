@@ -5,11 +5,13 @@
     <view class="intro">
       <text class="intro-icon">🐷</text>
       <text class="intro-title">拱猪</text>
+      <text class="intro-subtitle">2v2组队版</text>
       <view class="intro-rules">
         <text>♠Q 猪=-100 ♦J 羊=+100</text>
         <text>♥ 红桃=-10至-50</text>
         <text>♣10 变压器=×2 或 +50</text>
         <text>满红(13张)=+200分</text>
+        <text>猪羊同队，分数平均</text>
       </view>
     </view>
     <view class="btn-wrapper" bindtap="startGame">
@@ -24,7 +26,8 @@
       <view class="player-avatar {{currentPlayer === 2 ? 'active' : ''}}">
         <text class="avatar-icon">🤖</text>
         <text class="player-name">对家</text>
-        <text class="player-score">{{scores[2]}}</text>
+        <text class="player-score">{{teamScores[2]}}</text>
+        <text class="team-tag" wx:if="{{teams && teams[2] === 0}}">队友</text>
       </view>
       <view class="card-back">
         <text class="card-count">{{aiHands[1] ? aiHands[1].length : 13}}张</text>
@@ -38,7 +41,8 @@
         <view class="player-avatar {{currentPlayer === 3 ? 'active' : ''}}">
           <text class="avatar-icon">🤖</text>
           <text class="player-name">下家</text>
-          <text class="player-score">{{scores[3]}}</text>
+          <text class="player-score">{{teamScores[3]}}</text>
+          <text class="team-tag" wx:if="{{teams && teams[3] === 0}}">队友</text>
         </view>
         <view class="card-back small">
           <text class="card-count">{{aiHands[2] ? aiHands[2].length : 13}}</text>
@@ -50,6 +54,8 @@
         <view class="round-info">
           <text>第{{currentRound}}/13轮</text>
           <text wx:if="{{leadSuit}}">主{{leadSuit}}</text>
+          <text wx:if="{{teams}}">队伍已分</text>
+          <text wx:else">等猪羊</text>
         </view>
         <view class="table-cards">
           <view class="played-card {{item.player === 0 ? 'bottom' : item.player === 1 ? 'left' : item.player === 2 ? 'top' : 'right'}}" 
@@ -66,7 +72,8 @@
         <view class="player-avatar {{currentPlayer === 1 ? 'active' : ''}}">
           <text class="avatar-icon">🤖</text>
           <text class="player-name">上家</text>
-          <text class="player-score">{{scores[1]}}</text>
+          <text class="player-score">{{teamScores[1]}}</text>
+          <text class="team-tag" wx:if="{{teams && teams[1] === 0}}">队友</text>
         </view>
         <view class="card-back small">
           <text class="card-count">{{aiHands[0] ? aiHands[0].length : 13}}</text>
@@ -80,7 +87,8 @@
         <view class="player-avatar {{currentPlayer === 0 ? 'active' : ''}}">
           <text class="avatar-icon">😀</text>
           <text class="player-name">你</text>
-          <text class="player-score">{{scores[0]}}</text>
+          <text class="player-score">{{teamScores[0]}}</text>
+          <text class="team-tag" wx:if="{{teams}}">{{teams[0] === 2 ? '对家' : teams[0] === 3 ? '下家' : '上家'}}</text>
         </view>
         <view class="btn-play-wrapper" bindtap="confirmPlay">
           <text class="btn-play-text" wx:if="{{selectedCard !== null}}">出牌</text>
