@@ -6,8 +6,7 @@
   </view>
 
   <view class="game-list">
-    <view class="game-card hot" bindtap="goGameScratch">
-      <view class="hot-tag">🔥 最火</view>
+    <view class="game-card" bindtap="goGameScratch">
       <view class="game-icon">🎯</view>
       <view class="game-info">
         <text class="game-name">🎲 手气测试</text>
@@ -39,7 +38,8 @@
       </view>
       <text class="arrow">›</text>
     </view>
-    <view class="game-card" bindtap="goGameGongzhu">
+    <view class="game-card hot" bindtap="goGameGongzhu">
+      <view class="hot-tag">🔥 最火</view>
       <view class="game-icon">🐷</view>
       <view class="game-info">
         <text class="game-name">拱猪</text>

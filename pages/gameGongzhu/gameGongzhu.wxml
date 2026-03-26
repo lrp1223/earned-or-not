@@ -88,10 +88,9 @@
       <text class="intro-icon">🐷</text>
       <text class="intro-title">拱猪</text>
       <view class="intro-rules">
-        <text>♠Q 猪 = -100分</text>
-        <text>♦J 羊 = +100分</text>
-        <text>♥ 红桃 = -10至-50分</text>
-        <text>♣10 变压器：无猪羊红桃+50，否则×2</text>
+        <text>♠Q 猪=-100 ♦J 羊=+100</text>
+        <text>♥ 红桃=-10至-50</text>
+        <text>♣10 变压器=×2 或 +50</text>
       </view>
     </view>
     <view class="btn-wrapper" bindtap="startGame">
