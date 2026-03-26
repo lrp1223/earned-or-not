@@ -53,10 +53,9 @@
 
     <!-- 输入区 -->
     <view class="input-area">
-      <input 
-        class="idiom-input" 
-        placeholder="输入4字成语..." 
-        maxlength="4"
+      <input
+        class="idiom-input"
+        placeholder="输入4字成语..."
         value="{{inputValue}}"
         bindinput="onInput"
         confirm-type="done"
