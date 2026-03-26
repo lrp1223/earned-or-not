@@ -83,7 +83,7 @@
   </view>
 
   <!-- 准备界面 -->
-  <view class="ready-screen" wx:if="{{gameState === 'ready'}}">
+  <view class="ready-screen" wx:if="{{gameState === 'ready'}}" catchtouchmove="true">
     <view class="intro">
       <text class="intro-icon">🐷</text>
       <text class="intro-title">拱猪</text>
@@ -94,7 +94,9 @@
         <text>收齐所有红桃变正分</text>
       </view>
     </view>
-    <button class="btn-start" bindtap="startGame">开始游戏</button>
+    <view class="btn-wrapper" bindtap="startGame">
+      <text class="btn-start-text">开始游戏</text>
+    </view>
   </view>
 
   <!-- 游戏结束 -->
