@@ -15,6 +15,14 @@
       </view>
       <text class="arrow">›</text>
     </view>
+    <view class="game-card" bindtap="goIdiomGame">
+      <view class="game-icon">📚</view>
+      <view class="game-info">
+        <text class="game-name">成语接龙</text>
+        <text class="game-desc">世界读书日特别版，挑战你的成语储备！</text>
+      </view>
+      <text class="arrow">›</text>
+    </view>
     <view class="game-card" bindtap="goGame24">
       <view class="game-icon">🃏</view>
       <view class="game-info">
