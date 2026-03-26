@@ -7,14 +7,15 @@
 .ready-screen {
   min-height: 100vh;
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   align-items: center;
   justify-content: center;
-  padding: 40rpx;
+  padding: 30rpx;
+  gap: 40rpx;
 }
 .intro {
   text-align: center;
-  margin-bottom: 60rpx;
+  max-width: 50%;
 }
 .intro-icon {
   font-size: 80rpx;
