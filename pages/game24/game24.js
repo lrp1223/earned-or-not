@@ -1,4 +1,5 @@
 // pages/game24/game24.js
+// 二十四点游戏
 Page({
   data: {
     cards: [],

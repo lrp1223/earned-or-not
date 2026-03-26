@@ -1,4 +1,5 @@
 // pages/gameGongzhu/gameGongzhu.js
+// 拱猪游戏
 // 拱猪游戏 - 单机版（玩家 vs 3 AI）
 
 // 牌型定义
