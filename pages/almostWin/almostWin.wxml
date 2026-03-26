@@ -1,0 +1,50 @@
+<!--pages/almostWin/almostWin.wxml-->
+<view class="container">
+  <view class="header">
+    <text class="title">差一点就中</text>
+    <text class="subtitle">刮开3个数，满20就中奖！</text>
+  </view>
+
+  <!-- 目标 -->
+  <view class="target-box">
+    <text class="target-label">目标分数</text>
+    <text class="target-value">20</text>
+  </view>
+
+  <!-- 刮卡区 -->
+  <view class="cards-area">
+    <view class="num-card {{item.scratched ? 'scratched' : ''}} {{item.animating ? 'animating' : ''}}" 
+          wx:for="{{cards}}" 
+          wx:key="index"
+          bindtap="scratchCard"
+          data-index="{{index}}">
+      <text class="card-num" wx:if="{{item.scratched}}">{{item.value}}</text>
+      <text class="card-mask" wx:else>?</text>
+    </view>
+  </view>
+
+  <!-- 当前总分 -->
+  <view class="score-box">
+    <text class="score-label">当前总分</text>
+    <text class="score-value {{score >= 20 ? 'win' : score >= 15 ? 'close' : ''}}">{{score}}</text>
+  </view>
+
+  <!-- 结果 -->
+  <view class="result-box" wx:if="{{result}}">
+    <text class="result-icon">{{result.icon}}</text>
+    <text class="result-text">{{result.text}}</text>
+    <text class="result-sub" wx:if="{{result.sub}}">{{result.sub}}</text>
+  </view>
+
+  <!-- 按钮 -->
+  <view class="actions">
+    <button class="btn-play" bindtap="newGame" wx:if="{{gameOver}}">{{result.retryText}}</button>
+    <button class="btn-play" bindtap="newGame" wx:else>开始刮奖</button>
+  </view>
+
+  <!-- 统计 -->
+  <view class="stats">
+    <text>今日已玩 {{playCount}} 次</text>
+    <text wx:if="{{winCount > 0}}">，中奖 {{winCount}} 次</text>
+  </view>
+</view>

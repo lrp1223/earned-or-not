@@ -1,10 +1,10 @@
 // pages/fun/fun.js
 Page({
   data: {},
-  goGame() {
-    wx.navigateTo({ url: '/pages/game24/game24' });
+  goAlmostWin() {
+    wx.navigateTo({ url: '/pages/almostWin/almostWin' });
   },
-  goClimbGame() {
-    wx.navigateTo({ url: '/pages/climbGame/climbGame' });
+  goGame24() {
+    wx.navigateTo({ url: '/pages/game24/game24' });
   }
 });

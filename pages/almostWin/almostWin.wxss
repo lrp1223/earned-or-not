@@ -1,0 +1,174 @@
+.container {
+  min-height: 100vh;
+  background: linear-gradient(180deg, #fff5f5 0%, #ffffff 100%);
+  padding: 40rpx;
+}
+.header {
+  text-align: center;
+  padding: 40rpx 0;
+}
+.title {
+  font-size: 56rpx;
+  font-weight: bold;
+  color: #ff6b6b;
+  display: block;
+  text-shadow: 2rpx 2rpx 4rpx rgba(255,107,107,0.3);
+}
+.subtitle {
+  font-size: 28rpx;
+  color: #999;
+  margin-top: 16rpx;
+  display: block;
+}
+
+/* 目标 */
+.target-box {
+  background: #fff7e6;
+  border-radius: 20rpx;
+  padding: 30rpx;
+  text-align: center;
+  margin: 30rpx 0;
+}
+.target-label {
+  font-size: 26rpx;
+  color: #d48806;
+  display: block;
+}
+.target-value {
+  font-size: 64rpx;
+  font-weight: bold;
+  color: #fa8c16;
+  display: block;
+  margin-top: 10rpx;
+}
+
+/* 卡片区 */
+.cards-area {
+  display: flex;
+  justify-content: center;
+  gap: 30rpx;
+  margin: 50rpx 0;
+}
+.num-card {
+  width: 180rpx;
+  height: 220rpx;
+  background: linear-gradient(135deg, #ffd700 0%, #ffaa00 100%);
+  border-radius: 24rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 12rpx 40rpx rgba(255, 170, 0, 0.4);
+  position: relative;
+}
+.num-card.scratched {
+  background: white;
+  border: 6rpx solid #ff6b6b;
+}
+.num-card.animating {
+  animation: shake 0.5s ease;
+}
+@keyframes shake {
+  0%, 100% { transform: rotate(0); }
+  25% { transform: rotate(-5deg); }
+  75% { transform: rotate(5deg); }
+}
+.card-mask {
+  font-size: 80rpx;
+  color: #8b4513;
+  font-weight: bold;
+}
+.card-num {
+  font-size: 80rpx;
+  font-weight: bold;
+  color: #ff6b6b;
+}
+
+/* 分数 */
+.score-box {
+  text-align: center;
+  margin: 40rpx 0;
+}
+.score-label {
+  font-size: 28rpx;
+  color: #999;
+  display: block;
+}
+.score-value {
+  font-size: 96rpx;
+  font-weight: bold;
+  color: #333;
+  display: block;
+  margin-top: 10rpx;
+  transition: all 0.3s;
+}
+.score-value.close {
+  color: #fa8c16;
+  animation: pulse 1s infinite;
+}
+.score-value.win {
+  color: #52c41a;
+  animation: bounce 0.5s ease;
+}
+@keyframes pulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.1); }
+}
+@keyframes bounce {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.2); }
+}
+
+/* 结果 */
+.result-box {
+  text-align: center;
+  margin: 40rpx 0;
+  padding: 30rpx;
+  background: white;
+  border-radius: 20rpx;
+  box-shadow: 0 8rpx 32rpx rgba(0,0,0,0.08);
+}
+.result-icon {
+  font-size: 80rpx;
+  display: block;
+}
+.result-text {
+  font-size: 40rpx;
+  font-weight: bold;
+  color: #333;
+  display: block;
+  margin-top: 20rpx;
+}
+.result-sub {
+  font-size: 28rpx;
+  color: #ff6b6b;
+  display: block;
+  margin-top: 16rpx;
+}
+
+/* 按钮 */
+.actions {
+  margin-top: 50rpx;
+}
+.btn-play {
+  width: 100%;
+  height: 100rpx;
+  line-height: 100rpx;
+  background: linear-gradient(135deg, #ff6b6b 0%, #ff8e8e 100%);
+  color: white;
+  font-size: 36rpx;
+  font-weight: bold;
+  border-radius: 50rpx;
+  border: none;
+  box-shadow: 0 12rpx 40rpx rgba(255, 107, 107, 0.4);
+}
+.btn-play:active {
+  transform: scale(0.98);
+}
+
+/* 统计 */
+.stats {
+  text-align: center;
+  margin-top: 60rpx;
+  font-size: 26rpx;
+  color: #bbb;
+}

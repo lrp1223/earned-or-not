@@ -23,6 +23,22 @@
   margin-top: 40rpx;
 }
 .game-card {
+  position: relative;
+}
+.hot-tag {
+  position: absolute;
+  top: -10rpx;
+  right: 20rpx;
+  background: #ff4d4f;
+  color: white;
+  font-size: 22rpx;
+  padding: 6rpx 16rpx;
+  border-radius: 20rpx;
+}
+.hot {
+  border: 2rpx solid #ff4d4f;
+}
+.game-card {
   background: white;
   border-radius: 28rpx;
   padding: 40rpx;
