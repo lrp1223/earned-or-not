@@ -6,7 +6,7 @@
   </view>
 
   <view class="game-list">
-    <view class="game-card hot" bindtap="goAlmostWin">
+    <view class="game-card hot" bindtap="goGameScratch">
       <view class="hot-tag">🔥 最火</view>
       <view class="game-icon">🎯</view>
       <view class="game-info">
@@ -15,7 +15,7 @@
       </view>
       <text class="arrow">›</text>
     </view>
-    <view class="game-card" bindtap="goIdiomGame">
+    <view class="game-card" bindtap="goGameIdiom">
       <view class="game-icon">📚</view>
       <view class="game-info">
         <text class="game-name">成语接龙</text>
@@ -23,7 +23,7 @@
       </view>
       <text class="arrow">›</text>
     </view>
-    <view class="game-card" bindtap="goFeihuaGame">
+    <view class="game-card" bindtap="goGameFeihua">
       <view class="game-icon">🌸</view>
       <view class="game-info">
         <text class="game-name">飞花令</text>

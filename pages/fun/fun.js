@@ -1,14 +1,14 @@
 // pages/fun/fun.js
 Page({
   data: {},
-  goAlmostWin() {
-    wx.navigateTo({ url: '/pages/almostWin/almostWin' });
+  goGameScratch() {
+    wx.navigateTo({ url: '/pages/gameScratch/gameScratch' });
   },
-  goIdiomGame() {
-    wx.navigateTo({ url: '/pages/idiomGame/idiomGame' });
+  goGameIdiom() {
+    wx.navigateTo({ url: '/pages/gameIdiom/gameIdiom' });
   },
-  goFeihuaGame() {
-    wx.navigateTo({ url: '/pages/feihuaGame/feihuaGame' });
+  goGameFeihua() {
+    wx.navigateTo({ url: '/pages/gameFeihua/gameFeihua' });
   },
   goGame24() {
     wx.navigateTo({ url: '/pages/game24/game24' });
