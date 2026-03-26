@@ -100,7 +100,7 @@ Page({
 
   findFirstPlayer(hands) {
     for (let i = 0; i < 4; i++) {
-      if (hands[i].some(c => c.suit === '♣' && c.rank === '2')) {
+      if (hands[i].some(c => c.suit === '♠' && c.rank === 'J')) {
         return i;
       }
     }
@@ -126,23 +126,25 @@ Page({
 
   isValidPlay(card, hand) {
     const { tableCards, leadSuit, currentRound } = this.data;
-    
+
     if (currentRound === 1 && tableCards.length === 0) {
-      return card.suit === '♣' && card.rank === '2';
+      // 第一轮首家必须出♠J
+      return card.suit === '♠' && card.rank === 'J';
     }
-    
+
     if (tableCards.length === 0) {
       if (currentRound === 1) {
+        // 第一轮不能出分牌
         if (card.id === '♠Q' || card.id === '♦J' || card.id === '♣10') return false;
       }
       return true;
     }
-    
+
     if (leadSuit && card.suit !== leadSuit) {
       const hasSuit = hand.some(c => c.suit === leadSuit);
       if (hasSuit) return false;
     }
-    
+
     return true;
   },
 
