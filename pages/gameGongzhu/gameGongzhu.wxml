@@ -95,7 +95,7 @@
           <text class="btn-play-text" wx:else>选牌</text>
         </view>
       </view>
-      <scroll-view class="hand-scroll" scroll-x="true">
+      <scroll-view class="hand-scroll" scroll-x="true" scroll-y="false" enable-flex="true">
         <view class="player-hand">
           <view class="hand-card {{selectedCard === index ? 'selected' : ''}} {{!isValidPlay(item, playerHand) ? 'disabled' : ''}}" 
                 wx:for="{{playerHand}}" 

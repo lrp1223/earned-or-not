@@ -177,6 +177,7 @@
 /* 手牌滚动区 */
 .hand-scroll {
   width: 100%;
+  height: 160rpx;
   white-space: nowrap;
 }
 .player-hand {
