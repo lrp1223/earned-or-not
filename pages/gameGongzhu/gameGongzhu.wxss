@@ -9,49 +9,52 @@
   width: 100%;
   height: 100%;
   display: flex;
+  flex-direction: column;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-start;
+  padding-top: 8vh;
+  box-sizing: border-box;
 }
 .ready-box {
   text-align: center;
-  padding: 40rpx;
+  width: 90%;
 }
 .ready-title {
-  font-size: 80rpx;
+  font-size: 60rpx;
   color: #fff;
   display: block;
   text-shadow: 4rpx 4rpx 8rpx rgba(0,0,0,0.5);
 }
 .ready-subtitle {
-  font-size: 36rpx;
+  font-size: 28rpx;
   color: #ffd700;
   display: block;
-  margin: 20rpx 0 40rpx;
+  margin: 10rpx 0 20rpx;
 }
 .rules {
   background: rgba(255,255,255,0.1);
-  border-radius: 20rpx;
-  padding: 30rpx;
-  margin-bottom: 60rpx;
+  border-radius: 16rpx;
+  padding: 20rpx;
+  margin-bottom: 30rpx;
 }
 .rules text {
   display: block;
-  font-size: 28rpx;
+  font-size: 24rpx;
   color: #fff;
-  margin: 16rpx 0;
+  margin: 8rpx 0;
 }
 .start-btn {
-  width: 280rpx;
-  height: 88rpx;
+  width: 240rpx;
+  height: 72rpx;
   background: linear-gradient(180deg, #ffd700 0%, #ffaa00 100%);
-  border-radius: 44rpx;
+  border-radius: 36rpx;
   display: flex;
   align-items: center;
   justify-content: center;
   color: #333;
-  font-size: 36rpx;
+  font-size: 32rpx;
   font-weight: bold;
-  box-shadow: 0 8rpx 24rpx rgba(255, 170, 0, 0.4);
+  box-shadow: 0 6rpx 18rpx rgba(255, 170, 0, 0.4);
 }
 
 /* 游戏界面 */
