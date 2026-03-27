@@ -2,17 +2,43 @@
 <view class="container">
   <!-- 准备界面 -->
   <view class="ready-screen" wx:if="{{gameState === 'ready'}}">
-    <view class="ready-box">
-      <text class="ready-title">🐷 拱猪</text>
-      <text class="ready-subtitle">2v2组队版</text>
-      <view class="rules">
-        <text>♠Q猪=-100 ♦J羊=+100</text>
-        <text>♥红桃=-10至-50 ♣10变压器=×2</text>
-        <text>满红13张=+200 大满贯翻倍</text>
+    <view class="title-section">
+      <text class="game-emoji">🐷</text>
+      <text class="game-title">拱猪</text>
+      <text class="game-subtitle">2V2 组队版</text>
+    </view>
+
+    <view class="rule-card">
+      <view class="rule-item">
+        <text class="suit spade">♠</text>
+        <text class="rule-text">Q 猪</text>
+        <text class="score-highlight">-100</text>
+      </view>
+      <view class="rule-item">
+        <text class="suit diamond">♦</text>
+        <text class="rule-text">J 羊</text>
+        <text class="score-highlight">+100</text>
+      </view>
+      <view class="rule-item">
+        <text class="suit heart">♥</text>
+        <text class="rule-text">红桃</text>
+        <text class="score-highlight">-10 至 -50</text>
+      </view>
+      <view class="rule-item">
+        <text class="suit club">♣</text>
+        <text class="rule-text">10 变压器</text>
+        <text class="score-highlight">×2 / +50</text>
+      </view>
+      <view class="rule-item">
+        <text class="rule-text">满红 13 张</text>
+        <text class="score-highlight">+200</text>
+      </view>
+      <view class="rule-item rule-note">
         <text>猪羊定队，队友分数平分</text>
       </view>
-      <view class="start-btn" bindtap="startGame">开始游戏</view>
     </view>
+
+    <view class="start-btn" bindtap="startGame">开始游戏</view>
   </view>
 
   <!-- 游戏界面 -->

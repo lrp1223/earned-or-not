@@ -11,50 +11,97 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: flex-start;
-  padding-top: 8vh;
+  background: linear-gradient(180deg, #1a472a 0%, #2d5a27 100%);
+  padding-top: 60rpx;
   box-sizing: border-box;
 }
-.ready-box {
-  text-align: center;
-  width: 90%;
-}
-.ready-title {
-  font-size: 60rpx;
-  color: #fff;
-  display: block;
-  text-shadow: 4rpx 4rpx 8rpx rgba(0,0,0,0.5);
-}
-.ready-subtitle {
-  font-size: 28rpx;
-  color: #ffd700;
-  display: block;
-  margin: 10rpx 0 20rpx;
-}
-.rules {
-  background: rgba(255,255,255,0.1);
-  border-radius: 16rpx;
-  padding: 20rpx;
+
+/* 标题区 */
+.title-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
   margin-bottom: 30rpx;
 }
-.rules text {
-  display: block;
-  font-size: 24rpx;
-  color: #fff;
-  margin: 8rpx 0;
+.game-emoji {
+  font-size: 64rpx;
+  margin-bottom: 10rpx;
 }
-.start-btn {
-  width: 240rpx;
-  height: 72rpx;
-  background: linear-gradient(180deg, #ffd700 0%, #ffaa00 100%);
-  border-radius: 36rpx;
+.game-title {
+  font-size: 56rpx;
+  font-weight: 700;
+  color: #fff;
+  text-shadow: 0 4rpx 16rpx rgba(0,0,0,0.3);
+}
+.game-subtitle {
+  font-size: 28rpx;
+  color: rgba(255,255,255,0.85);
+  letter-spacing: 8rpx;
+  margin-top: 12rpx;
+}
+
+/* 规则卡片 */
+.rule-card {
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 24rpx;
+  padding: 30rpx 24rpx;
+  margin: 0 30rpx 40rpx;
+  width: 85%;
+  box-shadow: 0 16rpx 64rpx rgba(0, 0, 0, 0.25);
+}
+.rule-item {
   display: flex;
   align-items: center;
-  justify-content: center;
+  padding: 14rpx 0;
+  font-size: 30rpx;
   color: #333;
-  font-size: 32rpx;
-  font-weight: bold;
-  box-shadow: 0 6rpx 18rpx rgba(255, 170, 0, 0.4);
+  border-bottom: 1rpx solid rgba(0,0,0,0.06);
+}
+.rule-item:last-child {
+  border-bottom: none;
+}
+.rule-item.rule-note {
+  justify-content: center;
+  font-size: 26rpx;
+  color: #666;
+  padding-top: 20rpx;
+}
+.suit {
+  font-size: 36rpx;
+  margin-right: 16rpx;
+  width: 40rpx;
+  text-align: center;
+}
+.suit.spade, .suit.club {
+  color: #1a1a1a;
+}
+.suit.heart, .suit.diamond {
+  color: #e53935;
+}
+.rule-text {
+  flex: 1;
+}
+.score-highlight {
+  color: #d4a017;
+  font-weight: 600;
+  font-size: 28rpx;
+}
+
+/* 开始按钮 */
+.start-btn {
+  background: linear-gradient(135deg, #ff6b35 0%, #ff8c42 100%);
+  color: #fff;
+  border-radius: 16rpx;
+  padding: 24rpx 80rpx;
+  font-size: 34rpx;
+  font-weight: 600;
+  letter-spacing: 4rpx;
+  box-shadow: 0 8rpx 32rpx rgba(255, 107, 53, 0.4);
+  margin-top: 10rpx;
+}
+.start-btn:active {
+  transform: scale(0.98);
+  box-shadow: 0 4rpx 16rpx rgba(255, 107, 53, 0.3);
 }
 
 /* 游戏界面 */
