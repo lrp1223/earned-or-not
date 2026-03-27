@@ -13,7 +13,7 @@
   align-items: center;
   justify-content: center;
   background: linear-gradient(180deg, #1a472a 0%, #2d5a27 100%);
-  padding: 40rpx;
+  padding: 80rpx 40rpx 40rpx;
   box-sizing: border-box;
   gap: 40rpx;
 }
@@ -56,11 +56,12 @@
   background: linear-gradient(135deg, #ff6b35 0%, #ff8c42 100%);
   color: #fff;
   border-radius: 16rpx;
-  padding: 28rpx 80rpx;
-  font-size: 36rpx;
+  padding: 24rpx 48rpx;
+  font-size: 32rpx;
   font-weight: 600;
-  letter-spacing: 4rpx;
+  letter-spacing: 2rpx;
   box-shadow: 0 8rpx 32rpx rgba(255, 107, 53, 0.4);
+  white-space: nowrap;
 }
 .start-btn:active {
   transform: scale(0.98);
