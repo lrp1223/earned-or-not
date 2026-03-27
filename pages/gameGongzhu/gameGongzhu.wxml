@@ -2,80 +2,81 @@
 <view class="container">
   <!-- 准备界面 -->
   <view class="ready-screen" wx:if="{{gameState === 'ready'}}">
-    <view class="ready-content">
+    <view class="ready-box">
       <text class="ready-title">🐷 拱猪</text>
       <text class="ready-subtitle">2v2组队版</text>
-      <view class="ready-rules">
+      <view class="rules">
         <text>♠Q猪=-100 ♦J羊=+100</text>
-        <text>♥红桃=-10至-50</text>
-        <text>♣10变压器=×2/+50</text>
-        <text>满红13张=+200</text>
-        <text>猪羊定队，分数平分</text>
+        <text>♥红桃=-10至-50 ♣10变压器=×2</text>
+        <text>满红13张=+200 大满贯翻倍</text>
+        <text>猪羊定队，队友分数平分</text>
       </view>
+      <view class="start-btn" bindtap="startGame">开始游戏</view>
     </view>
-    <view class="ready-btn" bindtap="startGame">开始游戏</view>
   </view>
 
   <!-- 游戏界面 -->
   <view class="game-screen" wx:if="{{gameState === 'playing' || gameState === 'over'}}">
-    <!-- 顶部信息栏 -->
-    <view class="top-bar">
-      <text class="round-info">第{{currentRound}}/13轮</text>
-      <text wx:if="{{leadSuit}}">主{{leadSuit}}</text>
-      <text wx:if="{{teams}}">队伍已分</text>
-      <text wx:else>等猪羊</text>
+    <!-- 顶部信息 -->
+    <view class="top-info">
+      <text class="round">第{{currentRound}}/13轮</text>
+      <text wx:if="{{leadSuit}}" class="suit">主{{leadSuit}}</text>
+      <text wx:if="{{teams}}" class="team-status">队伍已分</text>
+      <text wx:else class="team-status">等猪羊</text>
     </view>
 
-    <!-- 中间游戏区 -->
-    <view class="game-area">
-      <!-- 对家 -->
-      <view class="player-top">
-        <view class="player-tag {{currentPlayer === 2 ? 'active' : ''}}">
-          <text>对家</text>
-          <text class="score">{{teamScores[2]}}</text>
-          <text class="team-mark" wx:if="{{teams && teams[2] === 0}}">友</text>
-        </view>
-        <text class="card-num">{{aiHands[1] ? aiHands[1].length : 13}}张</text>
+    <!-- 对家 -->
+    <view class="player player-top">
+      <view class="avatar-box {{currentPlayer === 2 ? 'active' : ''}}">
+        <view class="avatar">🤖</view>
+        <text class="name">对家</text>
+        <text class="score">{{teamScores[2]}}</text>
+        <text class="team-tag" wx:if="{{teams && teams[2] === 0}}">队友</text>
       </view>
+      <view class="card-count">{{aiHands[1] ? aiHands[1].length : 13}}张</view>
+    </view>
 
-      <!-- 桌面 -->
-      <view class="table">
-        <view class="table-card-wrap">
-          <view class="table-card {{item.player === 0 ? 'pos-bottom' : item.player === 1 ? 'pos-left' : item.player === 2 ? 'pos-top' : 'pos-right'}}" 
-                wx:for="{{tableCards}}" wx:key="index">
-            <text class="suit {{item.card.suit === '♥' || item.card.suit === '♦' ? 'red' : ''}}">{{item.card.suit}}</text>
-            <text class="rank">{{item.card.rank}}</text>
-          </view>
-        </view>
+    <!-- 左家 -->
+    <view class="player player-left">
+      <view class="avatar-box {{currentPlayer === 3 ? 'active' : ''}}">
+        <view class="avatar">🤖</view>
+        <text class="name">下家</text>
+        <text class="score">{{teamScores[3]}}</text>
+        <text class="team-tag" wx:if="{{teams && teams[3] === 0}}">队友</text>
       </view>
+      <view class="card-count">{{aiHands[2] ? aiHands[2].length : 13}}张</view>
+    </view>
 
-      <!-- 左右家 -->
-      <view class="player-left">
-        <view class="player-tag {{currentPlayer === 3 ? 'active' : ''}}">
-          <text>下家</text>
-          <text class="score">{{teamScores[3]}}</text>
-          <text class="team-mark" wx:if="{{teams && teams[3] === 0}}">友</text>
-        </view>
-        <text class="card-num">{{aiHands[2] ? aiHands[2].length : 13}}张</text>
+    <!-- 右家 -->
+    <view class="player player-right">
+      <view class="avatar-box {{currentPlayer === 1 ? 'active' : ''}}">
+        <view class="avatar">🤖</view>
+        <text class="name">上家</text>
+        <text class="score">{{teamScores[1]}}</text>
+        <text class="team-tag" wx:if="{{teams && teams[1] === 0}}">队友</text>
       </view>
+      <view class="card-count">{{aiHands[0] ? aiHands[0].length : 13}}张</view>
+    </view>
 
-      <view class="player-right">
-        <view class="player-tag {{currentPlayer === 1 ? 'active' : ''}}">
-          <text>上家</text>
-          <text class="score">{{teamScores[1]}}</text>
-          <text class="team-mark" wx:if="{{teams && teams[1] === 0}}">友</text>
+    <!-- 桌面 -->
+    <view class="table-area">
+      <view class="table-cards">
+        <view class="card-played {{item.player === 0 ? 'pos-bottom' : item.player === 1 ? 'pos-right' : item.player === 2 ? 'pos-top' : 'pos-left'}}" 
+              wx:for="{{tableCards}}" wx:key="index">
+          <text class="suit {{item.card.suit === '♥' || item.card.suit === '♦' ? 'red' : ''}}">{{item.card.suit}}</text>
+          <text class="rank">{{item.card.rank}}</text>
         </view>
-        <text class="card-num">{{aiHands[0] ? aiHands[0].length : 13}}张</text>
       </view>
     </view>
 
-    <!-- 底部玩家区 -->
-    <view class="bottom-area" wx:if="{{gameState === 'playing'}}">
-      <view class="my-info">
-        <view class="player-tag {{currentPlayer === 0 ? 'active' : ''}}">
-          <text>你</text>
+    <!-- 自己 -->
+    <view class="player-self" wx:if="{{gameState === 'playing'}}">
+      <view class="self-info">
+        <view class="avatar-box {{currentPlayer === 0 ? 'active' : ''}}">
+          <view class="avatar">😀</view>
+          <text class="name">你</text>
           <text class="score">{{teamScores[0]}}</text>
-          <text class="team-mark" wx:if="{{teams}}">{{teams[0] === 2 ? '对' : teams[0] === 3 ? '下' : '上'}}</text>
+          <text class="team-tag" wx:if="{{teams}}">{{teams[0] === 2 ? '对' : teams[0] === 3 ? '下' : '上'}}</text>
         </view>
         <view class="play-btn {{selectedCard !== null ? 'active' : ''}}" bindtap="confirmPlay">出牌</view>
       </view>
@@ -96,7 +97,7 @@
       <text class="over-icon">{{gameResult.rank === 1 ? '🏆' : gameResult.rank === 2 ? '🥈' : gameResult.rank === 3 ? '🥉' : '💔'}}</text>
       <text class="over-title">{{gameResult.rank === 1 ? '冠军' : gameResult.rank === 2 ? '亚军' : gameResult.rank === 3 ? '季军' : '垫底'}}</text>
       <text class="over-score">{{gameResult.playerScore}}分</text>
-      <view class="ready-btn" bindtap="restart">再来一局</view>
+      <view class="start-btn" bindtap="restart">再来一局</view>
     </view>
   </view>
 </view>

@@ -1,7 +1,7 @@
 .container {
   width: 100vw;
   height: 100vh;
-  background: linear-gradient(135deg, #1a5f1a 0%, #2d7a2d 100%);
+  background: linear-gradient(180deg, #1a5f1a 0%, #0d3d0d 100%);
 }
 
 /* 准备界面 */
@@ -9,285 +9,280 @@
   width: 100%;
   height: 100%;
   display: flex;
-  flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: 2vh;
 }
-.ready-content {
+.ready-box {
   text-align: center;
+  padding: 40rpx;
 }
 .ready-title {
-  font-size: 8vh;
+  font-size: 80rpx;
   color: #fff;
   display: block;
+  text-shadow: 4rpx 4rpx 8rpx rgba(0,0,0,0.5);
 }
 .ready-subtitle {
-  font-size: 3vh;
-  color: #ccc;
+  font-size: 36rpx;
+  color: #ffd700;
   display: block;
-  margin: 1vh 0 3vh;
+  margin: 20rpx 0 40rpx;
 }
-.ready-rules {
-  background: rgba(255,255,255,0.15);
-  border-radius: 2vh;
-  padding: 2vh 3vh;
+.rules {
+  background: rgba(255,255,255,0.1);
+  border-radius: 20rpx;
+  padding: 30rpx;
+  margin-bottom: 60rpx;
 }
-.ready-rules text {
+.rules text {
   display: block;
-  font-size: 2.5vh;
+  font-size: 28rpx;
   color: #fff;
-  margin: 1vh 0;
+  margin: 16rpx 0;
 }
-.ready-btn {
-  margin-top: 4vh;
-  width: 20vh;
-  height: 6vh;
-  background: linear-gradient(135deg, #4caf50, #81c784);
-  border-radius: 3vh;
+.start-btn {
+  width: 280rpx;
+  height: 88rpx;
+  background: linear-gradient(180deg, #ffd700 0%, #ffaa00 100%);
+  border-radius: 44rpx;
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #fff;
-  font-size: 2.5vh;
+  color: #333;
+  font-size: 36rpx;
   font-weight: bold;
+  box-shadow: 0 8rpx 24rpx rgba(255, 170, 0, 0.4);
 }
 
 /* 游戏界面 */
 .game-screen {
   width: 100%;
   height: 100%;
-  display: flex;
-  flex-direction: column;
-}
-
-/* 顶部栏 */
-.top-bar {
-  height: 6vh;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 2vh;
-  background: rgba(0,0,0,0.2);
-}
-.top-bar text {
-  font-size: 2vh;
-  color: #fff;
-  background: rgba(0,0,0,0.3);
-  padding: 0.5vh 1.5vh;
-  border-radius: 1vh;
-}
-
-/* 游戏区 */
-.game-area {
-  flex: 1;
   position: relative;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  min-height: 0;
 }
 
-/* 玩家标签 */
-.player-tag {
+/* 顶部信息 */
+.top-info {
+  position: absolute;
+  top: 20rpx;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 20rpx;
+  z-index: 10;
+}
+.top-info text {
+  font-size: 24rpx;
+  color: #fff;
+  background: rgba(0,0,0,0.4);
+  padding: 10rpx 20rpx;
+  border-radius: 20rpx;
+}
+
+/* 玩家通用 */
+.player {
+  position: absolute;
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 0.8vh 1.5vh;
+}
+.avatar-box {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
   background: rgba(255,255,255,0.15);
-  border-radius: 1vh;
-  min-width: 8vh;
+  border-radius: 16rpx;
+  padding: 16rpx 24rpx;
+  border: 2rpx solid transparent;
 }
-.player-tag.active {
-  background: rgba(255,215,0,0.4);
-  border: 0.3vh solid #ffd700;
+.avatar-box.active {
+  background: rgba(255,215,0,0.3);
+  border-color: #ffd700;
 }
-.player-tag text {
-  font-size: 2vh;
+.avatar {
+  width: 72rpx;
+  height: 72rpx;
+  background: #fff;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 40rpx;
+}
+.name {
+  font-size: 22rpx;
   color: #fff;
+  margin-top: 8rpx;
 }
-.player-tag .score {
-  font-size: 3vh;
+.score {
+  font-size: 32rpx;
   font-weight: bold;
   color: #ffd700;
+  margin-top: 4rpx;
 }
-.player-tag .team-mark {
-  font-size: 1.6vh;
+.team-tag {
+  font-size: 18rpx;
   color: #4caf50;
   background: #e8f5e9;
-  padding: 0.3vh 1vh;
-  border-radius: 0.6vh;
-  margin-top: 0.5vh;
+  padding: 4rpx 12rpx;
+  border-radius: 8rpx;
+  margin-top: 8rpx;
+}
+.card-count {
+  font-size: 20rpx;
+  color: #ccc;
+  margin-top: 12rpx;
+  background: rgba(0,0,0,0.3);
+  padding: 6rpx 16rpx;
+  border-radius: 12rpx;
 }
 
 /* 对家 */
 .player-top {
-  position: absolute;
-  top: 2vh;
+  top: 100rpx;
   left: 50%;
   transform: translateX(-50%);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-.player-top .card-num {
-  font-size: 1.8vh;
-  color: #ccc;
-  margin-top: 1vh;
 }
 
 /* 左右家 */
 .player-left {
-  position: absolute;
-  left: 2vh;
+  left: 30rpx;
   top: 50%;
   transform: translateY(-50%);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
 }
 .player-right {
-  position: absolute;
-  right: 2vh;
+  right: 30rpx;
   top: 50%;
   transform: translateY(-50%);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-.player-left .card-num, .player-right .card-num {
-  font-size: 1.8vh;
-  color: #ccc;
-  margin-top: 1vh;
 }
 
 /* 桌面 */
-.table {
-  width: 55vh;
-  height: 32vh;
-  position: relative;
+.table-area {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 400rpx;
+  height: 300rpx;
 }
-.table-card-wrap {
+.table-cards {
   width: 100%;
   height: 100%;
   position: relative;
 }
-.table-card {
-  width: 8vh;
-  height: 11vh;
+.card-played {
+  width: 100rpx;
+  height: 140rpx;
   background: #fff;
-  border-radius: 1vh;
+  border-radius: 12rpx;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   position: absolute;
-  box-shadow: 0 0.5vh 1.5vh rgba(0,0,0,0.3);
+  box-shadow: 0 8rpx 24rpx rgba(0,0,0,0.3);
 }
-.table-card .suit {
-  font-size: 3.5vh;
+.card-played .suit {
+  font-size: 48rpx;
 }
-.table-card .suit.red {
+.card-played .suit.red {
   color: #f44336;
 }
-.table-card .rank {
-  font-size: 2.8vh;
+.card-played .rank {
+  font-size: 36rpx;
   font-weight: bold;
   color: #333;
 }
-.table-card.pos-top {
+.card-played.pos-top {
   top: 0;
   left: 50%;
   transform: translateX(-50%);
 }
-.table-card.pos-bottom {
+.card-played.pos-bottom {
   bottom: 0;
   left: 50%;
   transform: translateX(-50%);
 }
-.table-card.pos-left {
+.card-played.pos-left {
   left: 0;
   top: 50%;
   transform: translateY(-50%);
 }
-.table-card.pos-right {
+.card-played.pos-right {
   right: 0;
   top: 50%;
   transform: translateY(-50%);
 }
 
-/* 底部区域 */
-.bottom-area {
-  height: 16vh;
-  padding: 1vh 2vh 3vh;
-  flex-shrink: 0;
+/* 自己 */
+.player-self {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 20rpx 30rpx 40rpx;
 }
-.my-info {
+.self-info {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 1vh;
+  margin-bottom: 20rpx;
 }
 .play-btn {
-  width: 12vh;
-  height: 5vh;
-  background: #ccc;
-  border-radius: 2.5vh;
+  width: 160rpx;
+  height: 72rpx;
+  background: #999;
+  border-radius: 36rpx;
   display: flex;
   align-items: center;
   justify-content: center;
   color: #fff;
-  font-size: 2.2vh;
+  font-size: 32rpx;
   font-weight: bold;
-  margin-right: 2vh;
 }
 .play-btn.active {
-  background: linear-gradient(135deg, #ffd700, #ffaa00);
+  background: linear-gradient(180deg, #ffd700 0%, #ffaa00 100%);
   color: #333;
 }
 
 /* 手牌 */
 .hand-scroll {
   width: 100%;
-  height: 9vh;
+  height: 160rpx;
   white-space: nowrap;
 }
 .hand {
   display: inline-flex;
-  gap: 0.8vh;
+  gap: 16rpx;
+  padding: 10rpx 0;
 }
 .hand-card {
-  width: 6.5vh;
-  height: 9vh;
+  width: 110rpx;
+  height: 150rpx;
   background: #fff;
-  border-radius: 0.8vh;
+  border-radius: 12rpx;
   display: inline-flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  border: 0.25vh solid transparent;
-}
-.hand-card .suit {
-  font-size: 3vh;
-}
-.hand-card .rank {
-  font-size: 2.2vh;
+  border: 4rpx solid transparent;
+  box-shadow: 0 8rpx 16rpx rgba(0,0,0,0.2);
 }
 .hand-card.selected {
   border-color: #ffd700;
-  transform: translateY(-1vh);
+  transform: translateY(-20rpx);
 }
 .hand-card.disabled {
   opacity: 0.4;
 }
 .hand-card .suit {
-  font-size: 3.5vh;
+  font-size: 48rpx;
 }
 .hand-card .suit.red {
   color: #f44336;
 }
 .hand-card .rank {
-  font-size: 2.5vh;
+  font-size: 36rpx;
   font-weight: bold;
   color: #333;
 }
@@ -297,26 +292,27 @@
   position: absolute;
   top: 0;
   left: 0;
-  width: 100%;
-  height: 100%;
+  right: 0;
+  bottom: 0;
   background: rgba(0,0,0,0.9);
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
+  z-index: 100;
 }
 .over-icon {
-  font-size: 10vh;
-  margin-bottom: 2vh;
+  font-size: 120rpx;
+  margin-bottom: 30rpx;
 }
 .over-title {
-  font-size: 5vh;
+  font-size: 60rpx;
   font-weight: bold;
   color: #fff;
-  margin-bottom: 2vh;
+  margin-bottom: 20rpx;
 }
 .over-score {
-  font-size: 4vh;
+  font-size: 48rpx;
   color: #ffd700;
-  margin-bottom: 4vh;
+  margin-bottom: 60rpx;
 }
