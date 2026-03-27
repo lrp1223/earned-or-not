@@ -201,7 +201,7 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
+  justify-content: center; /* 桌面牌保持中心对齐 */
   position: absolute;
   box-shadow: 0 1vh 2vh rgba(0,0,0,0.3);
 }
@@ -271,23 +271,26 @@
   border-radius: 1vh;
   display: flex;
   flex-direction: column;
-  align-items: center;
-  justify-content: center;
+  align-items: flex-start;
+  justify-content: flex-start;
+  padding: 1.5vh 1.2vw;
   position: absolute;
   bottom: 2vh;
   box-shadow: 0 0.5vh 1vh rgba(0,0,0,0.3);
   border: 1rpx solid #eee;
+  box-sizing: border-box;
 }
 
 .h-selected {
-  transform: translateY(-4vh);
-  z-index: 500 !important;
-  border: 0.3vh solid #ffd700;
+  transform: translateY(-5vh);
+  z-index: 1000 !important;
+  border: 0.4vh solid #ffd700;
+  box-shadow: 0 1vh 2vh rgba(255, 215, 0, 0.4);
 }
 
 .h-disabled { opacity: 0.4; }
-.h-suit { font-size: 5vh; }
-.h-rank { font-size: 4vh; font-weight: bold; color: #333; }
+.h-suit { font-size: 3vh; line-height: 1; }
+.h-rank { font-size: 3.5vh; font-weight: bold; color: #333; line-height: 1; margin-top: 0.2vh; }
 
 /* 结算 */
 .mask-overlay {
