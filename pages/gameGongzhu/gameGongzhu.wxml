@@ -2,30 +2,40 @@
 <view class="container">
   <!-- 准备界面 -->
   <view class="ready-screen" wx:if="{{gameState === 'ready'}}">
-    <view class="ready-content">
-      <view class="logo-area">
-        <text class="logo-emoji">🐷</text>
-        <text class="logo-title">拱猪</text>
-        <text class="logo-subtitle">2V2 组队版</text>
+    <view class="ready-box">
+      <view class="game-logo">
+        <text class="logo-icon">🐷</text>
+        <text class="logo-text">拱猪</text>
+        <text class="logo-tag">2V2组队版</text>
       </view>
-      <view class="rules-area">
-        <view class="rule-line">
-          <view class="rule-tag"><text class="suit">♠</text><text>Q猪</text><text class="score">-100</text></view>
-          <view class="rule-tag"><text class="suit red">♦</text><text>J羊</text><text class="score">+100</text></view>
+      <view class="rules-panel">
+        <view class="rule-row">
+          <view class="rule-cell">
+            <text class="suit">♠</text>
+            <text>Q猪</text>
+            <text class="score neg">-100</text>
+          </view>
+          <view class="rule-cell">
+            <text class="suit red">♦</text>
+            <text>J羊</text>
+            <text class="score pos">+100</text>
+          </view>
         </view>
-        <view class="rule-line">
-          <view class="rule-tag"><text class="suit red">♥</text><text>红桃</text><text class="score">-10~-50</text></view>
-          <view class="rule-tag"><text class="suit">♣</text><text>10变压器</text><text class="score">×2</text></view>
+        <view class="rule-row">
+          <view class="rule-cell">
+            <text class="suit red">♥</text>
+            <text>红桃</text>
+            <text class="score neg">-10~-50</text>
+          </view>
+          <view class="rule-cell">
+            <text class="suit">♣</text>
+            <text>10变压器</text>
+            <text class="score">×2</text>
+          </view>
         </view>
-        <view class="rule-line">
-          <view class="rule-tag"><text>满红13张</text><text class="score">+200</text></view>
-          <view class="rule-tag"><text>大满贯</text><text class="score">翻倍</text></view>
-        </view>
-        <view class="rule-tip">猪羊定队，队友分数平分</view>
+        <view class="rule-tip">猪羊定队 · 队友分数平分</view>
       </view>
-      <view class="action-area">
-        <view class="btn-primary" bindtap="startGame">开始游戏</view>
-      </view>
+      <view class="btn-start" bindtap="startGame">开始游戏</view>
     </view>
   </view>
 
@@ -33,91 +43,79 @@
   <view class="game-screen" wx:if="{{gameState === 'playing' || gameState === 'over'}}">
     <!-- 顶部信息 -->
     <view class="header">
-      <view class="info-tag">第{{currentRound}}/13轮</view>
-      <view class="info-tag" wx:if="{{leadSuit}}">主{{leadSuit}}</view>
-      <view class="info-tag" wx:if="{{teams}}">队伍已分</view>
-      <view class="info-tag" wx:else>等猪羊</view>
+      <text class="info-badge">第{{currentRound}}/13轮</text>
+      <text class="info-badge" wx:if="{{leadSuit}}">主{{leadSuit}}</text>
+      <text class="info-badge" wx:if="{{teams}}">队伍已分</text>
+      <text class="info-badge" wx:else>等猪羊</text>
     </view>
 
-    <!-- 游戏区 -->
-    <view class="play-area">
-      <!-- 对家 -->
-      <view class="seat seat-top">
-        <view class="player-info {{currentPlayer === 2 ? 'active' : ''}}">
-          <view class="avatar">🤖</view>
-          <view class="name">对家</view>
-          <view class="score">{{teamScores[2]}}</view>
-          <view class="team-badge" wx:if="{{teams && teams[2] === 0}}">友</view>
-        </view>
-        <view class="card-badge">{{aiHands[1] ? aiHands[1].length : 13}}</view>
-      </view>
+    <!-- 对家 -->
+    <view class="player top {{currentPlayer === 2 ? 'active' : ''}}">
+      <view class="avatar">🤖</view>
+      <text class="p-name">对家</text>
+      <text class="p-score">{{teamScores[2]}}</text>
+      <text class="p-team" wx:if="{{teams && teams[2] === 0}}">友</text>
+      <text class="p-cards">{{aiHands[1] ? aiHands[1].length : 13}}张</text>
+    </view>
 
-      <!-- 左家 -->
-      <view class="seat seat-left">
-        <view class="player-info {{currentPlayer === 3 ? 'active' : ''}}">
-          <view class="avatar">🤖</view>
-          <view class="name">下家</view>
-          <view class="score">{{teamScores[3]}}</view>
-          <view class="team-badge" wx:if="{{teams && teams[3] === 0}}">友</view>
-        </view>
-        <view class="card-badge">{{aiHands[2] ? aiHands[2].length : 13}}</view>
-      </view>
+    <!-- 左家 -->
+    <view class="player left {{currentPlayer === 3 ? 'active' : ''}}">
+      <view class="avatar">🤖</view>
+      <text class="p-name">下家</text>
+      <text class="p-score">{{teamScores[3]}}</text>
+      <text class="p-team" wx:if="{{teams && teams[3] === 0}}">友</text>
+      <text class="p-cards">{{aiHands[2] ? aiHands[2].length : 13}}张</text>
+    </view>
 
-      <!-- 右家 -->
-      <view class="seat seat-right">
-        <view class="player-info {{currentPlayer === 1 ? 'active' : ''}}">
-          <view class="avatar">🤖</view>
-          <view class="name">上家</view>
-          <view class="score">{{teamScores[1]}}</view>
-          <view class="team-badge" wx:if="{{teams && teams[1] === 0}}">友</view>
-        </view>
-        <view class="card-badge">{{aiHands[0] ? aiHands[0].length : 13}}</view>
-      </view>
+    <!-- 右家 -->
+    <view class="player right {{currentPlayer === 1 ? 'active' : ''}}">
+      <view class="avatar">🤖</view>
+      <text class="p-name">上家</text>
+      <text class="p-score">{{teamScores[1]}}</text>
+      <text class="p-team" wx:if="{{teams && teams[1] === 0}}">友</text>
+      <text class="p-cards">{{aiHands[0] ? aiHands[0].length : 13}}张</text>
+    </view>
 
-      <!-- 桌面 -->
-      <view class="table">
-        <view class="played-card {{item.player === 0 ? 'at-bottom' : item.player === 1 ? 'at-right' : item.player === 2 ? 'at-top' : 'at-left'}}" 
-              wx:for="{{tableCards}}" wx:key="index">
-          <text class="card-suit {{item.card.suit === '♥' || item.card.suit === '♦' ? 'red' : ''}}">{{item.card.suit}}</text>
-          <text class="card-rank">{{item.card.rank}}</text>
-        </view>
+    <!-- 桌面 -->
+    <view class="table">
+      <view class="card-out {{item.player === 0 ? 'out-bottom' : item.player === 1 ? 'out-right' : item.player === 2 ? 'out-top' : 'out-left'}}" 
+            wx:for="{{tableCards}}" wx:key="index">
+        <text class="c-suit {{item.card.suit === '♥' || item.card.suit === '♦' ? 'red' : ''}}">{{item.card.suit}}</text>
+        <text class="c-rank">{{item.card.rank}}</text>
       </view>
+    </view>
 
-      <!-- 自己 -->
-      <view class="seat seat-bottom" wx:if="{{gameState === 'playing'}}">
-        <view class="player-info {{currentPlayer === 0 ? 'active' : ''}}">
-          <view class="avatar">😀</view>
-          <view class="name">你</view>
-          <view class="score">{{teamScores[0]}}</view>
-          <view class="team-badge" wx:if="{{teams}}">{{teams[0] === 2 ? '对' : teams[0] === 3 ? '下' : '上'}}</view>
-        </view>
-      </view>
+    <!-- 自己 -->
+    <view class="player bottom {{currentPlayer === 0 ? 'active' : ''}}" wx:if="{{gameState === 'playing'}}">
+      <view class="avatar">😀</view>
+      <text class="p-name">你</text>
+      <text class="p-score">{{teamScores[0]}}</text>
+      <text class="p-team" wx:if="{{teams}}">{{teams[0] === 2 ? '对' : teams[0] === 3 ? '下' : '上'}}</text>
     </view>
 
     <!-- 手牌区 -->
-    <view class="hand-area" wx:if="{{gameState === 'playing'}}">
-      <scroll-view class="hand-scroll" scroll-x="true" show-scrollbar="false">
-        <view class="hand-list">
-          <view class="hand-card {{selectedCard === index ? 'selected' : ''}} {{!isValidPlay(item, playerHand) ? 'disabled' : ''}}" 
-                wx:for="{{playerHand}}" wx:key="index"
-                bindtap="selectCard" data-index="{{index}}">
-            <text class="card-suit {{item.suit === '♥' || item.suit === '♦' ? 'red' : ''}}">{{item.suit}}</text>
-            <text class="card-rank">{{item.rank}}</text>
-          </view>
+    <view class="hand-box" wx:if="{{gameState === 'playing'}}">
+      <view class="hand-cards">
+        <view class="h-card {{selectedCard === index ? 'up' : ''}} {{!isValidPlay(item, playerHand) ? 'disabled' : ''}}" 
+              style="left: {{index * 50}}rpx; z-index: {{index}};"
+              wx:for="{{playerHand}}" wx:key="index"
+              bindtap="selectCard" data-index="{{index}}">
+          <text class="c-suit {{item.suit === '♥' || item.suit === '♦' ? 'red' : ''}}">{{item.suit}}</text>
+          <text class="c-rank">{{item.rank}}</text>
         </view>
-      </scroll-view>
-      <view class="hand-action">
-        <view class="btn-play {{selectedCard !== null ? 'active' : ''}}" bindtap="confirmPlay">出牌</view>
+      </view>
+      <view class="hand-btn">
+        <view class="btn-play {{selectedCard !== null ? 'on' : ''}}" bindtap="confirmPlay">出牌</view>
       </view>
     </view>
 
-    <!-- 结束界面 -->
-    <view class="overlay" wx:if="{{gameState === 'over'}}">
-      <view class="result-box">
-        <text class="result-icon">{{gameResult.rank === 1 ? '🏆' : gameResult.rank === 2 ? '🥈' : gameResult.rank === 3 ? '🥉' : '💔'}}</text>
-        <text class="result-title">{{gameResult.rank === 1 ? '冠军' : gameResult.rank === 2 ? '亚军' : gameResult.rank === 3 ? '季军' : '垫底'}}</text>
-        <text class="result-score">{{gameResult.playerScore}}分</text>
-        <view class="btn-primary" bindtap="restart">再来一局</view>
+    <!-- 结束 -->
+    <view class="game-over" wx:if="{{gameState === 'over'}}">
+      <view class="over-box">
+        <text class="over-icon">{{gameResult.rank === 1 ? '🏆' : gameResult.rank === 2 ? '🥈' : gameResult.rank === 3 ? '🥉' : '💔'}}</text>
+        <text class="over-title">{{gameResult.rank === 1 ? '冠军' : gameResult.rank === 2 ? '亚军' : gameResult.rank === 3 ? '季军' : '垫底'}}</text>
+        <text class="over-score">{{gameResult.playerScore}}分</text>
+        <view class="btn-start" bindtap="restart">再来一局</view>
       </view>
     </view>
   </view>
