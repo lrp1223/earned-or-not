@@ -3,26 +3,30 @@ cloud.init({ env: cloud.DYNAMIC_CURRENT_ENV });
 const db = cloud.database();
 const _ = db.command;
 
-// 计算单个用户的盈亏（优化：使用聚合查询）
+// 计算单个用户的盈亏，返回 {net, hasRecord}
 async function calcUserNet(userId, type) {
   let net = 0;
+  let hasRecord = false;
   
   if (type === 'total' || type === 'lottery') {
     const lotteryRes = await db.collection('lottery').where({ _openid: userId }).get();
+    if (lotteryRes.data.length > 0) hasRecord = true;
     lotteryRes.data.forEach(i => { net += (i.winAmount || 0) - (i.cost || 0); });
   }
   
   if (type === 'total' || type === 'scratch') {
     const scratchRes = await db.collection('scratch').where({ _openid: userId }).get();
+    if (scratchRes.data.length > 0) hasRecord = true;
     scratchRes.data.forEach(i => { net += (i.winAmount || 0) - (i.cost || 0); });
   }
   
   if (type === 'total' || type === 'mahjong') {
     const mahjongRes = await db.collection('mahjong').where({ _openid: userId }).get();
+    if (mahjongRes.data.length > 0) hasRecord = true;
     mahjongRes.data.forEach(i => { net += i.amount || 0; });
   }
   
-  return net;
+  return { net, hasRecord };
 }
 
 exports.main = async (event, context) => {
@@ -44,7 +48,7 @@ exports.main = async (event, context) => {
     // 并行计算所有用户的盈亏
     const userPromises = usersRes.data.map(async (user) => {
       const userId = user._openid;
-      const net = await calcUserNet(userId, calcType);
+      const { net, hasRecord } = await calcUserNet(userId, calcType);
       
       // 处理头像URL
       let avatarUrl = user.customAvatarUrl || user.avatarUrl || '';
@@ -62,11 +66,15 @@ exports.main = async (event, context) => {
         nickname: user.nickname || '匿名用户',
         avatarUrl: avatarUrl,
         net: net,
+        hasRecord: hasRecord,
         isMe: userId === OPENID
       };
     });
     
     let list = await Promise.all(userPromises);
+    
+    // 过滤：只保留有记录的用户
+    list = list.filter(user => user.hasRecord);
     
     // 按盈亏排序
     list.sort((a, b) => b.net - a.net);
