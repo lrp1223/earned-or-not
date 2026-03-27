@@ -1,4 +1,6 @@
 {
-  "usingComponents": {},
-  "pageOrientation": "landscape"
+  "navigationBarTitleText": "拱猪",
+  "pageOrientation": "landscape",
+  "disableScroll": true,
+  "navigationStyle": "custom"
 }
