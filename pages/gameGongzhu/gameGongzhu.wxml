@@ -104,7 +104,7 @@
     <view class="hand-section" wx:if="{{gameState === 'playing'}}">
       <view class="hand-container">
         <view class="hand-card {{selectedCard === index ? 'selected' : ''}} {{!isValidPlay(item, playerHand) ? 'disabled' : ''}}" 
-              style="left: {{index * 35}}rpx; z-index: {{index}};"
+              style="left: {{ (650 - ((playerHand.length - 1) * 35 + 70)) / 2 + index * 35 }}rpx; z-index: {{index}};"
               wx:for="{{playerHand}}" wx:key="index"
               bindtap="selectCard" data-index="{{index}}">
           <text class="card-suit {{item.suit === '♥' || item.suit === '♦' ? 'red' : ''}}">{{item.suit}}</text>
