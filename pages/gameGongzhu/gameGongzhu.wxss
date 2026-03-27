@@ -273,7 +273,7 @@
   flex-direction: column;
   align-items: flex-start;
   justify-content: flex-start;
-  padding: 1.5vh 1.2vw;
+  padding: 1vh 1vw;
   position: absolute;
   bottom: 2vh;
   box-shadow: 0 0.5vh 1vh rgba(0,0,0,0.3);
@@ -285,12 +285,12 @@
   transform: translateY(-5vh);
   z-index: 1000 !important;
   border: 0.4vh solid #ffd700;
-  box-shadow: 0 1vh 2vh rgba(255, 215, 0, 0.4);
+  box-shadow: 0 1.5vh 3vh rgba(255, 215, 0, 0.5);
 }
 
 .h-disabled { opacity: 0.4; }
-.h-suit { font-size: 3vh; line-height: 1; }
-.h-rank { font-size: 3.5vh; font-weight: bold; color: #333; line-height: 1; margin-top: 0.2vh; }
+.h-suit { font-size: 3.5vh; line-height: 1; }
+.h-rank { font-size: 3vh; font-weight: bold; color: #333; line-height: 1; margin-top: 0.5vh; }
 
 /* 结算 */
 .mask-overlay {
