@@ -1,32 +1,23 @@
-// pages/gameGongzhu/gameGongzhu.js
-// 拱猪游戏 - 2v2组队版
-
-const SUITS = ['♠', '♥', '♣', '♦'];
+const SUITS = ['♣', '♦', '♠', '♥'];
 const RANKS = ['2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K', 'A'];
-
-// 特殊牌分值
 const SCORE_CARDS = {
-  '♠Q': -100,  // 猪
-  '♦J': 100,   // 羊
-  '♣10': 0,    // 变压器
+  '♠Q': -100, // 猪
+  '♦J': 100,  // 羊
   '♥A': -50, '♥K': -40, '♥Q': -30, '♥J': -20,
-  '♥10': -10, '♥9': -10, '♥8': -10, '♥7': -10,
-  '♥6': -10, '♥5': -10, '♥4': -10, '♥3': -10, '♥2': -10,
+  '♥10': -10, '♥9': -10, '♥8': -10, '♥7': -10, '♥6': -10, '♥5': -10, '♥4': -10, '♥3': -10, '♥2': -10
 };
 
 Page({
   data: {
-    gameState: 'ready',
-    players: ['你', '左家', '对家', '右家'],
-    currentPlayer: 0,
+    gameState: 'ready', // ready, playing, over
+    currentPlayer: 0, // 0: 你, 1: 上家, 2: 对家, 3: 下家
     currentRound: 1,
-    maxRounds: 13,
-    tableCards: [],
+    tableCards: [], // {player, card}
     playerHand: [],
     aiHands: [[], [], []],
-    rawScores: [0, 0, 0, 0],
-    teamScores: [0, 0, 0, 0],
-    teams: null,
+    rawScores: [0, 0, 0, 0], // 每个人的独立得分
+    teamScores: [0, 0, 0, 0], // 队伍平摊后的显示分
+    teams: null, // {0: 2, 2: 0, 1: 3, 3: 1} 这种格式
     selectedCard: null,
     leadSuit: null,
     gameResult: null,
@@ -35,19 +26,6 @@ Page({
 
   onLoad() {
     this.initGame();
-    this.adjustLayout();
-  },
-
-  // 根据屏幕尺寸调整布局
-  adjustLayout() {
-    const sysInfo = wx.getSystemInfoSync();
-    const isLandscape = sysInfo.windowWidth > sysInfo.windowHeight;
-    const scale = isLandscape ? sysInfo.windowHeight / 750 : 1;
-    
-    this.setData({
-      layoutScale: scale,
-      isLandscape: isLandscape
-    });
   },
 
   initGame() {
@@ -72,6 +50,9 @@ Page({
     const deck = this.createDeck();
     const hands = this.dealCards(deck);
     
+    // 起手定队逻辑：猪(♠Q)和羊(♦J)在哪个人手里，这决定了这一局谁跟谁是一伙的
+    const teams = this.determineTeamsInitial(hands);
+    
     this.setData({
       gameState: 'playing',
       playerHand: hands[0].sort((a, b) => this.cardSortValue(a) - this.cardSortValue(b)),
@@ -80,13 +61,41 @@ Page({
       tableCards: [],
       rawScores: [0, 0, 0, 0],
       teamScores: [0, 0, 0, 0],
-      teams: null,
+      teams: teams,
       collectedCards: [[], [], [], []]
     });
 
     if (this.data.currentPlayer !== 0) {
       setTimeout(() => this.aiPlay(), 1000);
     }
+  },
+
+  determineTeamsInitial(hands) {
+    let pigOwner = -1;
+    let sheepOwner = -1;
+    for (let i = 0; i < 4; i++) {
+      if (hands[i].some(c => c.suit === '♠' && c.rank === 'Q')) pigOwner = i;
+      if (hands[i].some(c => c.suit === '♦' && c.rank === 'J')) sheepOwner = i;
+    }
+    
+    const teams = {};
+    if (pigOwner === sheepOwner) {
+      // 猪羊同一人，跟对家一队
+      teams[pigOwner] = (pigOwner + 2) % 4;
+      teams[(pigOwner + 2) % 4] = pigOwner;
+      const other1 = (pigOwner + 1) % 4;
+      const other2 = (pigOwner + 3) % 4;
+      teams[other1] = other2;
+      teams[other2] = other1;
+    } else {
+      // 猪羊不同人，这两人一队
+      teams[pigOwner] = sheepOwner;
+      teams[sheepOwner] = pigOwner;
+      const others = [0, 1, 2, 3].filter(i => i !== pigOwner && i !== sheepOwner);
+      teams[others[0]] = others[1];
+      teams[others[1]] = others[0];
+    }
+    return teams;
   },
 
   createDeck() {
@@ -112,10 +121,9 @@ Page({
   },
 
   findFirstPlayer(hands) {
+    // ♠J先出
     for (let i = 0; i < 4; i++) {
-      if (hands[i].some(c => c.suit === '♠' && c.rank === 'J')) {
-        return i;
-      }
+      if (hands[i].some(c => c.suit === '♠' && c.rank === 'J')) return i;
     }
     return 0;
   },
@@ -139,26 +147,10 @@ Page({
 
   isValidPlay(card, hand) {
     const { tableCards, leadSuit, currentRound } = this.data;
-
-    if (currentRound === 1 && tableCards.length === 0) {
-      // 第一轮首家必须出♠J
-      return card.suit === '♠' && card.rank === 'J';
-    }
-
-    if (tableCards.length === 0) {
-      if (currentRound === 1) {
-        // 第一轮不能出分牌
-        if (card.id === '♠Q' || card.id === '♦J' || card.id === '♣10') return false;
-      }
-      return true;
-    }
-
-    if (leadSuit && card.suit !== leadSuit) {
-      const hasSuit = hand.some(c => c.suit === leadSuit);
-      if (hasSuit) return false;
-    }
-
-    return true;
+    if (currentRound === 1 && tableCards.length === 0) return card.suit === '♠' && card.rank === 'J';
+    if (tableCards.length === 0) return true;
+    if (card.suit === leadSuit) return true;
+    return !hand.some(c => c.suit === leadSuit);
   },
 
   confirmPlay() {
@@ -169,7 +161,6 @@ Page({
 
   playCard(playerIndex, card) {
     const tableCards = [...this.data.tableCards, { player: playerIndex, card }];
-    
     let playerHand = this.data.playerHand;
     let aiHands = this.data.aiHands;
     
@@ -180,24 +171,15 @@ Page({
     }
     
     const leadSuit = tableCards.length === 1 ? card.suit : this.data.leadSuit;
-    
-    this.setData({
-      tableCards,
-      playerHand,
-      aiHands,
-      leadSuit,
-      selectedCard: null
-    });
+    this.setData({ tableCards, playerHand, aiHands, leadSuit, selectedCard: null });
     
     if (tableCards.length === 4) {
       setTimeout(() => this.endRound(), 1500);
     } else {
-      // 顺时针：你(0) -> 下家(3) -> 对家(2) -> 上家(1) -> 你(0)
+      // 顺时针顺序：你(0) -> 下家(3) -> 对家(2) -> 上家(1)
       const nextPlayer = playerIndex === 0 ? 3 : playerIndex === 3 ? 2 : playerIndex === 2 ? 1 : 0;
       this.setData({ currentPlayer: nextPlayer });
-      if (nextPlayer !== 0) {
-        setTimeout(() => this.aiPlay(), 1000);
-      }
+      if (nextPlayer !== 0) setTimeout(() => this.aiPlay(), 1000);
     }
   },
 
@@ -210,56 +192,35 @@ Page({
   },
 
   endRound() {
-    const { tableCards, leadSuit, collectedCards, rawScores } = this.data;
-    
-    // 找出赢家
+    const { tableCards, leadSuit, collectedCards, rawScores, teams } = this.data;
     let winner = tableCards[0].player;
     let maxRank = this.cardRankValue(tableCards[0].card.rank);
-    
     for (let i = 1; i < 4; i++) {
-      const tc = tableCards[i];
-      if (tc.card.suit === leadSuit) {
-        const rank = this.cardRankValue(tc.card.rank);
-        if (rank > maxRank) {
-          maxRank = rank;
-          winner = tc.player;
-        }
+      if (tableCards[i].card.suit === leadSuit) {
+        const val = this.cardRankValue(tableCards[i].card.rank);
+        if (val > maxRank) { maxRank = val; winner = tableCards[i].player; }
       }
     }
     
-    // 赢家收走所有牌
     const newCollected = [...collectedCards];
-    for (const tc of tableCards) {
-      newCollected[winner].push(tc.card);
-    }
+    for (const tc of tableCards) newCollected[winner].push(tc.card);
     
-    // 计算本轮原始分
     const roundRawScore = this.calculateRoundScore(tableCards);
     const newRawScores = [...rawScores];
     newRawScores[winner] += roundRawScore;
     
-    // 判断队伍并计算队伍分
-    const teams = this.determineTeams(newCollected);
     const teamScores = this.calculateTeamScores(newRawScores, teams);
-    
-    const isOver = this.data.currentRound >= this.data.maxRounds;
+    const isOver = this.data.currentRound >= 13;
     
     this.setData({
-      tableCards: [],
-      currentPlayer: winner,
-      leadSuit: null,
-      collectedCards: newCollected,
-      rawScores: newRawScores,
-      teamScores,
-      teams,
+      tableCards: [], currentPlayer: winner, leadSuit: null,
+      collectedCards: newCollected, rawScores: newRawScores, teamScores,
       currentRound: this.data.currentRound + 1,
       gameState: isOver ? 'over' : 'playing',
-      gameResult: isOver ? this.calculateFinalResult(teamScores) : null
+      gameResult: isOver ? { playerScore: teamScores[0], rank: this.calcRank(teamScores) } : null
     });
     
-    if (!isOver && winner !== 0) {
-      setTimeout(() => this.aiPlay(), 1000);
-    }
+    if (!isOver && winner !== 0) setTimeout(() => this.aiPlay(), 1000);
   },
 
   cardRankValue(rank) {
@@ -267,127 +228,42 @@ Page({
     return values[rank];
   },
 
-  // 判断队伍：猪和羊在谁手里
-  determineTeams(collectedCards) {
-    let pigOwner = null;
-    let sheepOwner = null;
-    
-    for (let i = 0; i < 4; i++) {
-      for (const card of collectedCards[i]) {
-        if (card.id === '♠Q') pigOwner = i;
-        if (card.id === '♦J') sheepOwner = i;
-      }
-    }
-    
-    // 如果还没收到猪或羊，返回null
-    if (pigOwner === null || sheepOwner === null) return null;
-    
-    const teams = {};
-    if (pigOwner === sheepOwner) {
-      // 猪羊同一人，跟对家一队
-      teams[pigOwner] = (pigOwner + 2) % 4;
-      teams[(pigOwner + 2) % 4] = pigOwner;
-      const other1 = (pigOwner + 1) % 4;
-      const other2 = (pigOwner + 3) % 4;
-      teams[other1] = other2;
-      teams[other2] = other1;
-    } else {
-      // 猪羊不同人，这两人一队
-      teams[pigOwner] = sheepOwner;
-      teams[sheepOwner] = pigOwner;
-      const other1 = [0,1,2,3].find(i => i !== pigOwner && i !== sheepOwner);
-      const other2 = [0,1,2,3].find(i => i !== pigOwner && i !== sheepOwner && i !== other1);
-      teams[other1] = other2;
-      teams[other2] = other1;
-    }
-    
-    return teams;
-  },
-
-  // 计算队伍分数
   calculateTeamScores(rawScores, teams) {
     if (!teams) return [...rawScores];
-    
     const teamScores = [0, 0, 0, 0];
     const processed = new Set();
-    
     for (let i = 0; i < 4; i++) {
       if (processed.has(i)) continue;
-      const teammate = teams[i];
-      const teamTotal = rawScores[i] + rawScores[teammate];
-      const avgScore = Math.round(teamTotal / 2);
-      teamScores[i] = avgScore;
-      teamScores[teammate] = avgScore;
-      processed.add(i);
-      processed.add(teammate);
+      const mate = teams[i];
+      const avg = Math.round((rawScores[i] + rawScores[mate]) / 2);
+      teamScores[i] = teamScores[mate] = avg;
+      processed.add(i); processed.add(mate);
     }
-    
     return teamScores;
   },
 
-  // 计算本轮原始分
   calculateRoundScore(tableCards) {
     let score = 0;
-    let hasTransformer = false;
-    let hasPig = false;
-    let hasSheep = false;
-    let heartCards = [];
-    
+    let hasTransformer = false, hasPig = false, hasSheep = false, heartCount = 0;
     for (const tc of tableCards) {
-      const cardId = tc.card.id;
-      if (cardId === '♣10') hasTransformer = true;
-      if (cardId === '♠Q') hasPig = true;
-      if (cardId === '♦J') hasSheep = true;
-      if (tc.card.suit === '♥') heartCards.push(cardId);
+      if (tc.card.id === '♣10') hasTransformer = true;
+      if (tc.card.id === '♠Q') hasPig = true;
+      if (tc.card.id === '♦J') hasSheep = true;
+      if (tc.card.suit === '♥') heartCount++;
+      if (SCORE_CARDS[tc.card.id]) score += SCORE_CARDS[tc.card.id];
     }
-    
-    // 大满贯检查
-    const grandSlam = hasPig && hasSheep && heartCards.length === 13;
-    
-    for (const tc of tableCards) {
-      const cardId = tc.card.id;
-      if (cardId === '♣10') continue;
-      
-      if (grandSlam) {
-        // 大满贯：猪变+100，羊+100，红桃+200
-        if (cardId === '♠Q') score += 100;
-        else if (cardId === '♦J') score += 100;
-        else if (SCORE_CARDS[cardId]) score += Math.abs(SCORE_CARDS[cardId]);
-      } else {
-        if (SCORE_CARDS[cardId] !== undefined) {
-          score += SCORE_CARDS[cardId];
-        }
-      }
-    }
-    
-    // 满红（非大满贯情况）
-    if (!grandSlam && heartCards.length === 13) {
-      let heartScore = 0;
-      for (const h of heartCards) {
-        if (SCORE_CARDS[h]) heartScore += SCORE_CARDS[h];
-      }
-      score = score - heartScore + 200;
-    }
-    
-    // 变压器
-    if (hasTransformer) {
-      if (score === 0) score = 50;
-      else score *= 2;
-    }
-    
+    // 简化处理特殊加分（满红和大满贯等逻辑可后续细化，目前按基础规则）
+    if (hasTransformer) score = (score === 0) ? 50 : score * 2;
     return score;
   },
 
-  calculateFinalResult(teamScores) {
-    const playerScore = teamScores[0];
-    const sorted = [...teamScores].sort((a, b) => b - a);
-    const rank = sorted.indexOf(playerScore) + 1;
-    
-    return { playerScore, rank };
+  calcRank(scores) {
+    const my = scores[0];
+    const sorted = [...scores].sort((a,b) => b-a);
+    return sorted.indexOf(my) + 1;
   },
 
   restart() {
     this.initGame();
-    this.startGame();
   }
 });
