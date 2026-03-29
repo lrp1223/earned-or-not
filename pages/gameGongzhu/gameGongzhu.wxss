@@ -1,103 +1,90 @@
-.container {
-  width: 100vw;
-  height: 100vh;
+.page-container {
+  width: 100vw; height: 100vh;
   background: linear-gradient(180deg, #1a472a 0%, #2d5a27 100%);
   overflow: hidden;
 }
 
 /* ========== 1. 准备界面 ========== */
-.ready-screen {
-  width: 100vw;
-  height: 100vh;
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  justify-content: center;
-  padding: 0 5vw;
-  gap: 8vw;
-}
-
+.ready-screen { width: 100vw; height: 100vh; display: flex; flex-direction: row; align-items: center; justify-content: center; gap: 8vw; }
 .ready-box-left { width: 35vw; display: flex; flex-direction: column; align-items: center; }
-.title-wrap { text-align: center; margin-bottom: 4vh; }
-.emoji-main { font-size: 12vh; display: block; }
 .text-title { font-size: 8vh; font-weight: bold; color: #fff; text-shadow: 0 4px 10px rgba(0,0,0,0.3); }
-.text-subtitle { font-size: 3vh; color: rgba(255,255,255,0.8); letter-spacing: 0.5vw; }
-.btn-primary-start { background: linear-gradient(135deg, #ff6b35 0%, #ff8c42 100%); color: #fff; border-radius: 1.5vh; padding: 2.5vh 6vw; font-size: 3.5vh; font-weight: bold; box-shadow: 0 1vh 3vh rgba(255, 107, 53, 0.4); }
-
-.ready-box-right { width: 50vw; }
+.text-subtitle { font-size: 3vh; color: #ffd700; margin-top: 1vh; letter-spacing: 0.5vw; }
+.btn-primary-start { background: linear-gradient(135deg, #ff6b35 0%, #ff8c42 100%); color: #fff; border-radius: 1.5vh; padding: 2.5vh 6vw; font-size: 3.2vh; font-weight: bold; box-shadow: 0 1vh 3vh rgba(255, 107, 53, 0.4); }
+.ready-box-right { width: 45vw; }
 .rule-card-white { background: rgba(255, 255, 255, 0.95); border-radius: 2.5vh; padding: 3vh 4vw; box-shadow: 0 2vh 6vh rgba(0, 0, 0, 0.25); }
 .rule-row-inline { display: flex; justify-content: space-between; margin-bottom: 2vh; }
-.item-rule { display: flex; align-items: center; font-size: 2.8vh; color: #333; }
-.suit-s, .suit-d, .suit-h, .suit-c { width: 4vh; font-size: 3.5vh; margin-right: 1.5vw; text-align: center; }
-.suit-d, .suit-h { color: #e53935; }
+.item-rule { display: flex; align-items: center; font-size: 2.5vh; color: #333; }
+.suit-s, .suit-d, .suit-h, .suit-c { font-size: 3.5vh; margin-right: 1.5vw; }
 .val { color: #d4a017; font-weight: bold; margin-left: 1vw; }
-.rule-row-full { display: flex; justify-content: center; font-size: 2.8vh; color: #333; margin-bottom: 2vh; border-top: 1rpx solid rgba(0,0,0,0.06); padding-top: 2vh; }
-.rule-bottom-note { font-size: 2.2vh; color: #777; text-align: center; border-top: 1rpx solid rgba(0,0,0,0.06); padding-top: 1.5vh; }
+.rule-tip-bottom { font-size: 2vh; color: #888; text-align: center; border-top: 1rpx solid #eee; padding-top: 1.5vh; }
 
 /* ========== 2. 游戏界面 ========== */
-.game-screen-fixed { width: 100vw; height: 100vh; position: relative; display: flex; flex-direction: column; }
-.bar-top { height: 5vh; display: flex; justify-content: center; align-items: center; gap: 2vw; padding-top: 1vh; }
+.game-screen-fixed { width: 100vw; height: 100vh; display: flex; flex-direction: column; position: relative; }
+.bar-top { height: 6vh; display: flex; justify-content: center; align-items: center; gap: 2vw; }
 .tag-status { font-size: 2vh; color: #fff; background: rgba(0,0,0,0.4); padding: 0.5vh 2vw; border-radius: 1vh; }
 
-.board-middle { height: 60vh; position: relative; }
-.seat-pos { position: absolute; display: flex; flex-direction: column; align-items: center; z-index: 100; }
-.seat-top-mid { top: 2vh; left: 50%; transform: translateX(-50%); }
-.seat-left-mid { left: 4vw; top: 40%; transform: translateY(-50%); }
-.seat-right-mid { right: 4vw; top: 40%; transform: translateY(-50%); }
-.seat-bottom-mid { bottom: 2vh; left: 50%; transform: translateX(-50%); }
+.board-middle { height: 59vh; position: relative; }
+.seat-pos { position: absolute; display: flex; align-items: center; z-index: 100; }
+.seat-top-mid { top: 2vh; left: 50%; transform: translateX(-50%); flex-direction: column; }
+.seat-left-mid { left: 2vw; top: 40%; transform: translateY(-50%); flex-direction: row; }
+.seat-right-mid { right: 2vw; top: 40%; transform: translateY(-50%); flex-direction: row-reverse; }
+.seat-bottom-mid { bottom: 2vh; left: 50%; transform: translateX(-50%); flex-direction: column-reverse; }
 
-.u-info { background: rgba(255,255,255,0.15); border-radius: 1vh; padding: 1vh 1.5vw; display: flex; flex-direction: column; align-items: center; border: 2rpx solid transparent; }
-.u-active { background: rgba(255,215,0,0.25); border-color: #ffd700; }
-.u-avatar { width: 6vh; height: 6vh; background: #fff; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 3.5vh; }
-.u-name { font-size: 1.8vh; color: #fff; margin-top: 0.5vh; }
-.u-score { font-size: 2.5vh; font-weight: bold; color: #ffd700; }
-.u-team { font-size: 1.5vh; color: #4caf50; background: #e8f5e9; padding: 0.2vh 1vw; border-radius: 0.5vh; margin-top: 0.3vh; }
-.u-cards-tip { font-size: 1.8vh; color: #ccc; margin-top: 0.5vh; }
+.u-info {
+  background: rgba(0,0,0,0.3); border-radius: 1vh; padding: 0.8vh 1.5vw;
+  display: flex; flex-direction: column; align-items: center; border: 2rpx solid transparent;
+}
+.u-active { border-color: #ffd700; box-shadow: 0 0 1.5vh #ffd700; }
+.u-avatar { width: 5.5vh; height: 5.5vh; background: #fff; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 3.5vh; }
+.u-score { font-size: 2.2vh; font-weight: bold; color: #ffd700; margin-top: 0.3vh; }
+
+/* 收牌区：展示得分牌 */
+.u-collected-zone { display: flex; flex-wrap: wrap; gap: 0.5vw; max-width: 15vw; margin: 1vh; }
+.mini-card {
+  font-size: 1.8vh; font-weight: bold; background: #fff; border-radius: 0.3vh;
+  padding: 0.2vh 0.5vw; color: #333; box-shadow: 0 0.2vh 0.5vh rgba(0,0,0,0.3);
+}
+.p-red { color: #e53935; }
 
 .center-table-cards { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 30vw; height: 25vh; }
-.played-card-box { width: 7vh; height: 10vh; background: #fff; border-radius: 0.8vh; display: flex; flex-direction: column; align-items: center; justify-content: center; position: absolute; box-shadow: 0 1vh 2vh rgba(0,0,0,0.3); }
-.p-suit { font-size: 3.5vh; }
-.p-red { color: #e53935; }
+.played-card-box { width: 7vh; height: 10vh; position: absolute; }
+.p-card-inner {
+  width: 100%; height: 100%; background: #fff; border-radius: 0.8vh;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  box-shadow: 0 0.5vh 1.5vh rgba(0,0,0,0.4); border: 1px solid #ddd;
+}
+.p-suit { font-size: 3.5vh; line-height: 1; }
 .p-rank { font-size: 2.5vh; font-weight: bold; color: #333; }
 .p-t { top: 0; left: 50%; transform: translateX(-50%); }
 .p-b { bottom: 0; left: 50%; transform: translateX(-50%); }
 .p-l { left: 0; top: 50%; transform: translateY(-50%); }
 .p-r { right: 0; top: 50%; transform: translateY(-50%); }
 
-/* 底部区域 */
-.area-bottom-hand { height: 35vh; display: flex; flex-direction: column; align-items: center; background: rgba(0,0,0,0.3); padding-bottom: env(safe-area-inset-bottom); box-sizing: border-box; }
-.btn-row-action { height: 10vh; display: flex; align-items: center; justify-content: center; }
-.btn-confirm-play { width: 25vw; height: 7vh; background: #888; border-radius: 3.5vh; display: flex; align-items: center; justify-content: center; color: #fff; font-size: 3.5vh; font-weight: bold; }
+/* 底部区域与手牌拟物化 */
+.area-bottom-hand { height: 35vh; background: rgba(0,0,0,0.25); display: flex; flex-direction: column; align-items: center; }
+.btn-row-action { height: 9vh; display: flex; align-items: center; }
+.btn-confirm-play { width: 20vw; height: 6.5vh; background: #666; border-radius: 3vh; display: flex; align-items: center; justify-content: center; color: #fff; font-size: 3vh; font-weight: bold; }
 .btn-enabled { background: linear-gradient(135deg, #ffd700 0%, #ffaa00 100%); color: #333; }
 
-.hand-view-center { width: 100vw; height: 25vh; position: relative; overflow: visible; }
+.hand-view-center { width: 100vw; height: 26vh; position: relative; }
 .hand-card-stack { width: 100%; height: 100%; position: relative; }
 
-/* 手牌：竖版比例 (9vh : 13vh ≈ 5:7) */
 .h-card-item {
-  width: 9vh; 
-  height: 13vh;
-  background: #fff;
-  border-radius: 0.8vh;
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  justify-content: flex-start;
-  padding: 1.2vh 0.8vh;
-  position: absolute;
-  bottom: 2vh;
-  box-shadow: 0 0.5vh 1vh rgba(0,0,0,0.3);
-  border: 1rpx solid #eee;
-  box-sizing: border-box;
+  width: 8.5vh; height: 12.5vh; background: #fff; border-radius: 0.8vh;
+  position: absolute; bottom: 3vh; box-shadow: 0 0.5vh 1.5vh rgba(0,0,0,0.4);
+  border: 1px solid #ccc; box-sizing: border-box; transition: transform 0.1s;
 }
+.h-card-face { width: 100%; height: 100%; position: relative; padding: 0.8vh 0.8vh; }
+.h-suit { font-size: 2.8vh; display: block; line-height: 1; }
+.h-rank { font-size: 2.8vh; font-weight: bold; color: #1a1a1a; display: block; line-height: 1; margin-top: 0.2vh; }
+.h-suit-mini { position: absolute; bottom: 0.8vh; right: 0.8vh; font-size: 2vh; opacity: 0.8; }
 
-.h-selected { transform: translateY(-4vh); z-index: 500 !important; border: 0.3vh solid #ffd700; box-shadow: 0 1vh 2vh rgba(255, 215, 0, 0.5); }
-.h-disabled { opacity: 0.4; }
-.h-suit { font-size: 3vh; line-height: 1; }
-.h-rank { font-size: 2.8vh; font-weight: bold; color: #333; line-height: 1; margin-top: 0.3vh; }
+.h-selected { transform: translateY(-4vh); z-index: 500 !important; border: 0.4vh solid #ffd700; box-shadow: 0 1vh 2vh rgba(255, 215, 0, 0.5); }
+.h-disabled { opacity: 0.5; filter: grayscale(0.5); }
 
+/* 结算 */
 .mask-overlay { position: absolute; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.9); display: flex; align-items: center; justify-content: center; z-index: 1000; }
-.box-result { text-align: center; }
-.ico-result { font-size: 15vh; margin-bottom: 2vh; }
-.tit-result { font-size: 8vh; font-weight: bold; color: #fff; display: block; }
-.num-result { font-size: 5vh; color: #ffd700; margin-bottom: 5vh; display: block; }
+.box-result { text-align: center; color: #fff; }
+.ico-result { font-size: 12vh; display: block; margin-bottom: 2vh; }
+.tit-result { font-size: 6vh; font-weight: bold; }
+.num-result { font-size: 4vh; color: #ffd700; margin: 3vh 0; display: block; }
