@@ -20,7 +20,7 @@
           <view class="item-rule"><text class="suit-h">♥</text><text>红桃</text><text class="val">-10~-50</text></view>
           <view class="item-rule"><text class="suit-c">♣</text><text>10变压</text><text class="val">×2</text></view>
         </view>
-        <view class="rule-tip-bottom">起手定队 · 分数末尾结算平均</view>
+        <view class="rule-tip-bottom">起手定队 · 分数末尾平均结算</view>
       </view>
     </view>
     
