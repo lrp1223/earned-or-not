@@ -164,9 +164,73 @@ Page({
   aiPlay() {
     const playerIndex = this.data.currentPlayer;
     const hand = this.data.aiHands[playerIndex - 1];
+    const { tableCards, leadSuit, displayScores } = this.data;
     const validCards = hand.filter(c => this.isValidPlay(c, hand));
-    const card = validCards[Math.floor(Math.random() * validCards.length)];
+    
+    let card = null;
+
+    // --- AI 策略逻辑开始 ---
+    if (tableCards.length === 0) {
+      // 1. 作为首家出牌：尽量避开负分，寻找正分
+      // 如果有 ♦J 且 ♦ 大牌多，尝试领出方片
+      const hasSheep = hand.some(c => c.id === '♦J');
+      const diamonds = hand.filter(c => c.suit === '♦');
+      if (hasSheep && diamonds.length > 3) {
+        card = hand.find(c => c.id === '♦A') || hand.find(c => c.id === '♦K') || hand.find(c => c.id === '♦J');
+      }
+      
+      // 否则领出最小的非得分牌
+      if (!card) {
+        const safeCards = validCards.filter(c => !SCORE_CARDS[c.id] && c.id !== '♣10');
+        if (safeCards.length > 0) {
+          card = safeCards.sort((a,b) => this.cardRankValue(a.rank) - this.cardRankValue(b.rank))[0];
+        }
+      }
+    } else {
+      // 2. 跟牌逻辑：分析当前桌面是否有得分牌
+      const hasScore = tableCards.some(tc => SCORE_CARDS[tc.card.id]);
+      const hasPig = tableCards.some(tc => tc.card.id === '♠Q');
+      const hasSheepOnTable = tableCards.some(tc => tc.card.id === '♦J');
+      const currentWinner = this.getCurrentTableWinner();
+      
+      // 判断是否要赢下这一轮
+      let wantToWin = false;
+      if (hasSheepOnTable) wantToWin = true; // 有羊必抢
+      if (displayScores[playerIndex] > 0 && tableCards.some(tc => tc.card.id === '♣10')) wantToWin = true; // 正分抢变压器
+      
+      if (wantToWin) {
+        // 尝试出大牌赢下
+        const bigCards = validCards.sort((a,b) => this.cardRankValue(b.rank) - this.cardRankValue(a.rank));
+        card = bigCards[0];
+      } else if (hasPig || hasScore) {
+        // 有负分，尝试不出最大（除非必须赢或者你是最后一家且赢不了）
+        const smallCards = validCards.sort((a,b) => this.cardRankValue(a.rank) - this.cardRankValue(b.rank));
+        // 如果能垫掉 ♠Q 或 ♣10 等“祸根”，优先垫掉
+        const trouble = validCards.find(c => c.id === '♠Q' || c.id === '♣10');
+        card = trouble || smallCards[0];
+      }
+    }
+
+    // 保底：随机选一张合法的
+    if (!card) card = validCards[Math.floor(Math.random() * validCards.length)];
+    // --- AI 策略逻辑结束 ---
+
     this.playCard(playerIndex, card);
+  },
+
+  // 辅助：判断当前桌面上谁最大
+  getCurrentTableWinner() {
+    const { tableCards, leadSuit } = this.data;
+    if (tableCards.length === 0) return -1;
+    let winner = tableCards[0].player;
+    let maxRank = this.cardRankValue(tableCards[0].card.rank);
+    for (let i = 1; i < tableCards.length; i++) {
+      if (tableCards[i].card.suit === leadSuit) {
+        const val = this.cardRankValue(tableCards[i].card.rank);
+        if (val > maxRank) { maxRank = val; winner = tableCards[i].player; }
+      }
+    }
+    return winner;
   },
 
   endRound() {
@@ -221,10 +285,24 @@ Page({
     const teams = this.data.teams;
     const final = [0,0,0,0];
     const processed = new Set();
+    
+    // 在平均前，检查每个人是否达成“全红”或“大满贯”
+    const optimizedScores = rawScores.map((score, idx) => {
+      const myCollected = this.data.collectedScoreCards[idx];
+      const hearts = myCollected.filter(c => c.suit === '♥');
+      let finalScore = score;
+      
+      if (hearts.length === 13) {
+        // 全红逻辑：扣除原本红桃扣的200分，反加200分
+        finalScore = score + 200 + 200; 
+      }
+      return finalScore;
+    });
+
     for (let i = 0; i < 4; i++) {
       if (processed.has(i)) continue;
       const mate = teams[i];
-      const avg = Math.round((rawScores[i] + rawScores[mate]) / 2);
+      const avg = Math.round((optimizedScores[i] + optimizedScores[mate]) / 2);
       final[i] = final[mate] = avg;
       processed.add(i); processed.add(mate);
     }
