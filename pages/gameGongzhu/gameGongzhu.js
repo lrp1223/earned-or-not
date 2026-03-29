@@ -20,7 +20,9 @@ Page({
     selectedCard: null,
     leadSuit: null,
     gameResult: null,
-    collectedScoreCards: [[], [], [], []] // 每个人收到的得分牌，用于界面展示
+    collectedScoreCards: [[], [], [], []],
+    pigPlayer: -1, // 记录谁打出了猪
+    sheepPlayer: -1 // 记录谁打出了羊
   },
 
   onLoad() { this.initGame(); },
@@ -31,7 +33,8 @@ Page({
       tableCards: [], playerHand: [], aiHands: [[], [], []],
       rawScores: [0, 0, 0, 0], displayScores: [0, 0, 0, 0],
       teams: null, selectedCard: null, leadSuit: null, gameResult: null,
-      collectedScoreCards: [[], [], [], []]
+      collectedScoreCards: [[], [], [], []],
+      pigPlayer: -1, sheepPlayer: -1
     });
   },
 
@@ -140,7 +143,14 @@ Page({
     }
     
     const leadSuit = tableCards.length === 1 ? card.suit : this.data.leadSuit;
-    this.setData({ tableCards, playerHand, aiHands, leadSuit, selectedCard: null });
+    
+    // 追踪猪和羊被打出的记录
+    let pigPlayer = this.data.pigPlayer;
+    let sheepPlayer = this.data.sheepPlayer;
+    if (card.id === '♠Q') pigPlayer = playerIndex;
+    if (card.id === '♦J') sheepPlayer = playerIndex;
+
+    this.setData({ tableCards, playerHand, aiHands, leadSuit, selectedCard: null, pigPlayer, sheepPlayer });
     
     if (tableCards.length === 4) {
       setTimeout(() => this.endRound(), 1500);

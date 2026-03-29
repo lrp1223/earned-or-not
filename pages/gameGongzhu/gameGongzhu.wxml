@@ -1,17 +1,17 @@
 <!--pages/gameGongzhu/gameGongzhu.wxml-->
 <view class="page-container">
-  <!-- 1. 准备界面 -->
+  <!-- 1. 准备界面 (左侧标题+规则, 右侧按钮) -->
   <view class="ready-screen" wx:if="{{gameState === 'ready'}}">
-    <view class="ready-box-left">
-      <view class="title-wrap">
+    <view class="ready-box-left-col">
+      <view class="title-wrap-left">
         <text class="emoji-main">🐷</text>
-        <text class="text-title">拱猪</text>
-        <text class="text-subtitle">经典组队版</text>
+        <view class="title-texts">
+          <text class="text-title">拱猪</text>
+          <text class="text-subtitle">经典组队版</text>
+        </view>
       </view>
-      <view class="btn-primary-start" bindtap="startGame">开始游戏</view>
-    </view>
-    <view class="ready-box-right">
-      <view class="rule-card-white">
+      
+      <view class="rule-card-white-compact">
         <view class="rule-row-inline">
           <view class="item-rule"><text class="suit-s">♠</text><text>Q猪</text><text class="val">-100</text></view>
           <view class="item-rule"><text class="suit-d">♦</text><text>J羊</text><text class="val">+100</text></view>
@@ -22,6 +22,10 @@
         </view>
         <view class="rule-tip-bottom">起手定队 · 分数末尾结算平均</view>
       </view>
+    </view>
+    
+    <view class="ready-box-right-btn">
+      <view class="btn-primary-start-large" bindtap="startGame">开始游戏</view>
     </view>
   </view>
 
@@ -35,15 +39,20 @@
 
     <!-- 牌桌中间层 -->
     <view class="board-middle">
-      <!-- 玩家通用模板 -->
-      <block wx:for="{{[2, 3, 1]}}" wx:for-item="idx" wx:key="idx">
-        <view class="seat-pos {{idx === 2 ? 'seat-top-mid' : idx === 3 ? 'seat-left-mid' : 'seat-right-mid'}}">
+      <!-- 玩家列表 -->
+      <block wx:for="{{[2, 3, 1, 0]}}" wx:for-item="idx" wx:key="idx">
+        <view class="seat-pos seat-{{idx}}">
           <view class="u-info {{currentPlayer === idx ? 'u-active' : ''}}">
             <view class="u-avatar">{{idx === 0 ? '😀' : '🤖'}}</view>
             <text class="u-score">{{displayScores[idx]}}</text>
+            <!-- 猪羊初始持有标识 (被打出后才显示) -->
+            <view class="u-ident-wrap">
+              <text class="u-ident" wx:if="{{pigPlayer === idx}}">🐷</text>
+              <text class="u-ident" wx:if="{{sheepPlayer === idx}}">🐑</text>
+            </view>
           </view>
           <!-- 得分牌展示区 -->
-          <view class="u-collected-zone {{idx === 3 ? 'zone-left' : idx === 1 ? 'zone-right' : 'zone-top'}}">
+          <view class="u-collected-zone zone-{{idx}}" wx:if="{{collectedScoreCards[idx].length > 0}}">
             <view class="mini-card" wx:for="{{collectedScoreCards[idx]}}" wx:for-item="card" wx:key="index">
               <text class="{{card.suit === '♥' || card.suit === '♦' ? 'p-red' : ''}}">{{card.suit}}{{card.rank}}</text>
             </view>
@@ -61,22 +70,9 @@
           </view>
         </view>
       </view>
-
-      <!-- 自己 -->
-      <view class="seat-pos seat-bottom-mid">
-        <view class="u-info {{currentPlayer === 0 ? 'u-active' : ''}}">
-          <view class="u-avatar">😀</view>
-          <text class="u-score">{{displayScores[0]}}</text>
-        </view>
-        <view class="u-collected-zone zone-bottom">
-          <view class="mini-card" wx:for="{{collectedScoreCards[0]}}" wx:for-item="card" wx:key="index">
-            <text class="{{card.suit === '♥' || card.suit === '♦' ? 'p-red' : ''}}">{{card.suit}}{{card.rank}}</text>
-          </view>
-        </view>
-      </view>
     </view>
 
-    <!-- 底部区域 -->
+    <!-- 底部手牌区域 -->
     <view class="area-bottom-hand" wx:if="{{gameState === 'playing'}}">
       <view class="btn-row-action">
         <view class="btn-confirm-play {{selectedCard !== null ? 'btn-enabled' : ''}}" bindtap="confirmPlay">出牌</view>
@@ -97,11 +93,11 @@
       </view>
     </view>
 
-    <!-- 结果 -->
+    <!-- 结果结算 -->
     <view class="mask-overlay" wx:if="{{gameState === 'over'}}">
       <view class="box-result">
         <text class="ico-result">{{gameResult.rank === 1 ? '🏆' : '💔'}}</text>
-        <text class="tit-result">{{gameResult.rank === 1 ? '冠军' : '再接再厉'}}</text>
+        <text class="tit-result">{{gameResult.rank === 1 ? '你赢了！' : '惜败'}}</text>
         <text class="num-result">最终得分: {{gameResult.playerScore}}</text>
         <view class="btn-primary-start" bindtap="restart">返回大厅</view>
       </view>
