@@ -5,24 +5,75 @@
 }
 
 /* ========== 1. 准备界面 (左侧标题规则, 右侧按钮) ========== */
-.ready-screen { width: 100vw; height: 100vh; display: flex; flex-direction: row; align-items: center; justify-content: center; gap: 6vw; padding: 0 5vw; }
+.ready-screen { 
+  width: 100vw; 
+  height: 100vh; 
+  display: flex; 
+  flex-direction: row; 
+  align-items: center; 
+  justify-content: center; 
+  gap: 6vw; 
+  padding: 0 5vw calc(env(safe-area-inset-bottom) + 2vh); /* 留出底部安全区 */
+  box-sizing: border-box;
+}
 
-.ready-box-left-col { width: 50vw; display: flex; flex-direction: column; align-items: flex-start; }
-.title-wrap-left { display: flex; align-items: center; gap: 2vw; margin-bottom: 3vh; }
-.emoji-main { font-size: 10vh; }
-.text-title { font-size: 7vh; font-weight: bold; color: #fff; display: block; }
-.text-subtitle { font-size: 2.5vh; color: #ffd700; letter-spacing: 2rpx; }
+.ready-box-left-col { 
+  width: 55vw; /* 稍微调宽左侧给规则腾空间 */
+  display: flex; 
+  flex-direction: column; 
+  align-items: flex-start; 
+}
 
-.rule-card-white-compact { background: rgba(255, 255, 255, 0.95); border-radius: 2vh; padding: 2vh 3vw; box-shadow: 0 1vh 3vh rgba(0, 0, 0, 0.2); width: 100%; box-sizing: border-box; }
-.rule-row-inline { display: flex; justify-content: space-between; margin-bottom: 1.5vh; }
-.item-rule { display: flex; align-items: center; font-size: 2.2vh; color: #333; }
-.suit-s, .suit-d, .suit-h, .suit-c { font-size: 3vh; margin-right: 1vw; width: 3.5vh; text-align: center; }
-.suit-d, .suit-h { color: #e53935; }
-.val { color: #d4a017; font-weight: bold; margin-left: 1vw; }
-.rule-tip-bottom { font-size: 1.8vh; color: #888; text-align: center; border-top: 1rpx solid #eee; padding-top: 1vh; margin-top: 1vh; }
+.rule-card-white-compact { 
+  background: rgba(255, 255, 255, 0.95); 
+  border-radius: 2vh; 
+  padding: 2vh 2.5vw; 
+  box-shadow: 0 1vh 3vh rgba(0, 0, 0, 0.2); 
+  width: 100%; 
+  box-sizing: border-box; 
+}
 
-.ready-box-right-btn { width: 30vw; display: flex; justify-content: center; }
-.btn-primary-start-large { background: linear-gradient(135deg, #ff6b35 0%, #ff8c42 100%); color: #fff; border-radius: 2vh; padding: 3vh 5vw; font-size: 3.5vh; font-weight: bold; box-shadow: 0 1vh 3vh rgba(255, 107, 53, 0.4); text-align: center; }
+.rule-row-inline { 
+  display: flex; 
+  justify-content: space-between; 
+  margin-bottom: 1vh; /* 压缩行距 */
+}
+
+.item-rule { 
+  display: flex; 
+  align-items: center; 
+  font-size: 2vh; /* 再次缩小字号确保不换行 */
+  color: #333;
+  flex: 1;
+}
+
+.rule-tip-bottom { 
+  font-size: 1.8vh; 
+  color: #d4a017; /* 调亮颜色 */
+  text-align: center; 
+  border-top: 1rpx solid #eee; 
+  padding-top: 1vh; 
+  margin-top: 1vh;
+  font-weight: bold;
+}
+
+.ready-box-right-btn { 
+  width: 25vw; 
+  display: flex; 
+  justify-content: center; 
+}
+
+.btn-primary-start-large { 
+  background: linear-gradient(135deg, #ff6b35 0%, #ff8c42 100%); 
+  color: #fff; 
+  border-radius: 2vh; 
+  padding: 3vh 4vw; /* 缩小左右 padding */
+  font-size: 3vh; /* 缩小字号 */
+  font-weight: bold; 
+  box-shadow: 0 1vh 3vh rgba(255, 107, 53, 0.4); 
+  text-align: center;
+  white-space: nowrap;
+}
 
 /* ========== 2. 游戏界面 ========== */
 .game-screen-fixed { width: 100vw; height: 100vh; display: flex; flex-direction: column; position: relative; }
