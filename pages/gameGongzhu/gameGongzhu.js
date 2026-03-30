@@ -61,10 +61,18 @@ Page({
       gameCount: this.data.gameCount + 1
     });
 
+    // 使用局部变量 firstPlayer，避免 setData 异步问题
     if (firstPlayer !== 0) setTimeout(() => this.aiPlay(), 1000);
   },
 
   nextGame() {
+    // 清空桌面，开始新的一局
+    this.setData({
+      tableCards: [],
+      leadSuit: null,
+      selectedCard: null,
+      gameResult: null
+    });
     this.startGame();
   },
 
@@ -237,24 +245,40 @@ Page({
     let newTotalScores = [...totalScores];
     let rawScoresThisGame = [0,0,0,0];  // 每个人原始抓到的分数（未平均，但已应用变压器）
 
-    if (isOver) {
+    if (isOver && teams) {
       const result = this.calculateFinalAverage(newRawScores);
       finalThisGameScores = result.final;
       rawScoresThisGame = result.optimizedScores;  // 使用已应用变压器的分数
       for (let i = 0; i < 4; i++) newTotalScores[i] += finalThisGameScores[i];
+      
+      // 生成排序后的玩家列表（从高分到低分）
+      let sortedPlayers = [0, 1, 2, 3].map(idx => ({
+        idx,
+        name: idx === 0 ? '😀 你' : (idx === 1 ? '上家' : (idx === 2 ? '对家' : '下家')),
+        thisGameScore: finalThisGameScores[idx],
+        rawScore: rawScoresThisGame[idx],  // 已应用变压器规则后的分数
+        totalScore: newTotalScores[idx],
+        isTeammate: teams[0] === idx && idx !== 0  // 0 是玩家自己，其他与 0 同队的是队友
+      }));
+      sortedPlayers.sort((a, b) => b.totalScore - a.totalScore);  // 按总分排序
+      
+      this.setData({
+        tableCards: [], currentPlayer: winner, leadSuit: null,
+        collectedScoreCards: newCollected,
+        rawScores: newRawScores,
+        displayScores: newRawScores,
+        currentRound: currentRound + 1,
+        totalScores: newTotalScores,
+        gameState: 'over',
+        gameResult: { 
+          thisGameScores: finalThisGameScores,
+          sortedPlayers: sortedPlayers
+        }
+      });
+      return;
     }
-    
-    // 生成排序后的玩家列表（从高分到低分）
-    let sortedPlayers = [0, 1, 2, 3].map(idx => ({
-      idx,
-      name: idx === 0 ? '😀 你' : (idx === 1 ? '上家' : (idx === 2 ? '对家' : '下家')),
-      thisGameScore: finalThisGameScores[idx],
-      rawScore: rawScoresThisGame[idx],  // 原始抓到的分数（未平均，但已应用变压器）
-      totalScore: newTotalScores[idx],
-      isTeammate: teams[0] === idx && idx !== 0  // 0 是玩家自己，其他与 0 同队的是队友
-    }));
-    sortedPlayers.sort((a, b) => b.thisGameScore - a.thisGameScore);
 
+    // 游戏未结束，继续下一轮
     this.setData({
       tableCards: [], currentPlayer: winner, leadSuit: null,
       collectedScoreCards: newCollected,
@@ -262,14 +286,11 @@ Page({
       displayScores: newRawScores,
       currentRound: currentRound + 1,
       totalScores: newTotalScores,
-      gameState: isOver ? 'over' : 'playing',
-      gameResult: isOver ? { 
-        thisGameScores: finalThisGameScores,
-        sortedPlayers: sortedPlayers
-      } : null
+      gameState: 'playing',
+      gameResult: null
     });
     
-    if (!isOver && winner !== 0) setTimeout(() => this.aiPlay(), 800);
+    if (winner !== 0) setTimeout(() => this.aiPlay(), 800);
   },
 
   calculateFinalAverage(rawScores) {
