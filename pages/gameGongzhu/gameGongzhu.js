@@ -210,7 +210,7 @@ Page({
   },
 
   endRound() {
-    const { tableCards, leadSuit, rawScores, collectedScoreCards, currentRound, totalScores } = this.data;
+    const { tableCards, leadSuit, rawScores, collectedScoreCards, currentRound, totalScores, teams } = this.data;
     let winner = tableCards[0].player;
     let maxRank = this.cardRankValue(tableCards[0].card.rank);
     for (let i = 1; i < 4; i++) {
