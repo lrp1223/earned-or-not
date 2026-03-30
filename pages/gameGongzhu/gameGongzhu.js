@@ -235,9 +235,12 @@ Page({
     const isOver = currentRound >= 13;
     let finalThisGameScores = [0,0,0,0];
     let newTotalScores = [...totalScores];
+    let rawScoresThisGame = [0,0,0,0];  // 每个人原始抓到的分数
 
     if (isOver) {
-      finalThisGameScores = this.calculateFinalAverage(newRawScores);
+      const result = this.calculateFinalAverage(newRawScores);
+      finalThisGameScores = result.final;
+      rawScoresThisGame = result.rawFromCollected;  // 保存原始分数
       for (let i = 0; i < 4; i++) newTotalScores[i] += finalThisGameScores[i];
     }
     
@@ -246,6 +249,7 @@ Page({
       idx,
       name: idx === 0 ? '😀 你' : (idx === 1 ? '上家' : (idx === 2 ? '对家' : '下家')),
       thisGameScore: finalThisGameScores[idx],
+      rawScore: rawScoresThisGame[idx],  // 原始抓到的分数
       totalScore: newTotalScores[idx],
       isTeammate: teams[0] === idx && idx !== 0  // 0 是玩家自己，其他与 0 同队的是队友
     }));
@@ -282,7 +286,7 @@ Page({
       });
     };
     
-    // 直接从 collectedScoreCards 计算原始分数，不依赖 rawScores
+    // 直接从 collectedScoreCards 计算原始分数
     const rawFromCollected = this.data.collectedScoreCards.map(collected => {
       let score = 0;
       for (const card of collected) {
@@ -315,7 +319,7 @@ Page({
       final[i] = final[mate] = avg;
       processed.add(i); processed.add(mate);
     }
-    return final;
+    return { final, rawFromCollected, optimizedScores };
   },
 
   cardRankValue(rank) {

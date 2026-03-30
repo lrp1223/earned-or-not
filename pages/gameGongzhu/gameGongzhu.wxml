@@ -99,12 +99,14 @@
         <view class="score-table">
           <view class="score-row head">
             <text class="col-p">玩家</text>
+            <text class="col-r">抓到分</text>
             <text class="col-s">本局</text>
             <text class="col-t">总分</text>
           </view>
           <block wx:for="{{gameResult.sortedPlayers}}" wx:for-item="player" wx:key="idx">
             <view class="score-row {{player.idx === 0 ? 'me' : ''}} {{player.isTeammate ? 'teammate' : ''}}">
               <text class="col-p">{{player.name}}{{player.isTeammate ? ' 🤝' : ''}}</text>
+              <text class="col-r {{player.rawScore >= 0 ? 'plus' : 'minus'}}">{{player.rawScore}}</text>
               <text class="col-s {{player.thisGameScore >= 0 ? 'plus' : 'minus'}}">{{player.thisGameScore}}</text>
               <text class="col-t">{{player.totalScore}}</text>
             </view>
