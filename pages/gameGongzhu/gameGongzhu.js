@@ -143,8 +143,9 @@ Page({
   },
 
   cardSortValue(card) {
-    const suitOrder = { '♣': 0, '♦': 1, '♠': 2, '♥': 3 };
-    const rankOrder = { '2': 0, '3': 1, '4': 2, '5': 3, '6': 4, '7': 5, '8': 6, '9': 7, '10': 8, 'J': 9, 'Q': 10, 'K': 11, 'A': 12 };
+    // 先按花色排序（S 黑桃 > H 红桃 > C 梅花 > D 方片），再按点数从大到小
+    const suitOrder = { 'S': 0, 'H': 1, 'C': 2, 'D': 3 };
+    const rankOrder = { 'A': 12, 'K': 11, 'Q': 10, 'J': 9, '10': 8, '9': 7, '8': 6, '7': 5, '6': 4, '5': 3, '4': 2, '3': 1, '2': 0 };
     return suitOrder[card.suit] * 13 + rankOrder[card.rank];
   },
 
