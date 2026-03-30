@@ -143,8 +143,8 @@ Page({
   },
 
   cardSortValue(card) {
-    // 先按花色排序（S 黑桃 > H 红桃 > C 梅花 > D 方片），再按点数从大到小
-    const suitOrder = { 'S': 0, 'H': 1, 'C': 2, 'D': 3 };
+    // 花色顺序：黑桃 > 梅花 > 方片 > 红桃，同花色内从大到小（A>K>Q...>2）
+    const suitOrder = { 'S': 0, 'C': 1, 'D': 2, 'H': 3 };
     const rankOrder = { 'A': 12, 'K': 11, 'Q': 10, 'J': 9, '10': 8, '9': 7, '8': 6, '7': 5, '6': 4, '5': 3, '4': 2, '3': 1, '2': 0 };
     return suitOrder[card.suit] * 13 + rankOrder[card.rank];
   },
