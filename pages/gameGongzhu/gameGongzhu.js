@@ -252,7 +252,13 @@ Page({
       }
     }
     
-    const roundScoreCards = tableCards.filter(tc => SCORE_CARDS[tc.card.id] || tc.card.id === 'C10').map(tc => tc.card);
+    // 收牌区展示：分数牌 + 梅花 10 + 所有红桃（包括 2/3/4，方便判断变压器规则）
+    const roundScoreCards = tableCards.filter(tc => {
+      if (SCORE_CARDS[tc.card.id]) return true;  // 分数牌
+      if (tc.card.id === 'C10') return true;     // 梅花 10
+      if (tc.card.suit === 'H') return true;     // 所有红桃（包括 2/3/4）
+      return false;
+    }).map(tc => tc.card);
     const newCollected = [...collectedScoreCards];
     newCollected[winner] = [...newCollected[winner], ...roundScoreCards];
     
