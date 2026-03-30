@@ -1,11 +1,30 @@
-const SUITS = ['♣', '♦', '♠', '♥'];
+// 花色定义：S=黑桃，H=红桃，C=梅花，D=方片
+const SUITS = ['C', 'D', 'S', 'H'];
 const RANKS = ['2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K', 'A'];
+
+// 分数牌定义（使用花色字母）
 const SCORE_CARDS = {
-  '♠Q': -100, '♦J': 100,
-  '♥A': -50, '♥K': -40, '♥Q': -30, '♥J': -20,
-  '♥10': -10, '♥9': -10, '♥8': -10, '♥7': -10, '♥6': -10, '♥5': -10
+  'SQ': -100,  // 黑桃 Q（猪）
+  'DJ': 100,   // 方片 J（羊）
+  'HA': -50, 'HK': -40, 'HQ': -30, 'HJ': -20,
+  'H10': -10, 'H9': -10, 'H8': -10, 'H7': -10, 'H6': -10, 'H5': -10
   // 红桃 2、3、4 没有分数
 };
+
+// 花色符号映射（用于界面展示）
+const SUIT_SYMBOLS = { 'S': '♠', 'H': '♥', 'C': '♣', 'D': '♦' };
+const SUIT_COLORS = { 'S': 'black', 'H': 'red', 'C': 'black', 'D': 'red' };
+
+// 辅助函数：创建牌的展示对象
+function createCard(suit, rank) {
+  return {
+    suit,  // 内部用字母
+    rank,
+    id: `${suit}${rank}`,  // 如 "SQ" = 黑桃 Q
+    displaySuit: SUIT_SYMBOLS[suit],  // 展示用符号
+    isRed: SUIT_COLORS[suit] === 'red'  // 是否红色花色
+  };
+}
 
 Page({
   data: {
@@ -79,8 +98,8 @@ Page({
   determineTeamsInitial(hands) {
     let pigOwner = -1, sheepOwner = -1;
     for (let i = 0; i < 4; i++) {
-      if (hands[i].some(c => c.id === '♠Q')) pigOwner = i;
-      if (hands[i].some(c => c.id === '♦J')) sheepOwner = i;
+      if (hands[i].some(c => c.id === 'SQ')) pigOwner = i;  // 黑桃 Q
+      if (hands[i].some(c => c.id === 'DJ')) sheepOwner = i;  // 方片 J
     }
     const teams = {};
     if (pigOwner === sheepOwner) {
@@ -98,7 +117,9 @@ Page({
   createDeck() {
     const deck = [];
     for (const suit of SUITS) {
-      for (const rank of RANKS) deck.push({ suit, rank, id: `${suit}${rank}` });
+      for (const rank of RANKS) {
+        deck.push(createCard(suit, rank));
+      }
     }
     for (let i = deck.length - 1; i > 0; i--) {
       const j = Math.floor(Math.random() * (i + 1));
@@ -114,8 +135,9 @@ Page({
   },
 
   findFirstPlayer(hands) {
+    // 找黑桃 J（SJ）持有者
     for (let i = 0; i < 4; i++) {
-      if (hands[i].some(c => c.suit === '♠' && c.rank === 'J')) return i;
+      if (hands[i].some(c => c.id === 'SJ')) return i;
     }
     return 0;
   },
@@ -139,7 +161,8 @@ Page({
 
   isValidPlay(card, hand) {
     const { tableCards, leadSuit, currentRound } = this.data;
-    if (currentRound === 1 && tableCards.length === 0) return card.id === '♠J';
+    // 第 1 轮必须出黑桃 J（SJ）
+    if (currentRound === 1 && tableCards.length === 0) return card.id === 'SJ';
     if (tableCards.length === 0) return true;
     if (card.suit === leadSuit) return true;
     return !hand.some(c => c.suit === leadSuit);
@@ -166,8 +189,8 @@ Page({
     
     let pigPlayer = this.data.pigPlayer;
     let sheepPlayer = this.data.sheepPlayer;
-    if (card.id === '♠Q') pigPlayer = playerIndex;
-    if (card.id === '♦J') sheepPlayer = playerIndex;
+    if (card.id === 'SQ') pigPlayer = playerIndex;  // 黑桃 Q = 猪
+    if (card.id === 'DJ') sheepPlayer = playerIndex;  // 方片 J = 羊
 
     this.setData({ tableCards, playerHand, aiHands, leadSuit, selectedCard: null, pigPlayer, sheepPlayer });
     
@@ -188,28 +211,28 @@ Page({
     let card = null;
 
     if (tableCards.length === 0) {
-      const hasSheep = hand.some(c => c.id === '♦J');
-      const diamonds = hand.filter(c => c.suit === '♦');
+      const hasSheep = hand.some(c => c.id === 'DJ');  // 方片 J
+      const diamonds = hand.filter(c => c.suit === 'D');  // 方片
       if (hasSheep && diamonds.length > 3) {
-        card = hand.find(c => c.id === '♦A') || hand.find(c => c.id === '♦K') || hand.find(c => c.id === '♦J');
+        card = hand.find(c => c.id === 'DA') || hand.find(c => c.id === 'DK') || hand.find(c => c.id === 'DJ');
       }
       if (!card) {
-        const safeCards = validCards.filter(c => !SCORE_CARDS[c.id] && c.id !== '♣10');
+        const safeCards = validCards.filter(c => !SCORE_CARDS[c.id] && c.id !== 'C10');  // 梅花 10
         if (safeCards.length > 0) {
           card = safeCards.sort((a,b) => this.cardRankValue(a.rank) - this.cardRankValue(b.rank))[0];
         }
       }
     } else {
-      const hasPig = tableCards.some(tc => tc.card.id === '♠Q');
-      const hasSheepOnTable = tableCards.some(tc => tc.card.id === '♦J');
+      const hasPig = tableCards.some(tc => tc.card.id === 'SQ');  // 黑桃 Q
+      const hasSheepOnTable = tableCards.some(tc => tc.card.id === 'DJ');  // 方片 J
       let wantToWin = false;
       if (hasSheepOnTable) wantToWin = true;
-      if (displayScores[playerIndex] > 0 && tableCards.some(tc => tc.card.id === '♣10')) wantToWin = true;
+      if (displayScores[playerIndex] > 0 && tableCards.some(tc => tc.card.id === 'C10')) wantToWin = true;  // 梅花 10
       
       if (wantToWin) {
         card = validCards.sort((a,b) => this.cardRankValue(b.rank) - this.cardRankValue(a.rank))[0];
       } else if (hasPig || tableCards.some(tc => SCORE_CARDS[tc.card.id])) {
-        const trouble = validCards.find(c => c.id === '♠Q' || c.id === '♣10');
+        const trouble = validCards.find(c => c.id === 'SQ' || c.id === 'C10');  // 黑桃 Q 或 梅花 10
         card = trouble || validCards.sort((a,b) => this.cardRankValue(a.rank) - this.cardRankValue(b.rank))[0];
       }
     }
@@ -228,7 +251,7 @@ Page({
       }
     }
     
-    const roundScoreCards = tableCards.filter(tc => SCORE_CARDS[tc.card.id] || tc.card.id === '♣10').map(tc => tc.card);
+    const roundScoreCards = tableCards.filter(tc => SCORE_CARDS[tc.card.id] || tc.card.id === 'C10').map(tc => tc.card);
     const newCollected = [...collectedScoreCards];
     newCollected[winner] = [...newCollected[winner], ...roundScoreCards];
     
@@ -301,8 +324,8 @@ Page({
     // 定义什么是"有分数牌"（红桃 5-A、黑桃 Q、方片 J）
     const hasScoreCards = (collected) => {
       return collected.some(c => {
-        if (c.id === '♠Q' || c.id === '♦J') return true;
-        if (c.suit === '♥' && ['5','6','7','8','9','10','J','Q','K','A'].includes(c.rank)) return true;
+        if (c.id === 'SQ' || c.id === 'DJ') return true;
+        if (c.suit === 'H' && ['5','6','7','8','9','10','J','Q','K','A'].includes(c.rank)) return true;
         return false;
       });
     };
@@ -320,11 +343,11 @@ Page({
     
     const optimizedScores = rawFromCollected.map((score, idx) => {
       const myCollected = this.data.collectedScoreCards[idx];
-      const hearts = myCollected.filter(c => c.suit === '♥');
+      const hearts = myCollected.filter(c => c.suit === 'H');
       let finalS = score;
       if (hearts.length === 13) finalS = score + 400; // 全红收牌
       // 变压器逻辑：只有真正有分数牌时才生效
-      if (myCollected.some(c => c.id === '♣10')) {
+      if (myCollected.some(c => c.id === 'C10')) {
         if (hasScoreCards(myCollected)) {
           finalS *= 2; // 有分数牌，double
         }

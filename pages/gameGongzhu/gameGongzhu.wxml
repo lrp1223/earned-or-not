@@ -51,8 +51,8 @@
           </view>
           <!-- 收牌区 (v3.7 引入的好功能，予以保留) -->
           <view class="u-collected-zone zone-{{idx}}" wx:if="{{collectedScoreCards[idx].length > 0}}">
-            <view class="mini-card {{card.suit === '♥' || card.suit === '♦' ? 'card-red' : ''}}" wx:for="{{collectedScoreCards[idx]}}" wx:for-item="card" wx:key="index">
-              {{card.suit}}{{card.rank}}
+            <view class="mini-card {{card.isRed ? 'card-red' : ''}}" wx:for="{{collectedScoreCards[idx]}}" wx:for-item="card" wx:key="index">
+              {{card.displaySuit}}{{card.rank}}
             </view>
           </view>
         </view>
@@ -62,7 +62,7 @@
       <view class="center-table-cards">
         <view class="played-card-box {{item.player === 0 ? 'p-b' : item.player === 1 ? 'p-r' : item.player === 2 ? 'p-t' : 'p-l'}}" 
               wx:for="{{tableCards}}" wx:key="index">
-          <text class="p-suit {{item.card.suit === '♥' || item.card.suit === '♦' ? 'p-red' : ''}}">{{item.card.suit}}</text>
+          <text class="p-suit {{item.card.isRed ? 'p-red' : ''}}">{{item.card.displaySuit}}</text>
           <text class="p-rank">{{item.card.rank}}</text>
         </view>
       </view>
@@ -80,9 +80,9 @@
                 wx:for="{{playerHand}}" wx:key="index"
                 bindtap="selectCard" data-index="{{index}}">
             <view class="h-card-face">
-              <text class="h-suit {{item.suit === '♥' || item.suit === '♦' ? 'p-red' : ''}}">{{item.suit}}</text>
+              <text class="h-suit {{item.isRed ? 'p-red' : ''}}">{{item.displaySuit}}</text>
               <text class="h-rank">{{item.rank}}</text>
-              <text class="h-suit-mini {{item.suit === '♥' || item.suit === '♦' ? 'p-red' : ''}}">{{item.suit}}</text>
+              <text class="h-suit-mini {{item.isRed ? 'p-red' : ''}}">{{item.displaySuit}}</text>
             </view>
           </view>
         </view>
