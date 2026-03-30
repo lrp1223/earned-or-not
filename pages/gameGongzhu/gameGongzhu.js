@@ -240,6 +240,16 @@ Page({
       finalThisGameScores = this.calculateFinalAverage(newRawScores);
       for (let i = 0; i < 4; i++) newTotalScores[i] += finalThisGameScores[i];
     }
+    
+    // 生成排序后的玩家列表（从高分到低分）
+    let sortedPlayers = [0, 1, 2, 3].map(idx => ({
+      idx,
+      name: idx === 0 ? '😀 你' : (idx === 1 ? '上家' : (idx === 2 ? '对家' : '下家')),
+      thisGameScore: finalThisGameScores[idx],
+      totalScore: newTotalScores[idx],
+      isTeammate: teams[0] === idx && idx !== 0  // 0 是玩家自己，其他与 0 同队的是队友
+    }));
+    sortedPlayers.sort((a, b) => b.thisGameScore - a.thisGameScore);
 
     this.setData({
       tableCards: [], currentPlayer: winner, leadSuit: null,
@@ -249,7 +259,10 @@ Page({
       currentRound: currentRound + 1,
       totalScores: newTotalScores,
       gameState: isOver ? 'over' : 'playing',
-      gameResult: isOver ? { thisGameScores: finalThisGameScores } : null
+      gameResult: isOver ? { 
+        thisGameScores: finalThisGameScores,
+        sortedPlayers: sortedPlayers
+      } : null
     });
     
     if (!isOver && winner !== 0) setTimeout(() => this.aiPlay(), 800);

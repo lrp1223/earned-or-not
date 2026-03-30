@@ -102,11 +102,11 @@
             <text class="col-s">本局</text>
             <text class="col-t">总分</text>
           </view>
-          <block wx:for="{{[0, 1, 2, 3]}}" wx:for-item="idx" wx:key="idx">
-            <view class="score-row {{idx === 0 ? 'me' : ''}}">
-              <text class="col-p">{{idx === 0 ? '😀 你' : (idx === 1 ? '上家' : (idx === 2 ? '对家' : '下家'))}}</text>
-              <text class="col-s {{gameResult.thisGameScores[idx] >= 0 ? 'plus' : 'minus'}}">{{gameResult.thisGameScores[idx]}}</text>
-              <text class="col-t">{{totalScores[idx]}}</text>
+          <block wx:for="{{gameResult.sortedPlayers}}" wx:for-item="player" wx:key="idx">
+            <view class="score-row {{player.idx === 0 ? 'me' : ''}} {{player.isTeammate ? 'teammate' : ''}}">
+              <text class="col-p">{{player.name}}{{player.isTeammate ? ' 🤝' : ''}}</text>
+              <text class="col-s {{player.thisGameScore >= 0 ? 'plus' : 'minus'}}">{{player.thisGameScore}}</text>
+              <text class="col-t">{{player.totalScore}}</text>
             </view>
           </block>
         </view>
