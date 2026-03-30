@@ -46,13 +46,14 @@ Page({
     const deck = this.createDeck();
     const hands = this.dealCards(deck);
     const teams = this.determineTeamsInitial(hands);
+    const firstPlayer = this.findFirstPlayer(hands);
     
     this.setData({
       gameState: 'playing',
       currentRound: 1,
       playerHand: hands[0].sort((a, b) => this.cardSortValue(a) - this.cardSortValue(b)),
       aiHands: [hands[1], hands[2], hands[3]],
-      currentPlayer: this.findFirstPlayer(hands),
+      currentPlayer: firstPlayer,
       teams: teams,
       tableCards: [], rawScores: [0, 0, 0, 0], displayScores: [0, 0, 0, 0],
       collectedScoreCards: [[], [], [], []],
@@ -60,7 +61,7 @@ Page({
       gameCount: this.data.gameCount + 1
     });
 
-    if (this.data.currentPlayer !== 0) setTimeout(() => this.aiPlay(), 1000);
+    if (firstPlayer !== 0) setTimeout(() => this.aiPlay(), 1000);
   },
 
   nextGame() {
