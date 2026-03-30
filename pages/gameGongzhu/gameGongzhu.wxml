@@ -51,7 +51,7 @@
           </view>
           <!-- 收牌区 (v3.7 引入的好功能，予以保留) -->
           <view class="u-collected-zone zone-{{idx}}" wx:if="{{collectedScoreCards[idx].length > 0}}">
-            <view class="mini-card" wx:for="{{collectedScoreCards[idx]}}" wx:for-item="card" wx:key="index">
+            <view class="mini-card {{card.suit === '♥' || card.suit === '♦' ? 'card-red' : ''}}" wx:for="{{collectedScoreCards[idx]}}" wx:for-item="card" wx:key="index">
               {{card.suit}}{{card.rank}}
             </view>
           </view>
