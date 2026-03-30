@@ -186,6 +186,7 @@ Page({
       aiHands[playerIndex - 1] = aiHands[playerIndex - 1].filter(c => c.id !== card.id);
     }
     
+    // 第 1 张牌决定主花色，第 1 轮通常是黑桃 J
     const leadSuit = tableCards.length === 1 ? card.suit : this.data.leadSuit;
     
     let pigPlayer = this.data.pigPlayer;
@@ -198,6 +199,7 @@ Page({
     if (tableCards.length === 4) {
       setTimeout(() => this.endRound(), 1500);
     } else {
+      // 逆时针出牌：0(你)→3(下家)→2(对家)→1(上家)→0
       const nextPlayer = playerIndex === 0 ? 3 : playerIndex === 3 ? 2 : playerIndex === 2 ? 1 : 0;
       this.setData({ currentPlayer: nextPlayer });
       if (nextPlayer !== 0) setTimeout(() => this.aiPlay(), 800);
