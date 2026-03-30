@@ -258,15 +258,27 @@ Page({
     const teams = this.data.teams;
     const final = [0,0,0,0];
     const processed = new Set();
+    
+    // 定义什么是"有分数牌"（红桃 5-A、黑桃 Q、方片 J）
+    const hasScoreCards = (collected) => {
+      return collected.some(c => {
+        if (c.id === '♠Q' || c.id === '♦J') return true;
+        if (c.suit === '♥' && ['5','6','7','8','9','10','J','Q','K','A'].includes(c.rank)) return true;
+        return false;
+      });
+    };
+    
     const optimizedScores = rawScores.map((score, idx) => {
       const myCollected = this.data.collectedScoreCards[idx];
       const hearts = myCollected.filter(c => c.suit === '♥');
       let finalS = score;
-      if (hearts.length === 13) finalS = score + 400; 
-      // 变压器逻辑
+      if (hearts.length === 13) finalS = score + 400; // 全红收牌
+      // 变压器逻辑：只有真正有分数牌时才生效
       if (myCollected.some(c => c.id === '♣10')) {
-        if (finalS === 0) finalS = 50;
-        else finalS *= 2;
+        if (hasScoreCards(myCollected)) {
+          finalS *= 2; // 有分数牌，double
+        }
+        // 如果只有红桃 2/3/4，分数保持 0，不 +50
       }
       return finalS;
     });
