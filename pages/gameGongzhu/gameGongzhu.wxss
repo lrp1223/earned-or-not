@@ -116,6 +116,11 @@
 .seat-2 { top: 2vh; left: 50%; transform: translateX(-50%); flex-direction: column; }
 .seat-3 { left: 2vw; top: 40%; transform: translateY(-50%); flex-direction: row; }
 
+/* 对家特殊布局 - 收牌区放右侧，不挡出牌区 */
+.seat-2 .u-info { flex-direction: row; gap: 1vw; justify-content: center; }
+.seat-2 .u-ident-wrap { position: static; display: flex; gap: 4rpx; }
+.seat-2 .u-collected-zone { margin: 0; margin-left: 1vw; max-width: 15vw; }
+
 .u-info {
   background: rgba(0,0,0,0.3);
   border-radius: 1vh;
