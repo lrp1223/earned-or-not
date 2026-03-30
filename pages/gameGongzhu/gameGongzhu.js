@@ -235,12 +235,12 @@ Page({
     const isOver = currentRound >= 13;
     let finalThisGameScores = [0,0,0,0];
     let newTotalScores = [...totalScores];
-    let rawScoresThisGame = [0,0,0,0];  // 每个人原始抓到的分数
+    let rawScoresThisGame = [0,0,0,0];  // 每个人原始抓到的分数（未平均，但已应用变压器）
 
     if (isOver) {
       const result = this.calculateFinalAverage(newRawScores);
       finalThisGameScores = result.final;
-      rawScoresThisGame = result.rawFromCollected;  // 保存原始分数
+      rawScoresThisGame = result.optimizedScores;  // 使用已应用变压器的分数
       for (let i = 0; i < 4; i++) newTotalScores[i] += finalThisGameScores[i];
     }
     
@@ -249,7 +249,7 @@ Page({
       idx,
       name: idx === 0 ? '😀 你' : (idx === 1 ? '上家' : (idx === 2 ? '对家' : '下家')),
       thisGameScore: finalThisGameScores[idx],
-      rawScore: rawScoresThisGame[idx],  // 原始抓到的分数
+      rawScore: rawScoresThisGame[idx],  // 原始抓到的分数（未平均，但已应用变压器）
       totalScore: newTotalScores[idx],
       isTeammate: teams[0] === idx && idx !== 0  // 0 是玩家自己，其他与 0 同队的是队友
     }));
