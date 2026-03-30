@@ -269,7 +269,18 @@ Page({
       });
     };
     
-    const optimizedScores = rawScores.map((score, idx) => {
+    // 直接从 collectedScoreCards 计算原始分数，不依赖 rawScores
+    const rawFromCollected = this.data.collectedScoreCards.map(collected => {
+      let score = 0;
+      for (const card of collected) {
+        if (SCORE_CARDS[card.id]) {
+          score += SCORE_CARDS[card.id];
+        }
+      }
+      return score;
+    });
+    
+    const optimizedScores = rawFromCollected.map((score, idx) => {
       const myCollected = this.data.collectedScoreCards[idx];
       const hearts = myCollected.filter(c => c.suit === '♥');
       let finalS = score;
