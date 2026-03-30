@@ -1,6 +1,6 @@
 <!--pages/gameGongzhu/gameGongzhu.wxml-->
-<view class="page-container">
-  <!-- 1. 准备界面 (左侧标题规则, 右侧按钮) -->
+<view class="container">
+  <!-- 1. 准备界面 (完全还原 v3.5 左右布局) -->
   <view class="ready-screen" wx:if="{{gameState === 'ready'}}">
     <view class="ready-box-left-col">
       <view class="title-wrap-left">
@@ -20,7 +20,7 @@
           <view class="item-rule"><text class="suit-h">♥</text><text>红桃</text><text class="val">-10~-50</text></view>
           <view class="item-rule"><text class="suit-c">♣</text><text>10变压</text><text class="val">×2</text></view>
         </view>
-        <view class="rule-tip-bottom">起手定队 · 分数末尾平均结算</view>
+        <view class="rule-tip-bottom">起手定队 · 分数连局累加</view>
       </view>
     </view>
     
@@ -29,15 +29,15 @@
     </view>
   </view>
 
-  <!-- 2. 游戏界面 -->
+  <!-- 2. 游戏界面 (还原 v3.5 稳定布局) -->
   <view class="game-screen-fixed" wx:if="{{gameState === 'playing' || gameState === 'over'}}">
     <!-- 顶部 -->
     <view class="bar-top">
-      <text class="tag-status">第{{gameCount}}局 · 第{{currentRound}}/13轮</text>
+      <text class="tag-status">局:{{gameCount}} · 轮:{{currentRound}}/13</text>
       <text class="tag-status" wx:if="{{leadSuit}}">主: {{leadSuit}}</text>
     </view>
 
-    <!-- 牌桌中间层 -->
+    <!-- 牌桌 -->
     <view class="board-middle">
       <block wx:for="{{[2, 3, 1, 0]}}" wx:for-item="idx" wx:key="idx">
         <view class="seat-pos seat-{{idx}}">
@@ -49,10 +49,10 @@
               <text class="u-ident" wx:if="{{sheepPlayer === idx}}">🐑</text>
             </view>
           </view>
-          <!-- 得分牌展示区 -->
+          <!-- 收牌区 (v3.7 引入的好功能，予以保留) -->
           <view class="u-collected-zone zone-{{idx}}" wx:if="{{collectedScoreCards[idx].length > 0}}">
             <view class="mini-card" wx:for="{{collectedScoreCards[idx]}}" wx:for-item="card" wx:key="index">
-              <text class="{{card.suit === '♥' || card.suit === '♦' ? 'p-red' : ''}}">{{card.suit}}{{card.rank}}</text>
+              {{card.suit}}{{card.rank}}
             </view>
           </view>
         </view>
@@ -62,15 +62,13 @@
       <view class="center-table-cards">
         <view class="played-card-box {{item.player === 0 ? 'p-b' : item.player === 1 ? 'p-r' : item.player === 2 ? 'p-t' : 'p-l'}}" 
               wx:for="{{tableCards}}" wx:key="index">
-          <view class="p-card-inner">
-            <text class="p-suit {{item.card.suit === '♥' || item.card.suit === '♦' ? 'p-red' : ''}}">{{item.card.suit}}</text>
-            <text class="p-rank">{{item.card.rank}}</text>
-          </view>
+          <text class="p-suit {{item.card.suit === '♥' || item.card.suit === '♦' ? 'p-red' : ''}}">{{item.card.suit}}</text>
+          <text class="p-rank">{{item.card.rank}}</text>
         </view>
       </view>
     </view>
 
-    <!-- 底部区域 -->
+    <!-- 底部手牌区域 (修正 left 计算公式) -->
     <view class="area-bottom-hand" wx:if="{{gameState === 'playing'}}">
       <view class="btn-row-action">
         <view class="btn-confirm-play {{selectedCard !== null ? 'btn-enabled' : ''}}" bindtap="confirmPlay">出牌</view>
@@ -91,14 +89,13 @@
       </view>
     </view>
 
-    <!-- 结果结算列表 -->
+    <!-- 战报结算 (v3.7 合并版本) -->
     <view class="mask-overlay" wx:if="{{gameState === 'over'}}">
       <view class="box-result-list">
         <view class="result-header">
           <text class="res-title">第 {{gameCount}} 局战报</text>
-          <text class="res-subtitle">当前累计积分榜</text>
+          <text class="res-subtitle">当前累计积分</text>
         </view>
-
         <view class="score-table">
           <view class="score-row head">
             <text class="col-p">玩家</text>
@@ -113,10 +110,9 @@
             </view>
           </block>
         </view>
-
         <view class="result-actions">
-          <view class="btn-res next" bindtap="nextGame">继续游戏</view>
-          <view class="btn-res exit" bindtap="restart">退出</view>
+          <view class="btn-res next" bindtap="nextGame">继续</view>
+          <view class="btn-res exit" bindtap="restart">大厅</view>
         </view>
       </view>
     </view>
