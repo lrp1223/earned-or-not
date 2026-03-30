@@ -1,6 +1,6 @@
 <!--pages/gameGongzhu/gameGongzhu.wxml-->
 <view class="page-container">
-  <!-- 1. 准备界面 (左侧标题+规则, 右侧按钮) -->
+  <!-- 1. 准备界面 (左侧标题规则, 右侧按钮) -->
   <view class="ready-screen" wx:if="{{gameState === 'ready'}}">
     <view class="ready-box-left-col">
       <view class="title-wrap-left">
@@ -33,19 +33,17 @@
   <view class="game-screen-fixed" wx:if="{{gameState === 'playing' || gameState === 'over'}}">
     <!-- 顶部 -->
     <view class="bar-top">
-      <text class="tag-status">第{{currentRound}}/13轮</text>
+      <text class="tag-status">第{{gameCount}}局 · 第{{currentRound}}/13轮</text>
       <text class="tag-status" wx:if="{{leadSuit}}">主: {{leadSuit}}</text>
     </view>
 
     <!-- 牌桌中间层 -->
     <view class="board-middle">
-      <!-- 玩家列表 -->
       <block wx:for="{{[2, 3, 1, 0]}}" wx:for-item="idx" wx:key="idx">
         <view class="seat-pos seat-{{idx}}">
           <view class="u-info {{currentPlayer === idx ? 'u-active' : ''}}">
             <view class="u-avatar">{{idx === 0 ? '😀' : '🤖'}}</view>
             <text class="u-score">{{displayScores[idx]}}</text>
-            <!-- 猪羊初始持有标识 (被打出后才显示) -->
             <view class="u-ident-wrap">
               <text class="u-ident" wx:if="{{pigPlayer === idx}}">🐷</text>
               <text class="u-ident" wx:if="{{sheepPlayer === idx}}">🐑</text>
@@ -72,7 +70,7 @@
       </view>
     </view>
 
-    <!-- 底部手牌区域 -->
+    <!-- 底部区域 -->
     <view class="area-bottom-hand" wx:if="{{gameState === 'playing'}}">
       <view class="btn-row-action">
         <view class="btn-confirm-play {{selectedCard !== null ? 'btn-enabled' : ''}}" bindtap="confirmPlay">出牌</view>
@@ -93,13 +91,33 @@
       </view>
     </view>
 
-    <!-- 结果结算 -->
+    <!-- 结果结算列表 -->
     <view class="mask-overlay" wx:if="{{gameState === 'over'}}">
-      <view class="box-result">
-        <text class="ico-result">{{gameResult.rank === 1 ? '🏆' : '💔'}}</text>
-        <text class="tit-result">{{gameResult.rank === 1 ? '你赢了！' : '惜败'}}</text>
-        <text class="num-result">最终得分: {{gameResult.playerScore}}</text>
-        <view class="btn-primary-start" bindtap="restart">返回大厅</view>
+      <view class="box-result-list">
+        <view class="result-header">
+          <text class="res-title">第 {{gameCount}} 局战报</text>
+          <text class="res-subtitle">当前累计积分榜</text>
+        </view>
+
+        <view class="score-table">
+          <view class="score-row head">
+            <text class="col-p">玩家</text>
+            <text class="col-s">本局</text>
+            <text class="col-t">总分</text>
+          </view>
+          <block wx:for="{{[0, 1, 2, 3]}}" wx:for-item="idx" wx:key="idx">
+            <view class="score-row {{idx === 0 ? 'me' : ''}}">
+              <text class="col-p">{{idx === 0 ? '😀 你' : (idx === 1 ? '上家' : (idx === 2 ? '对家' : '下家'))}}</text>
+              <text class="col-s {{gameResult.thisGameScores[idx] >= 0 ? 'plus' : 'minus'}}">{{gameResult.thisGameScores[idx]}}</text>
+              <text class="col-t">{{totalScores[idx]}}</text>
+            </view>
+          </block>
+        </view>
+
+        <view class="result-actions">
+          <view class="btn-res next" bindtap="nextGame">继续游戏</view>
+          <view class="btn-res exit" bindtap="restart">退出</view>
+        </view>
       </view>
     </view>
   </view>

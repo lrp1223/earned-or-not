@@ -14,15 +14,17 @@ Page({
     tableCards: [],
     playerHand: [],
     aiHands: [[], [], []],
-    rawScores: [0, 0, 0, 0], // 每个人亲手拿到的原始分
-    displayScores: [0, 0, 0, 0], // 界面显示的即时分（不平均）
+    rawScores: [0, 0, 0, 0], 
+    displayScores: [0, 0, 0, 0], 
     teams: null,
     selectedCard: null,
     leadSuit: null,
     gameResult: null,
     collectedScoreCards: [[], [], [], []],
-    pigPlayer: -1, // 记录谁打出了猪
-    sheepPlayer: -1 // 记录谁打出了羊
+    pigPlayer: -1,
+    sheepPlayer: -1,
+    totalScores: [0, 0, 0, 0], // 累计总分
+    gameCount: 0 // 已玩局数
   },
 
   onLoad() { this.initGame(); },
@@ -34,7 +36,8 @@ Page({
       rawScores: [0, 0, 0, 0], displayScores: [0, 0, 0, 0],
       teams: null, selectedCard: null, leadSuit: null, gameResult: null,
       collectedScoreCards: [[], [], [], []],
-      pigPlayer: -1, sheepPlayer: -1
+      pigPlayer: -1, sheepPlayer: -1,
+      totalScores: [0, 0, 0, 0], gameCount: 0
     });
   },
 
@@ -45,15 +48,22 @@ Page({
     
     this.setData({
       gameState: 'playing',
+      currentRound: 1,
       playerHand: hands[0].sort((a, b) => this.cardSortValue(a) - this.cardSortValue(b)),
       aiHands: [hands[1], hands[2], hands[3]],
       currentPlayer: this.findFirstPlayer(hands),
-      teams: teams, // 后台存储，界面不体现
+      teams: teams,
       tableCards: [], rawScores: [0, 0, 0, 0], displayScores: [0, 0, 0, 0],
-      collectedScoreCards: [[], [], [], []]
+      collectedScoreCards: [[], [], [], []],
+      pigPlayer: -1, sheepPlayer: -1,
+      gameCount: this.data.gameCount + 1
     });
 
     if (this.data.currentPlayer !== 0) setTimeout(() => this.aiPlay(), 1000);
+  },
+
+  nextGame() {
+    this.startGame();
   },
 
   determineTeamsInitial(hands) {
@@ -144,7 +154,6 @@ Page({
     
     const leadSuit = tableCards.length === 1 ? card.suit : this.data.leadSuit;
     
-    // 追踪猪和羊被打出的记录
     let pigPlayer = this.data.pigPlayer;
     let sheepPlayer = this.data.sheepPlayer;
     if (card.id === '♠Q') pigPlayer = playerIndex;
@@ -164,22 +173,16 @@ Page({
   aiPlay() {
     const playerIndex = this.data.currentPlayer;
     const hand = this.data.aiHands[playerIndex - 1];
-    const { tableCards, leadSuit, displayScores } = this.data;
+    const { tableCards, displayScores } = this.data;
     const validCards = hand.filter(c => this.isValidPlay(c, hand));
-    
     let card = null;
 
-    // --- AI 策略逻辑开始 ---
     if (tableCards.length === 0) {
-      // 1. 作为首家出牌：尽量避开负分，寻找正分
-      // 如果有 ♦J 且 ♦ 大牌多，尝试领出方片
       const hasSheep = hand.some(c => c.id === '♦J');
       const diamonds = hand.filter(c => c.suit === '♦');
       if (hasSheep && diamonds.length > 3) {
         card = hand.find(c => c.id === '♦A') || hand.find(c => c.id === '♦K') || hand.find(c => c.id === '♦J');
       }
-      
-      // 否则领出最小的非得分牌
       if (!card) {
         const safeCards = validCards.filter(c => !SCORE_CARDS[c.id] && c.id !== '♣10');
         if (safeCards.length > 0) {
@@ -187,54 +190,25 @@ Page({
         }
       }
     } else {
-      // 2. 跟牌逻辑：分析当前桌面是否有得分牌
-      const hasScore = tableCards.some(tc => SCORE_CARDS[tc.card.id]);
       const hasPig = tableCards.some(tc => tc.card.id === '♠Q');
       const hasSheepOnTable = tableCards.some(tc => tc.card.id === '♦J');
-      const currentWinner = this.getCurrentTableWinner();
-      
-      // 判断是否要赢下这一轮
       let wantToWin = false;
-      if (hasSheepOnTable) wantToWin = true; // 有羊必抢
-      if (displayScores[playerIndex] > 0 && tableCards.some(tc => tc.card.id === '♣10')) wantToWin = true; // 正分抢变压器
+      if (hasSheepOnTable) wantToWin = true;
+      if (displayScores[playerIndex] > 0 && tableCards.some(tc => tc.card.id === '♣10')) wantToWin = true;
       
       if (wantToWin) {
-        // 尝试出大牌赢下
-        const bigCards = validCards.sort((a,b) => this.cardRankValue(b.rank) - this.cardRankValue(a.rank));
-        card = bigCards[0];
-      } else if (hasPig || hasScore) {
-        // 有负分，尝试不出最大（除非必须赢或者你是最后一家且赢不了）
-        const smallCards = validCards.sort((a,b) => this.cardRankValue(a.rank) - this.cardRankValue(b.rank));
-        // 如果能垫掉 ♠Q 或 ♣10 等“祸根”，优先垫掉
+        card = validCards.sort((a,b) => this.cardRankValue(b.rank) - this.cardRankValue(a.rank))[0];
+      } else if (hasPig || tableCards.some(tc => SCORE_CARDS[tc.card.id])) {
         const trouble = validCards.find(c => c.id === '♠Q' || c.id === '♣10');
-        card = trouble || smallCards[0];
+        card = trouble || validCards.sort((a,b) => this.cardRankValue(a.rank) - this.cardRankValue(b.rank))[0];
       }
     }
-
-    // 保底：随机选一张合法的
     if (!card) card = validCards[Math.floor(Math.random() * validCards.length)];
-    // --- AI 策略逻辑结束 ---
-
     this.playCard(playerIndex, card);
   },
 
-  // 辅助：判断当前桌面上谁最大
-  getCurrentTableWinner() {
-    const { tableCards, leadSuit } = this.data;
-    if (tableCards.length === 0) return -1;
-    let winner = tableCards[0].player;
-    let maxRank = this.cardRankValue(tableCards[0].card.rank);
-    for (let i = 1; i < tableCards.length; i++) {
-      if (tableCards[i].card.suit === leadSuit) {
-        const val = this.cardRankValue(tableCards[i].card.rank);
-        if (val > maxRank) { maxRank = val; winner = tableCards[i].player; }
-      }
-    }
-    return winner;
-  },
-
   endRound() {
-    const { tableCards, leadSuit, rawScores, collectedScoreCards, currentRound } = this.data;
+    const { tableCards, leadSuit, rawScores, collectedScoreCards, currentRound, totalScores } = this.data;
     let winner = tableCards[0].player;
     let maxRank = this.cardRankValue(tableCards[0].card.rank);
     for (let i = 1; i < 4; i++) {
@@ -244,38 +218,36 @@ Page({
       }
     }
     
-    // 找出本轮中的得分牌
     const roundScoreCards = tableCards.filter(tc => SCORE_CARDS[tc.card.id] || tc.card.id === '♣10').map(tc => tc.card);
     const newCollected = [...collectedScoreCards];
     newCollected[winner] = [...newCollected[winner], ...roundScoreCards];
     
-    // 计算本轮原始得分
     let roundRaw = 0;
-    let has10 = false;
     tableCards.forEach(tc => {
-      if (tc.card.id === '♣10') has10 = true;
       if (SCORE_CARDS[tc.card.id]) roundRaw += SCORE_CARDS[tc.card.id];
     });
 
     const newRawScores = [...rawScores];
     newRawScores[winner] += roundRaw;
-    // 变压器倍率暂时简单处理：这一轮谁拿了10，谁的本轮得分就受影响
-    // 注意：真实规则变压器是最后结算，这里为了即时反馈做简化显示
     
     const isOver = currentRound >= 13;
-    let finalTeamScores = [0,0,0,0];
+    let finalThisGameScores = [0,0,0,0];
+    let newTotalScores = [...totalScores];
+
     if (isOver) {
-      finalTeamScores = this.calculateFinalAverage(newRawScores);
+      finalThisGameScores = this.calculateFinalAverage(newRawScores);
+      for (let i = 0; i < 4; i++) newTotalScores[i] += finalThisGameScores[i];
     }
 
     this.setData({
       tableCards: [], currentPlayer: winner, leadSuit: null,
       collectedScoreCards: newCollected,
       rawScores: newRawScores,
-      displayScores: newRawScores, // 即时显示原始分
+      displayScores: newRawScores,
       currentRound: currentRound + 1,
+      totalScores: newTotalScores,
       gameState: isOver ? 'over' : 'playing',
-      gameResult: isOver ? { playerScore: finalTeamScores[0], rank: this.calcRank(finalTeamScores) } : null
+      gameResult: isOver ? { thisGameScores: finalThisGameScores } : null
     });
     
     if (!isOver && winner !== 0) setTimeout(() => this.aiPlay(), 800);
@@ -285,18 +257,17 @@ Page({
     const teams = this.data.teams;
     const final = [0,0,0,0];
     const processed = new Set();
-    
-    // 在平均前，检查每个人是否达成“全红”或“大满贯”
     const optimizedScores = rawScores.map((score, idx) => {
       const myCollected = this.data.collectedScoreCards[idx];
       const hearts = myCollected.filter(c => c.suit === '♥');
-      let finalScore = score;
-      
-      if (hearts.length === 13) {
-        // 全红逻辑：扣除原本红桃扣的200分，反加200分
-        finalScore = score + 200 + 200; 
+      let finalS = score;
+      if (hearts.length === 13) finalS = score + 400; 
+      // 变压器逻辑
+      if (myCollected.some(c => c.id === '♣10')) {
+        if (finalS === 0) finalS = 50;
+        else finalS *= 2;
       }
-      return finalScore;
+      return finalS;
     });
 
     for (let i = 0; i < 4; i++) {
@@ -312,12 +283,6 @@ Page({
   cardRankValue(rank) {
     const values = { '2': 2, '3': 3, '4': 4, '5': 5, '6': 6, '7': 7, '8': 8, '9': 9, '10': 10, 'J': 11, 'Q': 12, 'K': 13, 'A': 14 };
     return values[rank];
-  },
-
-  calcRank(scores) {
-    const my = scores[0];
-    const sorted = [...scores].sort((a,b) => b-a);
-    return sorted.indexOf(my) + 1;
   },
 
   restart() { this.initGame(); }
