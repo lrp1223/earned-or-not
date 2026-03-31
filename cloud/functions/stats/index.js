@@ -86,11 +86,9 @@ exports.main = async (event, context) => {
       const recordsRes = await db.collection(collection)
         .where({ _openid: OPENID })
         .orderBy('createTime', 'desc')
-        .skip(skip)
-        .limit(pageSize)
         .get();
       
-      const records = recordsRes.data.map(i => {
+      let records = recordsRes.data.map(i => {
         if (type === 'lottery' || type === 'scratch') {
           return {
             _id: i._id,
@@ -116,14 +114,20 @@ exports.main = async (event, context) => {
         }
       });
       
+      // 按 net 从高到低排序
+      records.sort((a, b) => b.net - a.net);
+      
+      // 分页
+      const paginatedRecords = records.slice(skip, skip + pageSize);
+      
       return { 
         success: true, 
-        data: records,
+        data: paginatedRecords,
         pagination: {
           page,
           pageSize,
           total: totalRes.total,
-          hasMore: skip + records.length < totalRes.total
+          hasMore: skip + paginatedRecords.length < totalRes.total
         }
       };
     } catch (err) {
