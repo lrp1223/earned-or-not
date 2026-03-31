@@ -52,7 +52,7 @@
           <!-- 收牌区 -->
           <view class="u-collected-zone zone-{{idx}}" wx:if="{{collectedScoreCards[idx].length > 0}}">
             <view class="mini-card" wx:for="{{collectedScoreCards[idx]}}" wx:for-item="card" wx:key="index">
-              {{suitMap[card.suit]}}{{card.rank}}
+              <text class="{{card.suit === 'H' || card.suit === 'D' ? 'p-red' : ''}}">{{suitMap[card.suit]}}{{card.rank}}</text>
             </view>
           </view>
         </view>
