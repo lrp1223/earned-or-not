@@ -98,15 +98,15 @@
         </view>
         <view class="score-table">
           <view class="score-row head">
-            <text class="col-p">玩家</text>
+            <text class="col-p">排名</text>
             <text class="col-s">本局</text>
             <text class="col-t">总分</text>
           </view>
-          <block wx:for="{{[0, 1, 2, 3]}}" wx:for-item="idx" wx:key="idx">
-            <view class="score-row {{idx === 0 ? 'me' : ''}}">
-              <text class="col-p">{{idx === 0 ? '😀 你' : (idx === 1 ? '上家' : (idx === 2 ? '对家' : '下家'))}}</text>
-              <text class="col-s {{gameResult.thisGameScores[idx] >= 0 ? 'plus' : 'minus'}}">{{gameResult.thisGameScores[idx]}}</text>
-              <text class="col-t">{{totalScores[idx]}}</text>
+          <block wx:for="{{gameResult.sortedRank}}" wx:for-item="item" wx:key="idx">
+            <view class="score-row {{item.idx === 0 ? 'me' : ''}}">
+              <text class="col-p">{{index === 0 ? '🥇' : (index === 1 ? '🥈' : (index === 2 ? '🥉' : ''))}} {{item.idx === 0 ? '😀 你' : (item.idx === 1 ? '上家' : (item.idx === 2 ? '对家' : '下家'))}}</text>
+              <text class="col-s {{item.thisGame >= 0 ? 'plus' : 'minus'}}">{{item.thisGame}}</text>
+              <text class="col-t">{{item.total}}</text>
             </view>
           </block>
         </view>

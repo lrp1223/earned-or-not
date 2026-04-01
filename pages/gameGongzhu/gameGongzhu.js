@@ -247,6 +247,13 @@ Page({
       for (let i = 0; i < 4; i++) newTotalScores[i] += finalThisGameScores[i];
     }
 
+    // 构建排序后的排行榜（按总分从高到低）
+    const sortedRank = isOver ? 
+      [0, 1, 2, 3]
+        .map(idx => ({ idx, total: newTotalScores[idx], thisGame: finalThisGameScores[idx] }))
+        .sort((a, b) => b.total - a.total)
+      : [];
+
     this.setData({
       tableCards: [], currentPlayer: winner, leadSuit: null,
       collectedScoreCards: newCollected,
@@ -255,7 +262,10 @@ Page({
       currentRound: currentRound + 1,
       totalScores: newTotalScores,
       gameState: isOver ? 'over' : 'playing',
-      gameResult: isOver ? { thisGameScores: finalThisGameScores } : null
+      gameResult: isOver ? { 
+        thisGameScores: finalThisGameScores,
+        sortedRank: sortedRank
+      } : null
     });
     
     if (!isOver && winner !== 0) setTimeout(() => this.aiPlay(), 800);
