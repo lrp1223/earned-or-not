@@ -258,7 +258,7 @@ Page({
     // 构建排序后的排行榜（按总分从高到低）
     const sortedRank = isOver ? 
       [0, 1, 2, 3]
-        .map(idx => ({ idx, total: newTotalScores[idx], thisGame: finalThisGameScores[idx] }))
+        .map(idx => ({ idx, raw: newRawScores[idx], thisGame: finalThisGameScores[idx], total: newTotalScores[idx] }))
         .sort((a, b) => b.total - a.total)
       : [];
 

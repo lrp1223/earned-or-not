@@ -269,12 +269,12 @@
 .res-subtitle { font-size: 2.2vh; color: #999; display: block; margin-top: 1vh; }
 
 .score-table { width: 100%; margin-bottom: 3vh; }
-.score-row { display: flex; justify-content: space-between; padding: 1.5vh 2vw; border-bottom: 1rpx solid #eee; font-size: 2.4vh; color: #333; }
+.score-row { display: flex; justify-content: space-between; padding: 1.5vh 2vw; border-bottom: 1rpx solid #eee; font-size: 2.2vh; color: #333; }
 .score-row.head { font-weight: bold; color: #999; border-bottom: 2rpx solid #ddd; }
 .score-row.me { background: #fffbe6; color: #d4a017; font-weight: bold; }
 .score-row.teammate { background: #e6f7ff; color: #1890ff; }
 .col-p { flex: 2; }
-.col-r { flex: 1; text-align: center; color: #666; }
+.col-raw { flex: 1; text-align: center; color: #666; }
 .col-s { flex: 1; text-align: center; font-weight: bold; }
 .col-t { flex: 1; text-align: right; }
 .plus { color: #52c41a; }
