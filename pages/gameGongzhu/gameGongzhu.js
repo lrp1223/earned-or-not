@@ -29,6 +29,8 @@ Page({
     collectedScoreCards: [[], [], [], []],
     pigPlayer: -1,
     sheepPlayer: -1,
+    initialPigPlayer: -1,  // 初始猪持有者
+    initialSheepPlayer: -1, // 初始羊持有者
     totalScores: [0, 0, 0, 0],
     gameCount: 0
   },
@@ -43,6 +45,7 @@ Page({
       teams: null, selectedCard: null, leadSuit: null, gameResult: null,
       collectedScoreCards: [[], [], [], []],
       pigPlayer: -1, sheepPlayer: -1,
+      initialPigPlayer: -1, initialSheepPlayer: -1,
       totalScores: [0, 0, 0, 0], gameCount: 0
     });
   },
@@ -67,6 +70,13 @@ Page({
     const hands = this.dealCards(deck);
     const teams = this.determineTeamsInitial(hands);
     
+    // 获取初始猪羊持有者
+    let initialPig = -1, initialSheep = -1;
+    for (let i = 0; i < 4; i++) {
+      if (hands[i].some(c => c.id === 'SQ')) initialPig = i;
+      if (hands[i].some(c => c.id === 'DJ')) initialSheep = i;
+    }
+    
     this.setData({
       gameState: 'playing',
       playerHand: hands[0].sort((a, b) => this.cardSortValue(a) - this.cardSortValue(b)),
@@ -76,6 +86,7 @@ Page({
       tableCards: [], rawScores: [0, 0, 0, 0], displayScores: [0, 0, 0, 0],
       collectedScoreCards: [[], [], [], []],
       pigPlayer: -1, sheepPlayer: -1,
+      initialPigPlayer: initialPig, initialSheepPlayer: initialSheep,
       gameCount: this.data.gameCount + 1
     });
 
@@ -302,7 +313,9 @@ Page({
       gameState: isOver ? 'over' : 'playing',
       gameResult: isOver ? { 
         thisGameScores: finalThisGameScores,
-        sortedRank: sortedRank
+        sortedRank: sortedRank,
+        initialPigPlayer: this.data.initialPigPlayer,
+        initialSheepPlayer: this.data.initialSheepPlayer
       } : null
     });
     
