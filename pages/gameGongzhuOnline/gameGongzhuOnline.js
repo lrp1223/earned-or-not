@@ -211,13 +211,20 @@ Page({
         const room = snapshot.docs[0];
         if (!room) return;
         
+        // 更新玩家列表
         this.setData({
           playerCount: room.players.length,
           players: this.formatPlayers(room.players)
         });
         
+        // 如果在等待页面且游戏开始，初始化游戏
         if (room.status === 'playing' && this.data.pageState === 'lobby') {
           this.initGameFromRoom(room);
+        }
+        
+        // 如果在游戏页面，同步游戏状态
+        if (room.status === 'playing' && this.data.pageState === 'playing' && room.gameData) {
+          this.syncGameState(room.gameData);
         }
       },
       onError: (err) => {
@@ -231,6 +238,29 @@ Page({
       this.roomWatcher.close();
       this.roomWatcher = null;
     }
+  },
+  
+  // 同步游戏状态
+  syncGameState(gameData) {
+    // 只在不是自己回合时同步（避免重复更新）
+    if (gameData.currentPlayer === this.data.myIndex) return;
+    
+    const myHand = gameData.hands[this.data.myIndex];
+    
+    this.setData({
+      currentRound: gameData.currentRound,
+      currentPlayer: gameData.currentPlayer,
+      playerHand: myHand.sort((a, b) => this.cardSortValue(a) - this.cardSortValue(b)),
+      allHands: gameData.hands,
+      tableCards: gameData.tableCards || [],
+      rawScores: gameData.rawScores || [0, 0, 0, 0],
+      displayScores: gameData.rawScores || [0, 0, 0, 0],
+      collectedScoreCards: gameData.collectedScoreCards || [[], [], [], []],
+      leadSuit: gameData.leadSuit || null
+    });
+    
+    // 检查 AI 出牌
+    setTimeout(() => this.checkAIPlay(), 500);
   },
 
   // ========== 大厅操作 ==========
@@ -307,6 +337,9 @@ Page({
       wx.hideLoading();
       
       if (res.result.success) {
+        // 等待一下确保数据库更新完成
+        await new Promise(resolve => setTimeout(resolve, 500));
+        
         // 本地初始化
         const myHand = hands[this.data.myIndex];
         this.setData({
@@ -473,6 +506,15 @@ Page({
       });
       
       const room = roomRes.result.data;
+      
+      // 安全检查：确保 gameData 存在
+      if (!room.gameData) {
+        console.error('gameData 不存在，游戏状态异常');
+        wx.showToast({ title: '游戏状态异常，请重新开始', icon: 'none' });
+        this.setData({ pageState: 'lobby' });
+        return;
+      }
+      
       const gameData = room.gameData;
       
       // 更新手牌
