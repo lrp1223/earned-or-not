@@ -70,9 +70,6 @@
 
     <!-- 底部手牌区域 -->
     <view class="area-bottom-hand" wx:if="{{gameState === 'playing'}}">
-      <view class="btn-row-action">
-        <view class="btn-confirm-play {{selectedCard !== null ? 'btn-enabled' : ''}}" bindtap="confirmPlay">出牌</view>
-      </view>
       <view class="hand-view-center">
         <view class="hand-card-stack">
           <view class="h-card-item {{selectedCard === index ? 'h-selected' : ''}} {{!isValidPlay(item, playerHand) ? 'h-disabled' : ''}}" 
@@ -87,6 +84,7 @@
           </view>
         </view>
       </view>
+      <view class="btn-confirm-play {{selectedCard !== null ? 'btn-enabled' : ''}}" bindtap="confirmPlay">出牌</view>
     </view>
 
     <!-- 战报结算 -->
