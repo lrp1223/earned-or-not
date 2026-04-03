@@ -279,23 +279,60 @@ Page({
       const deck = this.createDeck();
       const hands = this.dealCards(deck);
       const teams = this.determineTeamsInitial(hands);
+      const firstPlayer = this.findFirstPlayer(hands);
       
-      await db.collection('gongzhu_rooms').doc(this.data.roomId).update({
+      const gameData = {
+        currentRound: 1,
+        currentPlayer: firstPlayer,
+        hands: hands,
+        tableCards: [],
+        leadSuit: null,
+        rawScores: [0, 0, 0, 0],
+        collectedScoreCards: [[], [], [], []],
+        teams: teams
+      };
+      
+      // 使用云函数更新游戏状态
+      const res = await wx.cloud.callFunction({
+        name: 'gongzhu',
         data: {
-          status: 'playing',
-          gameData: {
-            currentRound: 1,
-            currentPlayer: this.findFirstPlayer(hands),
-            hands: hands,
-            tableCards: [],
-            rawScores: [0, 0, 0, 0],
-            collectedScoreCards: [[], [], [], []],
-            teams: teams
+          action: 'startGame',
+          data: {
+            roomId: this.data.roomId,
+            gameData
           }
         }
       });
       
       wx.hideLoading();
+      
+      if (res.result.success) {
+        // 本地初始化
+        const myHand = hands[this.data.myIndex];
+        this.setData({
+          pageState: 'playing',
+          currentRound: 1,
+          currentPlayer: firstPlayer,
+          playerHand: myHand.sort((a, b) => this.cardSortValue(a) - this.cardSortValue(b)),
+          allHands: hands,
+          tableCards: [],
+          rawScores: [0, 0, 0, 0],
+          displayScores: [0, 0, 0, 0],
+          collectedScoreCards: [[], [], [], []],
+          selectedCard: null,
+          leadSuit: null
+        });
+        
+        // 如果是当前玩家回合，开始倒计时
+        if (firstPlayer === this.data.myIndex) {
+          this.startCountdown();
+        }
+        
+        // AI 自动出牌
+        setTimeout(() => this.checkAIPlay(), 1000);
+      } else {
+        wx.showToast({ title: res.result.error || '开始失败', icon: 'none' });
+      }
       
     } catch (err) {
       wx.hideLoading();
@@ -314,12 +351,12 @@ Page({
       currentPlayer: gameData.currentPlayer,
       playerHand: myHand.sort((a, b) => this.cardSortValue(a) - this.cardSortValue(b)),
       allHands: gameData.hands,
-      tableCards: gameData.tableCards,
-      rawScores: gameData.rawScores,
-      displayScores: gameData.rawScores,
-      collectedScoreCards: gameData.collectedScoreCards,
+      tableCards: gameData.tableCards || [],
+      rawScores: gameData.rawScores || [0, 0, 0, 0],
+      displayScores: gameData.rawScores || [0, 0, 0, 0],
+      collectedScoreCards: gameData.collectedScoreCards || [[], [], [], []],
       selectedCard: null,
-      leadSuit: null
+      leadSuit: gameData.leadSuit || null
     });
     
     // 如果是当前玩家回合，开始倒计时
@@ -328,7 +365,7 @@ Page({
     }
     
     // AI 自动出牌
-    this.checkAIPlay();
+    setTimeout(() => this.checkAIPlay(), 500);
   },
 
   // ========== 游戏逻辑 ==========
@@ -426,8 +463,16 @@ Page({
     this.clearCountdown();
     
     try {
-      const res = await db.collection('gongzhu_rooms').doc(this.data.roomId).get();
-      const room = res.data;
+      // 获取当前游戏数据
+      const roomRes = await wx.cloud.callFunction({
+        name: 'gongzhu',
+        data: {
+          action: 'getRoom',
+          data: { roomId: this.data.roomId }
+        }
+      });
+      
+      const room = roomRes.result.data;
       const gameData = room.gameData;
       
       // 更新手牌
@@ -447,6 +492,7 @@ Page({
         ? this.data.playerHand.filter((c, i) => i !== this.data.selectedCard)
         : this.data.playerHand;
       
+      // 更新本地状态
       this.setData({
         tableCards: newTableCards,
         playerHand: newPlayerHand,
@@ -461,12 +507,24 @@ Page({
       } else {
         // 下一个玩家
         const nextPlayer = (playerIndex + 1) % 4;
-        await db.collection('gongzhu_rooms').doc(this.data.roomId).update({
+        
+        // 更新游戏数据到云端
+        const newGameData = {
+          ...gameData,
+          hands: newHands,
+          tableCards: newTableCards,
+          leadSuit: newLeadSuit,
+          currentPlayer: nextPlayer
+        };
+        
+        await wx.cloud.callFunction({
+          name: 'gongzhu',
           data: {
-            'gameData.hands': newHands,
-            'gameData.tableCards': newTableCards,
-            'gameData.leadSuit': newLeadSuit,
-            'gameData.currentPlayer': nextPlayer
+            action: 'playCard',
+            data: {
+              roomId: this.data.roomId,
+              gameData: newGameData
+            }
           }
         });
         
@@ -483,6 +541,7 @@ Page({
       
     } catch (err) {
       console.error('出牌失败:', err);
+      wx.showToast({ title: '出牌失败', icon: 'none' });
     }
   },
 
@@ -573,8 +632,7 @@ Page({
   // ========== 结算逻辑 ==========
   
   async endRound(hands, tableCards, leadSuit, gameData) {
-    // ... 结算逻辑（类似单机版）
-    // 简化版：直接判断赢家
+    // 判断赢家
     let winner = tableCards[0].player;
     let maxRank = this.cardRankValue(tableCards[0].card.rank);
     for (let i = 1; i < 4; i++) {
@@ -584,24 +642,149 @@ Page({
       }
     }
     
+    // 收集得分牌
+    const roundScoreCards = tableCards.filter(tc => 
+      SCORE_CARDS[tc.card.id] || 
+      tc.card.id === 'C10' || 
+      tc.card.suit === 'H'
+    ).map(tc => tc.card);
+    
+    const newCollected = [...gameData.collectedScoreCards];
+    newCollected[winner] = [...newCollected[winner], ...roundScoreCards];
+    
+    // 计算本轮分数
+    let roundRaw = 0;
+    tableCards.forEach(tc => {
+      if (SCORE_CARDS[tc.card.id]) roundRaw += SCORE_CARDS[tc.card.id];
+    });
+    
+    const newRawScores = [...gameData.rawScores];
+    newRawScores[winner] += roundRaw;
+    
     const isOver = this.data.currentRound >= 13;
     
     if (isOver) {
-      // 游戏结束，显示结算
-      this.setData({ pageState: 'result' });
+      // 游戏结束，计算最终分数
+      const { optimizedScores, finalScores } = this.calculateFinalAverage(newRawScores, newCollected, gameData.teams);
+      
+      // 构建排行榜
+      const sorted = [0, 1, 2, 3]
+        .map(idx => ({ idx, optimized: optimizedScores[idx], thisGame: finalScores[idx], total: finalScores[idx] }))
+        .sort((a, b) => b.total - a.total);
+      
+      // 计算排名
+      const sortedRank = [];
+      for (let index = 0; index < sorted.length; index++) {
+        const item = sorted[index];
+        let rank = index + 1;
+        if (index > 0 && item.total === sorted[index - 1].total) {
+          rank = sortedRank[index - 1].rank;
+        }
+        sortedRank.push({ ...item, rank });
+      }
+      
+      // 更新游戏数据
+      const newGameData = {
+        ...gameData,
+        hands,
+        tableCards: [],
+        collectedScoreCards: newCollected,
+        rawScores: newRawScores,
+        status: 'finished'
+      };
+      
+      await wx.cloud.callFunction({
+        name: 'gongzhu',
+        data: {
+          action: 'playCard',
+          data: { roomId: this.data.roomId, gameData: newGameData }
+        }
+      });
+      
+      // 显示结算
+      this.setData({
+        pageState: 'result',
+        sortedRank,
+        tableCards: []
+      });
+      
     } else {
       // 下一轮
+      const newGameData = {
+        ...gameData,
+        currentRound: this.data.currentRound + 1,
+        currentPlayer: winner,
+        hands,
+        tableCards: [],
+        leadSuit: null,
+        collectedScoreCards: newCollected,
+        rawScores: newRawScores
+      };
+      
+      await wx.cloud.callFunction({
+        name: 'gongzhu',
+        data: {
+          action: 'playCard',
+          data: { roomId: this.data.roomId, gameData: newGameData }
+        }
+      });
+      
       this.setData({
         currentRound: this.data.currentRound + 1,
         currentPlayer: winner,
-        tableCards: []
+        tableCards: [],
+        collectedScoreCards: newCollected,
+        rawScores: newRawScores,
+        displayScores: newRawScores
       });
       
       if (winner === this.data.myIndex) {
         this.startCountdown();
       }
-      this.checkAIPlay();
+      
+      setTimeout(() => this.checkAIPlay(), 500);
     }
+  },
+
+  calculateFinalAverage(rawScores, collected, teams) {
+    const final = [0, 0, 0, 0];
+    const processed = new Set();
+    
+    const optimizedScores = rawScores.map((score, idx) => {
+      const myCollected = collected[idx];
+      const hearts = myCollected.filter(c => c.suit === 'H');
+      let finalS = score;
+      
+      // 全红逻辑
+      if (hearts.length === 13) finalS += 400;
+      
+      // 变压器逻辑
+      const hasOtherScoreCards = myCollected.some(c => 
+        c.id === 'SQ' || c.id === 'DJ' || c.suit === 'H'
+      );
+      
+      if (myCollected.some(c => c.id === 'C10')) {
+        if (!hasOtherScoreCards) {
+          finalS = 50;
+        } else {
+          finalS *= 2;
+        }
+      }
+      
+      return finalS;
+    });
+
+    // 计算团队平均分
+    for (let i = 0; i < 4; i++) {
+      if (processed.has(i)) continue;
+      const mate = teams[i];
+      const avg = Math.round((optimizedScores[i] + optimizedScores[mate]) / 2);
+      final[i] = final[mate] = avg;
+      processed.add(i);
+      processed.add(mate);
+    }
+    
+    return { optimizedScores, finalScores: final };
   },
 
   playAgain() {
