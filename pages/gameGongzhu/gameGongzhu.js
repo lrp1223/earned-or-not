@@ -292,13 +292,14 @@ Page({
         .sort((a, b) => b.total - a.total);
       
       // 计算排名（1224竞赛排名法：同分并列，后续排名跳过）
-      sortedRank = sorted.map((item, index) => {
+      for (let index = 0; index < sorted.length; index++) {
+        const item = sorted[index];
         let rank = index + 1;
         if (index > 0 && item.total === sorted[index - 1].total) {
           rank = sortedRank[index - 1].rank;
         }
-        return { ...item, rank, isLast: index === 3 }; // 标记最后一名
-      });
+        sortedRank.push({ ...item, rank, isLast: index === 3 });
+      }
     }
 
     this.setData({
