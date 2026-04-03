@@ -248,17 +248,20 @@ Page({
     
     const isOver = currentRound >= 13;
     let finalThisGameScores = [0,0,0,0];
+    let optimizedThisGameScores = [0,0,0,0];
     let newTotalScores = [...totalScores];
 
     if (isOver) {
-      finalThisGameScores = this.calculateFinalAverage(newRawScores, newCollected);
+      const result = this.calculateFinalAverage(newRawScores, newCollected);
+      optimizedThisGameScores = result.optimizedScores;  // 收牌分数（含 C10/全红加成）
+      finalThisGameScores = result.finalScores;         // 本局分数（与队友平均后）
       for (let i = 0; i < 4; i++) newTotalScores[i] += finalThisGameScores[i];
     }
 
     // 构建排序后的排行榜（按总分从高到低）
     const sortedRank = isOver ? 
       [0, 1, 2, 3]
-        .map(idx => ({ idx, raw: newRawScores[idx], thisGame: finalThisGameScores[idx], total: newTotalScores[idx] }))
+        .map(idx => ({ idx, optimized: optimizedThisGameScores[idx], thisGame: finalThisGameScores[idx], total: newTotalScores[idx] }))
         .sort((a, b) => b.total - a.total)
       : [];
 
@@ -311,7 +314,8 @@ Page({
       final[i] = final[mate] = avg;
       processed.add(i); processed.add(mate);
     }
-    return final;
+    // 返回优化后的分数（收牌）和平均后的分数（本局）
+    return { optimizedScores, finalScores: final };
   },
 
   cardRankValue(rank) {
