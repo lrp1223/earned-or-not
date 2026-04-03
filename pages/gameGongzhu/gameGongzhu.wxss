@@ -200,7 +200,7 @@
 }
 
 .btn-confirm-play {
-  width: 18vw;
+  width: 12vw;
   height: 12vh;
   background: #666;
   border-radius: 2vh;
@@ -208,7 +208,7 @@
   align-items: center;
   justify-content: center;
   color: #fff;
-  font-size: 3vh;
+  font-size: 2.8vh;
   font-weight: bold;
   flex-shrink: 0;
 }
