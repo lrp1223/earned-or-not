@@ -79,6 +79,7 @@ Page({
     
     this.setData({
       gameState: 'playing',
+      currentRound: 1,  // 重置轮次
       playerHand: hands[0].sort((a, b) => this.cardSortValue(a) - this.cardSortValue(b)),
       aiHands: [hands[1], hands[2], hands[3]],
       currentPlayer: this.findFirstPlayer(hands),
