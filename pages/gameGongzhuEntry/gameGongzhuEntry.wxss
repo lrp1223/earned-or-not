@@ -1,0 +1,138 @@
+/* pages/gameGongzhuEntry/gameGongzhuEntry.wxss */
+
+.container {
+  min-height: 100vh;
+  background: linear-gradient(180deg, #1a5f1a 0%, #0d3d0d 100%);
+  padding: 60rpx 40rpx;
+  box-sizing: border-box;
+}
+
+.header {
+  text-align: center;
+  padding: 80rpx 0 60rpx;
+}
+
+.emoji {
+  font-size: 120rpx;
+  display: block;
+  margin-bottom: 20rpx;
+}
+
+.title {
+  font-size: 72rpx;
+  font-weight: bold;
+  color: #fff;
+  display: block;
+}
+
+.subtitle {
+  font-size: 28rpx;
+  color: #ffd700;
+  margin-top: 16rpx;
+  display: block;
+}
+
+.game-options {
+  margin-top: 60rpx;
+}
+
+.game-card {
+  position: relative;
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 32rpx;
+  padding: 48rpx;
+  display: flex;
+  align-items: center;
+  box-shadow: 0 16rpx 48rpx rgba(0, 0, 0, 0.3);
+  margin-bottom: 32rpx;
+}
+
+.game-card.single {
+  border: 3rpx solid #ff6b35;
+}
+
+.game-card.online {
+  border: 3rpx solid #52c41a;
+}
+
+.card-tag {
+  position: absolute;
+  top: -12rpx;
+  right: 24rpx;
+  font-size: 22rpx;
+  padding: 8rpx 20rpx;
+  border-radius: 24rpx;
+  color: #fff;
+}
+
+.card-tag.new {
+  background: #52c41a;
+}
+
+.card-icon {
+  font-size: 80rpx;
+  margin-right: 32rpx;
+}
+
+.card-info {
+  flex: 1;
+}
+
+.card-title {
+  font-size: 40rpx;
+  font-weight: bold;
+  color: #333;
+  display: block;
+}
+
+.card-desc {
+  font-size: 26rpx;
+  color: #666;
+  margin-top: 12rpx;
+  display: block;
+}
+
+.card-arrow {
+  font-size: 56rpx;
+  color: #ccc;
+}
+
+.rules {
+  margin-top: 60rpx;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 24rpx;
+  padding: 40rpx;
+}
+
+.rules-title {
+  font-size: 32rpx;
+  font-weight: bold;
+  color: #ffd700;
+  margin-bottom: 24rpx;
+}
+
+.rules-content {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16rpx;
+}
+
+.rule-item {
+  display: flex;
+  align-items: center;
+  font-size: 26rpx;
+  color: #fff;
+  background: rgba(0, 0, 0, 0.2);
+  padding: 16rpx 24rpx;
+  border-radius: 12rpx;
+}
+
+.suit-s, .suit-c { color: #333; font-size: 32rpx; margin-right: 12rpx; }
+.suit-d, .suit-h { color: #e53935; font-size: 32rpx; margin-right: 12rpx; }
+
+.rules-tip {
+  font-size: 24rpx;
+  color: rgba(255, 255, 255, 0.6);
+  margin-top: 24rpx;
+  text-align: center;
+}

@@ -9,6 +9,7 @@
     "pages/gameIdiom/gameIdiom",
     "pages/gameFeihua/gameFeihua",
     "pages/game24/game24",
+    "pages/gameGongzhuEntry/gameGongzhuEntry",
     "pages/gameGongzhu/gameGongzhu",
     "pages/gameGongzhuOnline/gameGongzhuOnline",
     "pages/profile/profile",

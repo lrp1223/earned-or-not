@@ -1,0 +1,40 @@
+<!--pages/gameGongzhuEntry/gameGongzhuEntry.wxml-->
+<view class="container">
+  <view class="header">
+    <text class="emoji">🐷</text>
+    <text class="title">拱猪</text>
+    <text class="subtitle">经典纸牌游戏</text>
+  </view>
+
+  <view class="game-options">
+    <view class="game-card single" bindtap="goSingle">
+      <view class="card-icon">🎮</view>
+      <view class="card-info">
+        <text class="card-title">单机版</text>
+        <text class="card-desc">你 vs 3个AI，随时随地开玩</text>
+      </view>
+      <text class="card-arrow">›</text>
+    </view>
+
+    <view class="game-card online" bindtap="goOnline">
+      <view class="card-tag new">🆕 新</view>
+      <view class="card-icon">👥</view>
+      <view class="card-info">
+        <text class="card-title">在线版</text>
+        <text class="card-desc">四人对战，邀请好友一起玩</text>
+      </view>
+      <text class="card-arrow">›</text>
+    </view>
+  </view>
+
+  <view class="rules">
+    <view class="rules-title">🎯 游戏规则</view>
+    <view class="rules-content">
+      <view class="rule-item"><text class="suit-s">♠</text><text>Q 猪 -100分</text></view>
+      <view class="rule-item"><text class="suit-d">♦</text><text>J 羊 +100分</text></view>
+      <view class="rule-item"><text class="suit-h">♥</text><text>红桃 -10~-50分</text></view>
+      <view class="rule-item"><text class="suit-c">♣</text><text>10 变压器 ×2</text></view>
+    </view>
+    <view class="rules-tip">起手定队 · 分数连局累加</view>
+  </view>
+</view>
