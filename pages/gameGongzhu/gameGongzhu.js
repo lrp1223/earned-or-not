@@ -281,10 +281,13 @@ Page({
       let finalS = score;
       // 全红逻辑：收齐 13 张红桃，额外 +400 分
       if (hearts.length === 13) finalS += 400;
-      // 变压器逻辑：C10 本身值 +50 分，且使所有分数翻倍
+      // 变压器逻辑：C10 单独存在时得 50 分，有其他分数牌时翻倍
       if (myCollected.some(c => c.id === 'C10')) {
-        finalS += 50;      // C10 基础分
-        finalS *= 2;       // 翻倍
+        if (finalS === 0) {
+          finalS = 50;    // 只有 C10，无其他分数牌
+        } else {
+          finalS *= 2;    // 有其他分数牌，翻倍
+        }
       }
       return finalS;
     });
