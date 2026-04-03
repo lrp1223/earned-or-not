@@ -192,9 +192,18 @@ Page({
   aiPlay() {
     const playerIndex = this.data.currentPlayer;
     const hand = this.data.aiHands[playerIndex - 1];
-    const { tableCards, displayScores } = this.data;
+    const { tableCards, displayScores, currentRound } = this.data;
     const validCards = hand.filter(c => this.isValidPlay(c, hand));
     let card = null;
+
+    // 第一轮首家必须出黑桃J
+    if (currentRound === 1 && tableCards.length === 0) {
+      card = hand.find(c => c.id === 'SJ');
+      if (card) {
+        this.playCard(playerIndex, card);
+        return;
+      }
+    }
 
     if (tableCards.length === 0) {
       // 首家策略
