@@ -275,12 +275,22 @@ Page({
       for (let i = 0; i < 4; i++) newTotalScores[i] += finalThisGameScores[i];
     }
 
-    // 构建排序后的排行榜（按总分从高到低）
-    const sortedRank = isOver ? 
-      [0, 1, 2, 3]
+    // 构建排序后的排行榜（按总分从高到低，处理并列）
+    let sortedRank = [];
+    if (isOver) {
+      const sorted = [0, 1, 2, 3]
         .map(idx => ({ idx, optimized: optimizedThisGameScores[idx], thisGame: finalThisGameScores[idx], total: newTotalScores[idx] }))
-        .sort((a, b) => b.total - a.total)
-      : [];
+        .sort((a, b) => b.total - a.total);
+      
+      // 计算排名（同分并列）
+      sortedRank = sorted.map((item, index) => {
+        let rank = index + 1;
+        if (index > 0 && item.total === sorted[index - 1].total) {
+          rank = sortedRank[index - 1].rank;
+        }
+        return { ...item, rank };
+      });
+    }
 
     this.setData({
       tableCards: [], currentPlayer: winner, leadSuit: null,
