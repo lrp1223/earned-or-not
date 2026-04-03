@@ -67,44 +67,47 @@ Page({
   async createRoom() {
     const roomId = this.generateRoomId();
     const userInfo = this.userInfo;
+    const hostId = app.globalData.openid || 'host_' + Date.now();
     
     try {
       wx.showLoading({ title: '创建中...' });
       
-      await db.collection('gongzhu_rooms').add({
+      // 使用云函数创建房间
+      const res = await wx.cloud.callFunction({
+        name: 'gongzhu',
         data: {
-          _id: roomId,
-          hostId: app.globalData.openid || 'host_' + Date.now(),
-          status: 'waiting',
-          players: [{
-            id: app.globalData.openid || 'player_0',
+          action: 'createRoom',
+          data: {
+            roomId,
+            hostId,
             nickname: userInfo.nickName,
-            avatar: userInfo.avatarUrl || '/images/avatar.png',
-            isHost: true,
-            isAI: false
-          }],
-          createdAt: db.serverDate()
+            avatar: userInfo.avatarUrl || '/images/avatar.png'
+          }
         }
       });
       
       wx.hideLoading();
       
-      this.setData({
-        roomId,
-        isHost: true,
-        myIndex: 0,
-        pageState: 'lobby',
-        playerCount: 1,
-        players: this.formatPlayers([{
-          id: app.globalData.openid || 'player_0',
-          nickname: userInfo.nickName,
-          avatar: userInfo.avatarUrl || '/images/avatar.png',
+      if (res.result.success) {
+        this.setData({
+          roomId,
           isHost: true,
-          isAI: false
-        }])
-      });
-      
-      this.startWatching(roomId);
+          myIndex: 0,
+          pageState: 'lobby',
+          playerCount: 1,
+          players: this.formatPlayers([{
+            id: hostId,
+            nickname: userInfo.nickName,
+            avatar: userInfo.avatarUrl || '/images/avatar.png',
+            isHost: true,
+            isAI: false
+          }])
+        });
+        
+        this.startWatching(roomId);
+      } else {
+        wx.showToast({ title: res.result.error || '创建失败', icon: 'none' });
+      }
       
     } catch (err) {
       wx.hideLoading();
@@ -133,57 +136,58 @@ Page({
     }
     
     const userInfo = this.userInfo;
+    const playerId = app.globalData.openid || 'player_' + Date.now();
     
     try {
       wx.showLoading({ title: '加入中...' });
       
-      const res = await db.collection('gongzhu_rooms').doc(roomId).get();
-      const room = res.data;
-      
-      if (room.status !== 'waiting') {
-        wx.hideLoading();
-        wx.showToast({ title: '游戏已开始', icon: 'none' });
-        return;
-      }
-      
-      if (room.players.length >= 4) {
-        wx.hideLoading();
-        wx.showToast({ title: '房间已满', icon: 'none' });
-        return;
-      }
-      
-      const newPlayer = {
-        id: app.globalData.openid || 'player_' + Date.now(),
-        nickname: userInfo.nickName,
-        avatar: userInfo.avatarUrl || '/images/avatar.png',
-        isHost: false,
-        isAI: false
-      };
-      
-      await db.collection('gongzhu_rooms').doc(roomId).update({
+      // 使用云函数加入房间
+      const res = await wx.cloud.callFunction({
+        name: 'gongzhu',
         data: {
-          players: db.command.push(newPlayer)
+          action: 'joinRoom',
+          data: {
+            roomId,
+            playerId,
+            nickname: userInfo.nickName,
+            avatar: userInfo.avatarUrl || '/images/avatar.png'
+          }
         }
       });
       
       wx.hideLoading();
       
-      this.setData({
-        roomId,
-        isHost: false,
-        myIndex: room.players.length,
-        pageState: 'lobby',
-        playerCount: room.players.length + 1,
-        players: this.formatPlayers([...room.players, newPlayer])
-      });
-      
-      this.startWatching(roomId);
-      this.hideJoinModal();
+      if (res.result.success) {
+        // 获取房间信息
+        const roomRes = await wx.cloud.callFunction({
+          name: 'gongzhu',
+          data: {
+            action: 'getRoom',
+            data: { roomId }
+          }
+        });
+        
+        const room = roomRes.result.data;
+        
+        this.setData({
+          roomId,
+          isHost: false,
+          myIndex: res.result.playerIndex,
+          pageState: 'lobby',
+          playerCount: room.players.length,
+          players: this.formatPlayers(room.players)
+        });
+        
+        this.startWatching(roomId);
+        this.hideJoinModal();
+      } else {
+        wx.showToast({ title: res.result.error || '加入失败', icon: 'none' });
+      }
       
     } catch (err) {
       wx.hideLoading();
       console.error('加入房间失败:', err);
-      wx.showToast({ title: '房间不存在', icon: 'none' });
+      wx.showToast({ title: '加入失败', icon: 'none' });
     }
   },
 
@@ -234,22 +238,29 @@ Page({
   async addAI() {
     if (this.data.playerCount >= 4) return;
     
-    const aiPlayer = {
-      id: 'ai_' + Date.now(),
-      nickname: '机器人' + (this.data.playerCount),
-      avatar: '/images/avatar2.png',
-      isHost: false,
-      isAI: true
-    };
+    const aiId = 'ai_' + Date.now();
+    const nickname = '机器人' + (this.data.playerCount);
     
     try {
-      await db.collection('gongzhu_rooms').doc(this.data.roomId).update({
+      const res = await wx.cloud.callFunction({
+        name: 'gongzhu',
         data: {
-          players: db.command.push(aiPlayer)
+          action: 'addAI',
+          data: {
+            roomId: this.data.roomId,
+            aiId,
+            nickname,
+            avatar: '/images/avatar2.png'
+          }
         }
       });
+      
+      if (!res.result.success) {
+        wx.showToast({ title: res.result.error || '添加失败', icon: 'none' });
+      }
     } catch (err) {
       console.error('添加AI失败:', err);
+      wx.showToast({ title: '添加失败', icon: 'none' });
     }
   },
 
