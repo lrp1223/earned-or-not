@@ -105,7 +105,7 @@
           </view>
           <block wx:for="{{gameResult.sortedRank}}" wx:for-item="item" wx:key="idx">
             <view class="score-row {{item.idx === 0 ? 'me' : ''}}">
-              <text class="col-p">{{item.isLast ? '🐷' : (item.rank === 1 ? '🥇' : (item.rank === 2 ? '🥈' : (item.rank === 3 ? '🥉' : '')))}} {{item.idx === 0 ? '😀 你' : (item.idx === 1 ? '上家' : (item.idx === 2 ? '对家' : '下家'))}}{{gameResult.initialPigPlayer === item.idx ? '🐷' : ''}}{{gameResult.initialSheepPlayer === item.idx ? '🐑' : ''}}</text>
+              <text class="col-p">{{item.isLast ? '🐷' : (item.rank === 1 ? '🥇' : (item.rank === 2 ? '🥈' : (item.rank === 3 ? '🥉' : '')))}} {{item.rank === 1 && item.idx === 0 ? '你' : (item.idx === 0 ? '😀 你' : (item.idx === 1 ? '上家' : (item.idx === 2 ? '对家' : '下家')))}}{{gameResult.initialPigPlayer === item.idx ? '🐷' : ''}}{{gameResult.initialSheepPlayer === item.idx ? '🐑' : ''}}</text>
               <text class="col-raw">{{item.optimized}}</text>
               <text class="col-s {{item.thisGame >= 0 ? 'plus' : 'minus'}}">{{item.thisGame}}</text>
               <text class="col-t">{{item.total}}</text>
