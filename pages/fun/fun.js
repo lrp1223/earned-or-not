@@ -15,5 +15,8 @@ Page({
   },
   goGameGongzhu() {
     wx.navigateTo({ url: '/pages/gameGongzhu/gameGongzhu' });
+  },
+  goGameGongzhuOnline() {
+    wx.navigateTo({ url: '/pages/gameGongzhuOnline/gameGongzhuOnline' });
   }
 });

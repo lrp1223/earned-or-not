@@ -10,6 +10,7 @@
     "pages/gameFeihua/gameFeihua",
     "pages/game24/game24",
     "pages/gameGongzhu/gameGongzhu",
+    "pages/gameGongzhuOnline/gameGongzhuOnline",
     "pages/profile/profile",
     "pages/settings/settings",
     "pages/record-list/record-list",

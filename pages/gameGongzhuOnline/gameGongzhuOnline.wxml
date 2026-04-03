@@ -1,0 +1,137 @@
+<!--pages/gameGongzhuOnline/gameGongzhuOnline.wxml-->
+<view class="container">
+
+  <!-- 1. 首页入口 -->
+  <view class="home-screen" wx:if="{{pageState === 'home'}}">
+    <view class="title-box">
+      <text class="emoji-main">🐷</text>
+      <view class="title-texts">
+        <text class="text-title">拱猪在线</text>
+        <text class="text-subtitle">四人对战版</text>
+      </view>
+    </view>
+    
+    <view class="btn-group">
+      <view class="btn-primary" bindtap="createRoom">创建房间</view>
+      <view class="btn-secondary" bindtap="showJoinModal">加入房间</view>
+    </view>
+  </view>
+
+  <!-- 加入房间弹窗 -->
+  <view class="modal-overlay" wx:if="{{showJoinInput}}" bindtap="hideJoinModal">
+    <view class="modal-box" catchtap>
+      <text class="modal-title">输入房间号</text>
+      <input class="room-input" type="number" maxlength="6" placeholder="请输入6位房间号" value="{{inputRoomId}}" bindinput="onRoomIdInput" />
+      <view class="modal-btns">
+        <view class="btn-cancel" bindtap="hideJoinModal">取消</view>
+        <view class="btn-confirm" bindtap="joinRoom">加入</view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 2. 等待大厅 -->
+  <view class="lobby-screen" wx:if="{{pageState === 'lobby'}}">
+    <view class="lobby-header">
+      <text class="room-id">房间号: {{roomId}}</text>
+      <text class="room-status">{{playerCount}}/4 人</text>
+    </view>
+    
+    <view class="player-list">
+      <view class="player-slot {{item.isEmpty ? 'empty' : ''}}" wx:for="{{players}}" wx:key="index">
+        <image wx:if="{{!item.isEmpty && !item.isAI}}" class="player-avatar" src="{{item.avatar}}" />
+        <text wx:else class="player-avatar-placeholder">{{item.isAI ? '🤖' : '+'}}</text>
+        <text class="player-name">{{item.isEmpty ? '等待加入' : (item.isAI ? item.nickname : item.nickname)}}</text>
+        <text class="player-tag" wx:if="{{item.isHost}}">房主</text>
+        <text class="player-tag ai" wx:if="{{item.isAI}}">AI</text>
+      </view>
+    </view>
+    
+    <view class="lobby-actions" wx:if="{{isHost}}">
+      <view class="btn-add-ai" wx:if="{{playerCount < 4}}" bindtap="addAI">添加AI机器人</view>
+      <view class="btn-start-game {{playerCount < 2 ? 'disabled' : ''}}" bindtap="startGame">开始游戏</view>
+    </view>
+    
+    <view class="lobby-actions" wx:else>
+      <view class="btn-leave" bindtap="leaveRoom">离开房间</view>
+    </view>
+  </view>
+
+  <!-- 3. 游戏界面 -->
+  <view class="game-screen" wx:if="{{pageState === 'playing'}}">
+    <!-- 顶部信息栏 -->
+    <view class="game-header">
+      <text class="round-info">第 {{currentRound}}/13 轮</text>
+      <text class="countdown" wx:if="{{countdown > 0}}">{{countdown}}s</text>
+    </view>
+
+    <!-- 游戏桌面 -->
+    <view class="game-board">
+      <!-- 四个玩家位置 -->
+      <view class="player-seat seat-top {{currentPlayer === 2 ? 'active' : ''}}">
+        <image class="seat-avatar" src="{{players[2].avatar}}" />
+        <text class="seat-name">{{players[2].nickname}}</text>
+        <text class="seat-score">{{displayScores[2]}}</text>
+      </view>
+      
+      <view class="player-seat seat-left {{currentPlayer === 3 ? 'active' : ''}}">
+        <image class="seat-avatar" src="{{players[3].avatar}}" />
+        <text class="seat-name">{{players[3].nickname}}</text>
+        <text class="seat-score">{{displayScores[3]}}</text>
+      </view>
+      
+      <view class="player-seat seat-right {{currentPlayer === 1 ? 'active' : ''}}">
+        <image class="seat-avatar" src="{{players[1].avatar}}" />
+        <text class="seat-name">{{players[1].nickname}}</text>
+        <text class="seat-score">{{displayScores[1]}}</text>
+      </view>
+      
+      <view class="player-seat seat-bottom {{currentPlayer === 0 ? 'active' : ''}}">
+        <image class="seat-avatar" src="{{players[0].avatar}}" />
+        <text class="seat-name">{{players[0].nickname}}</text>
+        <text class="seat-score">{{displayScores[0]}}</text>
+      </view>
+
+      <!-- 桌面出牌区 -->
+      <view class="table-cards">
+        <view class="table-card {{getPlayerPosition(item.player)}}" wx:for="{{tableCards}}" wx:key="index">
+          <text class="card-suit {{item.card.suit === 'H' || item.card.suit === 'D' ? 'red' : ''}}">{{suitMap[item.card.suit]}}</text>
+          <text class="card-rank">{{item.card.rank}}</text>
+        </view>
+      </view>
+    </view>
+
+    <!-- 底部手牌 -->
+    <view class="hand-area">
+      <view class="hand-cards">
+        <view class="hand-card {{selectedCard === index ? 'selected' : ''}} {{!isValidPlay(item) ? 'disabled' : ''}}"
+              wx:for="{{playerHand}}" wx:key="index"
+              bindtap="selectCard" data-index="{{index}}">
+          <text class="card-suit {{item.suit === 'H' || item.suit === 'D' ? 'red' : ''}}">{{suitMap[item.suit]}}</text>
+          <text class="card-rank">{{item.rank}}</text>
+        </view>
+      </view>
+      <view class="btn-play {{selectedCard !== null ? 'enabled' : ''}}" bindtap="confirmPlay">出牌</view>
+    </view>
+  </view>
+
+  <!-- 4. 结算界面 -->
+  <view class="result-overlay" wx:if="{{pageState === 'result'}}">
+    <view class="result-box">
+      <text class="result-title">游戏结束</text>
+      <view class="result-list">
+        <view class="result-item {{item.idx === myIndex ? 'me' : ''}}" wx:for="{{sortedRank}}" wx:key="idx">
+          <text class="result-rank">{{item.rank === 1 ? '🥇' : item.rank === 2 ? '🥈' : item.rank === 3 ? '🥉' : '🐷'}}</text>
+          <image class="result-avatar" src="{{players[item.idx].avatar}}" />
+          <text class="result-name">{{players[item.idx].nickname}}</text>
+          <text class="result-score">{{item.thisGame}}</text>
+          <text class="result-total">{{item.total}}</text>
+        </view>
+      </view>
+      <view class="result-actions">
+        <view class="btn-again" bindtap="playAgain">再来一局</view>
+        <view class="btn-exit" bindtap="exitGame">退出房间</view>
+      </view>
+    </view>
+  </view>
+
+</view>

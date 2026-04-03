@@ -35,8 +35,21 @@
   padding: 6rpx 16rpx;
   border-radius: 20rpx;
 }
+.new-tag {
+  position: absolute;
+  top: -10rpx;
+  right: 20rpx;
+  background: #52c41a;
+  color: white;
+  font-size: 22rpx;
+  padding: 6rpx 16rpx;
+  border-radius: 20rpx;
+}
 .hot {
   border: 2rpx solid #ff4d4f;
+}
+.new {
+  border: 2rpx solid #52c41a;
 }
 .game-card {
   background: white;
