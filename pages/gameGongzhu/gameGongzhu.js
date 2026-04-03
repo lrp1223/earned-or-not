@@ -216,6 +216,9 @@ Page({
   },
 
   endRound() {
+    // 防止用户在结算倒计时中点击下一局/重新开始导致分数丢失
+    if (this.data.gameState !== 'playing') return;
+    
     const { tableCards, leadSuit, rawScores, collectedScoreCards, currentRound, totalScores } = this.data;
     let winner = tableCards[0].player;
     let maxRank = this.cardRankValue(tableCards[0].card.rank);
