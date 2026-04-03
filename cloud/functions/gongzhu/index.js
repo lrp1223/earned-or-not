@@ -195,7 +195,20 @@ async function addAI(data) {
 async function startGame(data) {
   const { roomId, gameData } = data
   
+  if (!gameData) {
+    return { success: false, error: 'gameData 不能为空' }
+  }
+  
   try {
+    // 先获取当前房间状态
+    const roomRes = await db.collection('gongzhu_rooms').doc(roomId).get()
+    const room = roomRes.data
+    
+    if (room.status !== 'waiting') {
+      return { success: false, error: '游戏已经开始或结束' }
+    }
+    
+    // 使用 set 方法确保整个 gameData 被正确写入
     await db.collection('gongzhu_rooms').doc(roomId).update({
       data: {
         status: 'playing',
@@ -203,8 +216,15 @@ async function startGame(data) {
       }
     })
     
+    // 验证更新是否成功
+    const verifyRes = await db.collection('gongzhu_rooms').doc(roomId).get()
+    if (!verifyRes.data.gameData) {
+      return { success: false, error: 'gameData 写入失败，请重试' }
+    }
+    
     return { success: true }
   } catch (err) {
+    console.error('startGame 错误:', err)
     return { success: false, error: err.message }
   }
 }
@@ -213,7 +233,21 @@ async function startGame(data) {
 async function playCard(data) {
   const { roomId, gameData } = data
   
+  if (!gameData) {
+    return { success: false, error: 'gameData 不能为空' }
+  }
+  
   try {
+    // 获取当前房间状态
+    const roomRes = await db.collection('gongzhu_rooms').doc(roomId).get()
+    const room = roomRes.data
+    
+    // 确保游戏正在进行中
+    if (room.status !== 'playing') {
+      return { success: false, error: '游戏不在进行中' }
+    }
+    
+    // 更新游戏数据
     await db.collection('gongzhu_rooms').doc(roomId).update({
       data: {
         gameData: gameData
@@ -222,6 +256,7 @@ async function playCard(data) {
     
     return { success: true }
   } catch (err) {
+    console.error('playCard 错误:', err)
     return { success: false, error: err.message }
   }
 }
