@@ -3,11 +3,12 @@ const RANKS = ['2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K', 'A']
 const SUIT_MAP = { 'S': '♠', 'H': '♥', 'C': '♣', 'D': '♦' };
 
 // 内部逻辑全部改用英文 key
+// 红桃 2、3、4 为 0 分，不计入 SCORE_CARDS
 const SCORE_CARDS = {
   'SQ': -100, // 猪
   'DJ': 100,  // 羊
   'HA': -50, 'HK': -40, 'HQ': -30, 'HJ': -20,
-  'H10': -10, 'H9': -10, 'H8': -10, 'H7': -10, 'H6': -10, 'H5': -10, 'H4': -10, 'H3': -10, 'H2': -10
+  'H10': -10, 'H9': -10, 'H8': -10, 'H7': -10, 'H6': -10, 'H5': -10
 };
 
 Page({
@@ -225,8 +226,12 @@ Page({
       }
     }
     
-    // 找出得分牌 + C10 + 所有红桃
-    const roundScoreCards = tableCards.filter(tc => SCORE_CARDS[tc.card.id] || tc.card.id === 'C10' || tc.card.suit === 'H').map(tc => tc.card);
+    // 找出得分牌 + C10 + 所有红桃（用于全红判断和 C10 判断）
+    const roundScoreCards = tableCards.filter(tc => 
+      SCORE_CARDS[tc.card.id] || 
+      tc.card.id === 'C10' || 
+      tc.card.suit === 'H'
+    ).map(tc => tc.card);
     const newCollected = [...collectedScoreCards];
     newCollected[winner] = [...newCollected[winner], ...roundScoreCards];
     
@@ -282,8 +287,12 @@ Page({
       // 全红逻辑：收齐 13 张红桃，额外 +400 分
       if (hearts.length === 13) finalS += 400;
       // 变压器逻辑：C10 单独存在时得 50 分，有其他分数牌时翻倍
+      // "单独存在"指：没有红桃、猪、羊的任何牌
+      const hasOtherScoreCards = myCollected.some(c => 
+        c.id === 'SQ' || c.id === 'DJ' || c.suit === 'H'
+      );
       if (myCollected.some(c => c.id === 'C10')) {
-        if (finalS === 0) {
+        if (!hasOtherScoreCards) {
           finalS = 50;    // 只有 C10，无其他分数牌
         } else {
           finalS *= 2;    // 有其他分数牌，翻倍
