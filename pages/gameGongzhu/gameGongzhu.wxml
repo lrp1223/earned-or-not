@@ -73,7 +73,7 @@
       <view class="hand-view-center">
         <view class="hand-card-stack">
           <view class="h-card-item {{selectedCard === index ? 'h-selected' : ''}} {{!isValidPlay(item, playerHand) ? 'h-disabled' : ''}}" 
-                style="left: {{ 20 + index * 30 }}rpx; z-index: {{index}};"
+                style="left: {{ (660 - ( (playerHand.length - 1) * 35 + 80 )) / 2 + index * 35 }}rpx; z-index: {{index}};"
                 wx:for="{{playerHand}}" wx:key="index"
                 bindtap="selectCard" data-index="{{index}}">
             <view class="h-card-face">
