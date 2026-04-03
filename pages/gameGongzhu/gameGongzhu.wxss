@@ -271,7 +271,7 @@
 .res-subtitle { font-size: 2.2vh; color: #999; display: block; margin-top: 1vh; }
 
 .score-table { width: 100%; margin-bottom: 3vh; }
-.score-row { display: flex; justify-content: space-between; padding: 1.5vh 2vw; border-bottom: 1rpx solid #eee; font-size: 2.2vh; color: #333; }
+.score-row { display: flex; justify-content: space-between; padding: 2vh 3vw; border-bottom: 1rpx solid #eee; font-size: 2.8vh; color: #333; }
 .score-row.head { font-weight: bold; color: #999; border-bottom: 2rpx solid #ddd; }
 .score-row.me { background: #fffbe6; color: #d4a017; font-weight: bold; }
 .score-row.teammate { background: #e6f7ff; color: #1890ff; }
@@ -282,16 +282,16 @@
 .plus { color: #52c41a; }
 .minus { color: #f5222d; }
 
-.result-actions { display: flex; gap: 3vw; width: 100%; margin-top: 2vh; }
+.result-actions { display: flex; gap: 2vw; width: 100%; margin-top: 1.5vh; }
 .btn-res { 
   flex: 1; 
-  height: 8vh; 
-  min-height: 60rpx;
-  border-radius: 4vh; 
+  height: 4vh; 
+  min-height: 30rpx;
+  border-radius: 2vh; 
   display: flex; 
   align-items: center; 
   justify-content: center; 
-  font-size: 3vh; 
+  font-size: 1.5vh; 
   font-weight: bold; 
 }
 .btn-res.next { background: #ff6b35; color: #fff; }
