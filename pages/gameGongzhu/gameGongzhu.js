@@ -200,9 +200,26 @@ Page({
       // 跟牌策略
       const hasPig = tableCards.some(tc => tc.card.id === 'SQ');
       const hasSheepOnTable = tableCards.some(tc => tc.card.id === 'DJ');
+      const hasC10OnTable = tableCards.some(tc => tc.card.id === 'C10');
       let wantToWin = false;
       if (hasSheepOnTable) wantToWin = true;
-      if (displayScores[playerIndex] > 0 && tableCards.some(tc => tc.card.id === 'C10')) wantToWin = true;
+      
+      // C10 策略：评估拿 C10 后的效果
+      if (hasC10OnTable) {
+        const myCollected = this.data.collectedScoreCards[playerIndex];
+        // 检查已收集的牌
+        const hasNegativeCards = myCollected.some(c => c.id === 'SQ' || c.suit === 'H'); // 猪或红桃
+        const hasPositiveCards = myCollected.some(c => c.id === 'DJ'); // 羊
+        
+        if (hasPositiveCards && !hasNegativeCards) {
+          // 只有羊，没有负分牌 → C10 翻倍是好事
+          wantToWin = true;
+        } else if (!hasPositiveCards && !hasNegativeCards) {
+          // 没有其他分数牌 → C10 单独得 +50
+          wantToWin = true;
+        }
+        // 如果有负分牌（猪或红桃），C10 翻倍会让负分更多 → 不想要
+      }
       
       if (wantToWin) {
         card = validCards.sort((a,b) => this.cardRankValue(b.rank) - this.cardRankValue(a.rank))[0];
