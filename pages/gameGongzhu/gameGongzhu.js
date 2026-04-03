@@ -279,11 +279,12 @@ Page({
       const myCollected = collected[idx];
       const hearts = myCollected.filter(c => c.suit === 'H');
       let finalS = score;
-      if (hearts.length === 13) finalS = score + 400; // 全红逻辑
-      // 变压器逻辑
+      // 全红逻辑：收齐 13 张红桃，额外 +400 分
+      if (hearts.length === 13) finalS += 400;
+      // 变压器逻辑：C10 本身值 +50 分，且使所有分数翻倍
       if (myCollected.some(c => c.id === 'C10')) {
-        if (finalS === 0) finalS = 50;
-        else finalS *= 2;
+        finalS += 50;      // C10 基础分
+        finalS *= 2;       // 翻倍
       }
       return finalS;
     });
