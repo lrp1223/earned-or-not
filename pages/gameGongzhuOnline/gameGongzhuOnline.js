@@ -44,6 +44,12 @@ Page({
     // 结算
     sortedRank: [],
     
+    // AI 思考状态
+    aiThinking: false,
+    // 一轮结束提示
+    roundWinner: null,
+    showRoundResult: false,
+    
     // 云数据库监听
     roomWatcher: null,
     countdownTimer: null
@@ -638,7 +644,9 @@ Page({
   async checkAIPlay() {
     const { currentPlayer, players } = this.data;
     if (players[currentPlayer]?.isAI) {
-      setTimeout(() => this.aiPlay(), 800);
+      // 显示 AI 思考状态
+      this.setData({ aiThinking: true });
+      setTimeout(() => this.aiPlay(), 1200);
     }
   },
 
@@ -653,6 +661,7 @@ Page({
     if (currentRound === 1 && tableCards.length === 0) {
       card = hand.find(c => c.id === 'SJ');
       if (card) {
+        this.setData({ aiThinking: false });
         this.playCard(playerIndex, card);
         return;
       }
@@ -666,6 +675,7 @@ Page({
     }
     
     if (card) {
+      this.setData({ aiThinking: false });
       this.playCard(playerIndex, card);
     }
   },
@@ -819,20 +829,32 @@ Page({
         }
       });
       
+      // 显示一轮结束提示
+      const winnerName = this.data.players[winner]?.nickname || '玩家';
       this.setData({
-        currentRound: this.data.currentRound + 1,
-        currentPlayer: winner,
-        tableCards: [],
-        collectedScoreCards: newCollected,
-        rawScores: newRawScores,
-        displayScores: newRawScores
+        roundWinner: winnerName,
+        showRoundResult: true
       });
       
-      if (winner === this.data.myIndex) {
-        this.startCountdown();
-      }
-      
-      setTimeout(() => this.checkAIPlay(), 500);
+      // 1.5 秒后隐藏提示，开始下一轮
+      setTimeout(() => {
+        this.setData({
+          currentRound: this.data.currentRound + 1,
+          currentPlayer: winner,
+          tableCards: [],
+          collectedScoreCards: newCollected,
+          rawScores: newRawScores,
+          displayScores: newRawScores,
+          showRoundResult: false,
+          roundWinner: null
+        });
+        
+        if (winner === this.data.myIndex) {
+          this.startCountdown();
+        }
+        
+        setTimeout(() => this.checkAIPlay(), 500);
+      }, 1500);
     }
   },
 
