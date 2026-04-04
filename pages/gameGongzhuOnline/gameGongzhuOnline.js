@@ -247,14 +247,13 @@ Page({
     
     const myHand = gameData.hands[this.data.myIndex];
     
-    // 只更新必要的字段，桌牌保持本地状态（防止覆盖）
+    // 同步桌牌（显示其他玩家出的牌）
     this.setData({
       currentRound: gameData.currentRound,
       currentPlayer: gameData.currentPlayer,
       playerHand: myHand.sort((a, b) => this.cardSortValue(a) - this.cardSortValue(b)),
       allHands: gameData.hands,
-      // 不同步桌牌，避免覆盖已显示的牌
-      // tableCards: gameData.tableCards || [],
+      tableCards: gameData.tableCards || [],  // 同步桌牌
       rawScores: gameData.rawScores || [0, 0, 0, 0],
       displayScores: gameData.rawScores || [0, 0, 0, 0],
       collectedScoreCards: gameData.collectedScoreCards || [[], [], [], []],
