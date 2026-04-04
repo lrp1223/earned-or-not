@@ -44,12 +44,6 @@ Page({
     // 结算
     sortedRank: [],
     
-    // AI 思考状态
-    aiThinking: false,
-    // 一轮结束提示
-    roundWinner: null,
-    showRoundResult: false,
-    
     // 云数据库监听
     roomWatcher: null,
     countdownTimer: null
@@ -648,9 +642,8 @@ Page({
   async checkAIPlay() {
     const { currentPlayer, players } = this.data;
     if (players[currentPlayer]?.isAI) {
-      // 显示 AI 思考状态
-      this.setData({ aiThinking: true });
-      setTimeout(() => this.aiPlay(), 1200);
+      // AI 延迟出牌，更自然
+      setTimeout(() => this.aiPlay(), 1000);
     }
   },
 
@@ -665,7 +658,6 @@ Page({
     if (currentRound === 1 && tableCards.length === 0) {
       card = hand.find(c => c.id === 'SJ');
       if (card) {
-        this.setData({ aiThinking: false });
         this.playCard(playerIndex, card);
         return;
       }
@@ -679,7 +671,6 @@ Page({
     }
     
     if (card) {
-      this.setData({ aiThinking: false });
       this.playCard(playerIndex, card);
     }
   },
@@ -833,24 +824,15 @@ Page({
         }
       });
       
-      // 立即清空桌牌，防止同步冲突
-      const winnerName = this.data.players[winner]?.nickname || '玩家';
-      this.setData({
-        tableCards: [],
-        roundWinner: winnerName,
-        showRoundResult: true
-      });
-      
-      // 1.5 秒后隐藏提示，开始下一轮
+      // 延迟 1.5 秒后开始下一轮（让玩家看到桌上的牌）
       setTimeout(() => {
         this.setData({
           currentRound: this.data.currentRound + 1,
           currentPlayer: winner,
+          tableCards: [],
           collectedScoreCards: newCollected,
           rawScores: newRawScores,
-          displayScores: newRawScores,
-          showRoundResult: false,
-          roundWinner: null
+          displayScores: newRawScores
         });
         
         if (winner === this.data.myIndex) {

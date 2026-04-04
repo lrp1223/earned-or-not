@@ -204,49 +204,6 @@
 .pos-left { left: 0; top: 50%; transform: translateY(-50%); }
 .pos-right { right: 0; top: 50%; transform: translateY(-50%); }
 
-/* AI 思考提示 */
-.ai-thinking {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  background: rgba(0, 0, 0, 0.7);
-  padding: 2vh 3vw;
-  border-radius: 2vh;
-  z-index: 100;
-}
-.thinking-dots {
-  font-size: 3vh;
-  color: #fff;
-  animation: pulse 1s infinite;
-}
-@keyframes pulse {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.5; }
-}
-
-/* 一轮结束提示 */
-.round-result {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  background: rgba(255, 215, 0, 0.95);
-  padding: 2vh 3vw;
-  border-radius: 2vh;
-  z-index: 100;
-  animation: popIn 0.3s ease-out;
-}
-.winner-name {
-  font-size: 3.5vh;
-  color: #333;
-  font-weight: bold;
-}
-@keyframes popIn {
-  0% { transform: translate(-50%, -50%) scale(0.5); opacity: 0; }
-  100% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
-}
-
 /* 底部手牌 */
 .hand-area {
   height: 22vh;

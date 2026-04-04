@@ -98,16 +98,6 @@
           <text class="card-rank">{{item.card.rank}}</text>
         </view>
       </view>
-      
-      <!-- AI 思考提示 -->
-      <view class="ai-thinking" wx:if="{{aiThinking}}">
-        <text class="thinking-dots">🤔 思考中...</text>
-      </view>
-      
-      <!-- 一轮结束提示 -->
-      <view class="round-result" wx:if="{{showRoundResult}}">
-        <text class="winner-name">🎉 {{roundWinner}} 赢得此轮！</text>
-      </view>
     </view>
 
     <!-- 底部手牌 -->
