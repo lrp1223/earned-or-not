@@ -395,6 +395,12 @@ Page({
   },
 
   initGameFromRoom(room) {
+    // 检查 gameData 是否存在
+    if (!room.gameData) {
+      console.log('游戏数据未就绪，等待下一次同步...');
+      return;
+    }
+    
     const gameData = room.gameData;
     const myHand = gameData.hands[this.data.myIndex];
     
