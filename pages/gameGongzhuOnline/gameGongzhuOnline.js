@@ -242,18 +242,24 @@ Page({
   
   // 同步游戏状态
   syncGameState(gameData) {
-    // 只在不是自己回合时同步（避免重复更新）
-    if (gameData.currentPlayer === this.data.myIndex) return;
-    
     const myHand = gameData.hands[this.data.myIndex];
     
     // 同步桌牌（显示其他玩家出的牌）
+    // 只在不同步自己刚出的牌时更新（本地已经更新了）
+    const localTableCount = this.data.tableCards.length;
+    const remoteTableCount = (gameData.tableCards || []).length;
+    
+    // 如果云端桌牌数量 > 本地，说明有其他玩家出牌，需要同步
+    // 如果云端桌牌数量 < 本地，说明一轮结束清空了，需要同步
+    // 如果相等，可能是自己刚出的牌，不同步
+    const shouldSyncTable = remoteTableCount !== localTableCount;
+    
     this.setData({
       currentRound: gameData.currentRound,
       currentPlayer: gameData.currentPlayer,
       playerHand: myHand.sort((a, b) => this.cardSortValue(a) - this.cardSortValue(b)),
       allHands: gameData.hands,
-      tableCards: gameData.tableCards || [],  // 同步桌牌
+      tableCards: shouldSyncTable ? (gameData.tableCards || []) : this.data.tableCards,
       rawScores: gameData.rawScores || [0, 0, 0, 0],
       displayScores: gameData.rawScores || [0, 0, 0, 0],
       collectedScoreCards: gameData.collectedScoreCards || [[], [], [], []],
