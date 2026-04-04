@@ -247,10 +247,27 @@ async function playCard(data) {
       return { success: false, error: '游戏不在进行中' }
     }
     
+    // 检查 gameData 是否为 null，如果是则先初始化
+    if (!room.gameData) {
+      return { success: false, error: '游戏数据未初始化，请重新开始游戏' }
+    }
+    
+    // 确保 gameData 包含必要字段
+    const safeGameData = {
+      currentRound: gameData.currentRound || 1,
+      currentPlayer: gameData.currentPlayer || 0,
+      hands: gameData.hands || [[], [], [], []],
+      tableCards: gameData.tableCards || [],
+      leadSuit: gameData.leadSuit || null,
+      rawScores: gameData.rawScores || [0, 0, 0, 0],
+      collectedScoreCards: gameData.collectedScoreCards || [[], [], [], []],
+      teams: gameData.teams || {}
+    }
+    
     // 更新游戏数据
     await db.collection('gongzhu_rooms').doc(roomId).update({
       data: {
-        gameData: gameData
+        gameData: safeGameData
       }
     })
     
