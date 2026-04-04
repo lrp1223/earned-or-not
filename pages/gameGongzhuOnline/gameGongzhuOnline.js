@@ -271,6 +271,26 @@ Page({
     const aiId = 'ai_' + Date.now();
     const nickname = '机器人' + (this.data.playerCount);
     
+    // 乐观更新：先更新本地界面
+    const newPlayerCount = this.data.playerCount + 1;
+    const newPlayers = [...this.data.players];
+    const emptyIndex = newPlayers.findIndex(p => p.isEmpty);
+    if (emptyIndex !== -1) {
+      newPlayers[emptyIndex] = {
+        id: aiId,
+        nickname: nickname,
+        avatar: '/images/avatar2.png',
+        isHost: false,
+        isAI: true,
+        isEmpty: false
+      };
+    }
+    
+    this.setData({
+      playerCount: newPlayerCount,
+      players: newPlayers
+    });
+    
     try {
       const res = await wx.cloud.callFunction({
         name: 'gongzhu',
