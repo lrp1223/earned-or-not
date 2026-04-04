@@ -28,10 +28,16 @@
 .text-title { font-size: 10vh; font-weight: bold; color: #fff; display: block; }
 .text-subtitle { font-size: 3vh; color: #ffd700; display: block; }
 
-.btn-group { display: flex; flex-direction: column; gap: 3vh; width: 60vw; }
+.btn-group { 
+  display: flex; 
+  flex-direction: row; 
+  gap: 3vw; 
+  width: 80vw; 
+}
 .btn-primary, .btn-secondary {
-  height: 8vh;
-  border-radius: 4vh;
+  flex: 1;
+  height: 16vh;
+  border-radius: 3vh;
   display: flex;
   align-items: center;
   justify-content: center;
