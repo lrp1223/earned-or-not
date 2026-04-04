@@ -579,9 +579,10 @@ Page({
         newHands[playerIndex] = newHands[playerIndex].filter(c => c.id !== card.id);
       }
       
-      // 更新桌面
-      const newTableCards = [...gameData.tableCards, { player: playerIndex, card }];
-      const newLeadSuit = newTableCards.length === 1 ? card.suit : gameData.leadSuit;
+      // 关键修复：使用本地 tableCards 累加，而不是云端的
+      // 这样可以确保桌上的牌不会被覆盖
+      const newTableCards = [...this.data.tableCards, { player: playerIndex, card }];
+      const newLeadSuit = newTableCards.length === 1 ? card.suit : this.data.leadSuit;
       
       // 更新玩家本地手牌显示
       const newPlayerHand = playerIndex === this.data.myIndex 
@@ -829,9 +830,10 @@ Page({
         }
       });
       
-      // 显示一轮结束提示
+      // 立即清空桌牌，防止同步冲突
       const winnerName = this.data.players[winner]?.nickname || '玩家';
       this.setData({
+        tableCards: [],
         roundWinner: winnerName,
         showRoundResult: true
       });
@@ -841,7 +843,6 @@ Page({
         this.setData({
           currentRound: this.data.currentRound + 1,
           currentPlayer: winner,
-          tableCards: [],
           collectedScoreCards: newCollected,
           rawScores: newRawScores,
           displayScores: newRawScores,
