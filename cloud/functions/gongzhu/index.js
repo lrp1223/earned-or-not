@@ -208,11 +208,20 @@ async function startGame(data) {
       return { success: false, error: '游戏已经开始或结束' }
     }
     
+    // 如果 gameData 为 null，先删除该字段，再重新设置
+    if (room.gameData === null) {
+      await db.collection('gongzhu_rooms').doc(roomId).update({
+        data: {
+          gameData: _.remove()
+        }
+      })
+    }
+    
     // 使用 set 方法确保整个 gameData 被正确写入
     await db.collection('gongzhu_rooms').doc(roomId).update({
       data: {
         status: 'playing',
-        gameData: gameData
+        gameData: _.set(gameData)
       }
     })
     
