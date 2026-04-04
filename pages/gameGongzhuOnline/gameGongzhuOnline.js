@@ -416,7 +416,7 @@ Page({
       console.error('开始游戏失败:', err);
       wx.showToast({ title: '开始失败', icon: 'none' });
     }
-
+  },
 
   initGameFromRoom(room) {
     // 检查 gameData 是否存在
