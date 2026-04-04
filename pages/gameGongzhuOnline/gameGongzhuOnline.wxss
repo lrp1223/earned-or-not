@@ -107,33 +107,34 @@
 }
 .player-slot {
   background: rgba(255,255,255,0.95);
-  border-radius: 1.5vh;
-  padding: 1.6vh 1.5vw;
+  border-radius: 1.2vh;
+  padding: 0.8vh 1.5vw;
   display: flex;
   flex-direction: column;
   align-items: center;
   box-sizing: border-box;
 }
 .player-slot.empty { background: rgba(255,255,255,0.3); border: 2rpx dashed rgba(255,255,255,0.5); }
-.player-avatar { width: 4.5vh; height: 4.5vh; border-radius: 50%; }
-.player-avatar-placeholder { font-size: 3.5vh; color: #999; }
-.player-name { font-size: 2vh; color: #333; margin-top: 0.6vh; text-align: center; }
-.player-tag { font-size: 1.4vh; color: #fff; background: #ff6b35; padding: 0.3vh 0.6vw; border-radius: 0.8vh; margin-top: 0.6vh; }
+.player-avatar { width: 3vh; height: 3vh; border-radius: 50%; }
+.player-avatar-placeholder { font-size: 2.5vh; color: #999; }
+.player-name { font-size: 1.8vh; color: #333; margin-top: 0.4vh; text-align: center; }
+.player-tag { font-size: 1.2vh; color: #fff; background: #ff6b35; padding: 0.2vh 0.5vw; border-radius: 0.6vh; margin-top: 0.4vh; }
 .player-tag.ai { background: #1890ff; }
 
 .lobby-actions { 
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 2vh;
+  display: flex;
+  justify-content: center;
+  gap: 2vw;
   margin-top: 3vh;
 }
 .btn-add-ai, .btn-start-game, .btn-leave {
-  height: 6.5vh;
-  border-radius: 3.5vh;
+  width: 35vw;
+  height: 6vh;
+  border-radius: 3vh;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 2.8vh;
+  font-size: 2.5vh;
   font-weight: bold;
 }
 .btn-add-ai { background: #1890ff; color: #fff; }
