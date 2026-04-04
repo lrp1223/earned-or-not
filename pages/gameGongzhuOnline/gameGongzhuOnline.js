@@ -51,10 +51,6 @@ Page({
 
   onLoad() {
     this.userInfo = wx.getStorageSync('userInfo') || { nickName: '玩家', avatarUrl: '' };
-    // 进入页面就切换到横屏
-    if (wx.setScreenOrientation) {
-      wx.setScreenOrientation({ orientation: 'landscape' });
-    }
   },
 
   onUnload() {
@@ -325,10 +321,6 @@ Page({
 
   async leaveRoom() {
     this.stopWatching();
-    // 恢复竖屏
-    if (wx.setScreenOrientation) {
-      wx.setScreenOrientation({ orientation: 'portrait' });
-    }
     this.setData({ pageState: 'home', roomId: '' });
   },
 

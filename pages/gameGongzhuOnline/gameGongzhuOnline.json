@@ -1,4 +1,7 @@
 {
   "usingComponents": {},
-  "navigationBarTitleText": "拱猪在线"
+  "navigationBarTitleText": "拱猪在线",
+  "pageOrientation": "landscape",
+  "disableScroll": true,
+  "navigationStyle": "custom"
 }
