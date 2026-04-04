@@ -245,6 +245,14 @@ Page({
     // 只在不是自己回合时同步（避免重复更新）
     if (gameData.currentPlayer === this.data.myIndex) return;
     
+    // 如果本地桌牌数量 >= 云端，说明本地已更新，不同步桌牌（防止覆盖已出的牌）
+    const localTableCount = this.data.tableCards.length;
+    const remoteTableCount = (gameData.tableCards || []).length;
+    if (localTableCount > remoteTableCount) {
+      console.log('本地桌牌更新，跳过同步');
+      return;
+    }
+    
     const myHand = gameData.hands[this.data.myIndex];
     
     this.setData({
@@ -319,6 +327,10 @@ Page({
 
   async leaveRoom() {
     this.stopWatching();
+    // 恢复竖屏
+    if (wx.setScreenOrientation) {
+      wx.setScreenOrientation({ orientation: 'portrait' });
+    }
     this.setData({ pageState: 'home', roomId: '' });
   },
 
@@ -363,6 +375,11 @@ Page({
         // 等待一下确保数据库更新完成
         await new Promise(resolve => setTimeout(resolve, 500));
         
+        // 游戏开始，切换到横屏
+        if (wx.setScreenOrientation) {
+          wx.setScreenOrientation({ orientation: 'landscape' });
+        }
+        
         // 本地初始化
         const myHand = hands[this.data.myIndex];
         this.setData({
@@ -402,6 +419,11 @@ Page({
     if (!room.gameData) {
       console.log('游戏数据未就绪，等待下一次同步...');
       return;
+    }
+    
+    // 游戏开始，切换到横屏
+    if (wx.setScreenOrientation) {
+      wx.setScreenOrientation({ orientation: 'landscape' });
     }
     
     const gameData = room.gameData;
@@ -772,7 +794,11 @@ Page({
         }
       });
       
-      // 显示结算
+      // 显示结算，恢复竖屏
+      if (wx.setScreenOrientation) {
+        wx.setScreenOrientation({ orientation: 'portrait' });
+      }
+      
       this.setData({
         pageState: 'result',
         sortedRank,
