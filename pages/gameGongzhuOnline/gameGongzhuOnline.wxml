@@ -47,8 +47,8 @@
     </view>
     
     <view class="lobby-actions" wx:if="{{isHost}}">
-      <view class="btn-add-ai" wx:if="{{playerCount < 4}}" bindtap="addAI">添加AI机器人</view>
-      <view class="btn-start-game {{playerCount < 2 ? 'disabled' : ''}}" bindtap="startGame">开始游戏</view>
+      <view class="btn-add-ai {{playerCount >= 4 ? 'disabled' : ''}}" bindtap="addAI">添加AI机器人</view>
+      <view class="btn-start-game {{playerCount < 4 ? 'disabled' : ''}}" bindtap="startGame">开始游戏</view>
     </view>
     
     <view class="lobby-actions" wx:else>

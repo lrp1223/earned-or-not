@@ -336,7 +336,10 @@ Page({
   },
 
   async startGame() {
-    if (this.data.playerCount < 2) return;
+    if (this.data.playerCount < 4) {
+      wx.showToast({ title: '需要4人才能开始', icon: 'none' });
+      return;
+    }
     
     try {
       wx.showLoading({ title: '开始游戏...' });

@@ -107,18 +107,18 @@
 }
 .player-slot {
   background: rgba(255,255,255,0.95);
-  border-radius: 2vh;
-  padding: 2.5vh 1.5vw;
+  border-radius: 1.5vh;
+  padding: 1.6vh 1.5vw;
   display: flex;
   flex-direction: column;
   align-items: center;
   box-sizing: border-box;
 }
 .player-slot.empty { background: rgba(255,255,255,0.3); border: 2rpx dashed rgba(255,255,255,0.5); }
-.player-avatar { width: 7vh; height: 7vh; border-radius: 50%; }
-.player-avatar-placeholder { font-size: 5vh; color: #999; }
-.player-name { font-size: 2.3vh; color: #333; margin-top: 1vh; text-align: center; }
-.player-tag { font-size: 1.6vh; color: #fff; background: #ff6b35; padding: 0.4vh 0.8vw; border-radius: 1vh; margin-top: 1vh; }
+.player-avatar { width: 4.5vh; height: 4.5vh; border-radius: 50%; }
+.player-avatar-placeholder { font-size: 3.5vh; color: #999; }
+.player-name { font-size: 2vh; color: #333; margin-top: 0.6vh; text-align: center; }
+.player-tag { font-size: 1.4vh; color: #fff; background: #ff6b35; padding: 0.3vh 0.6vw; border-radius: 0.8vh; margin-top: 0.6vh; }
 .player-tag.ai { background: #1890ff; }
 
 .lobby-actions { 
@@ -137,8 +137,9 @@
   font-weight: bold;
 }
 .btn-add-ai { background: #1890ff; color: #fff; }
+.btn-add-ai.disabled { background: #999; color: #ccc; }
 .btn-start-game { background: #52c41a; color: #fff; }
-.btn-start-game.disabled { background: #999; }
+.btn-start-game.disabled { background: #999; color: #ccc; }
 .btn-leave { background: rgba(255,255,255,0.9); color: #333; }
 
 /* ========== 3. 游戏界面 ========== */
