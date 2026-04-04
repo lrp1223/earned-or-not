@@ -338,6 +338,86 @@ Page({
     this.setData({ pageState: 'home', roomId: '' });
   },
 
+  async startGame() {
+    if (this.data.playerCount < 2) return;
+    
+    try {
+      wx.showLoading({ title: '开始游戏...' });
+      
+      // 初始化游戏数据
+      const deck = this.createDeck();
+      const hands = this.dealCards(deck);
+      const teams = this.determineTeamsInitial(hands);
+      const firstPlayer = this.findFirstPlayer(hands);
+      
+      const gameData = {
+        currentRound: 1,
+        currentPlayer: firstPlayer,
+        hands: hands,
+        tableCards: [],
+        leadSuit: null,
+        rawScores: [0, 0, 0, 0],
+        collectedScoreCards: [[], [], [], []],
+        teams: teams
+      };
+      
+      // 使用云函数更新游戏状态
+      const res = await wx.cloud.callFunction({
+        name: 'gongzhu',
+        data: {
+          action: 'startGame',
+          data: {
+            roomId: this.data.roomId,
+            gameData
+          }
+        }
+      });
+      
+      wx.hideLoading();
+      
+      if (res.result.success) {
+        // 等待一下确保数据库更新完成
+        await new Promise(resolve => setTimeout(resolve, 500));
+        
+        // 游戏开始，切换到横屏
+        if (wx.setScreenOrientation) {
+          wx.setScreenOrientation({ orientation: 'landscape' });
+        }
+        
+        // 本地初始化
+        const myHand = hands[this.data.myIndex];
+        this.setData({
+          pageState: 'playing',
+          currentRound: 1,
+          currentPlayer: firstPlayer,
+          playerHand: myHand.sort((a, b) => this.cardSortValue(a) - this.cardSortValue(b)),
+          allHands: hands,
+          tableCards: [],
+          rawScores: [0, 0, 0, 0],
+          displayScores: [0, 0, 0, 0],
+          collectedScoreCards: [[], [], [], []],
+          selectedCard: null,
+          leadSuit: null
+        });
+        
+        // 如果是当前玩家回合，开始倒计时
+        if (firstPlayer === this.data.myIndex) {
+          this.startCountdown();
+        }
+        
+        // AI 自动出牌
+        setTimeout(() => this.checkAIPlay(), 1000);
+      } else {
+        wx.showToast({ title: res.result.error || '开始失败', icon: 'none' });
+      }
+      
+    } catch (err) {
+      wx.hideLoading();
+      console.error('开始游戏失败:', err);
+      wx.showToast({ title: '开始失败', icon: 'none' });
+    }
+
+
   initGameFromRoom(room) {
     // 检查 gameData 是否存在
     if (!room.gameData) {
