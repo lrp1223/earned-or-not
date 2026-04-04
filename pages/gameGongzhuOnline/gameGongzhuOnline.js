@@ -244,22 +244,13 @@ Page({
   syncGameState(gameData) {
     const myHand = gameData.hands[this.data.myIndex];
     
-    // 同步桌牌（显示其他玩家出的牌）
-    // 只在不同步自己刚出的牌时更新（本地已经更新了）
-    const localTableCount = this.data.tableCards.length;
-    const remoteTableCount = (gameData.tableCards || []).length;
-    
-    // 如果云端桌牌数量 > 本地，说明有其他玩家出牌，需要同步
-    // 如果云端桌牌数量 < 本地，说明一轮结束清空了，需要同步
-    // 如果相等，可能是自己刚出的牌，不同步
-    const shouldSyncTable = remoteTableCount !== localTableCount;
-    
+    // 直接同步云端的桌牌
     this.setData({
       currentRound: gameData.currentRound,
       currentPlayer: gameData.currentPlayer,
       playerHand: myHand.sort((a, b) => this.cardSortValue(a) - this.cardSortValue(b)),
       allHands: gameData.hands,
-      tableCards: shouldSyncTable ? (gameData.tableCards || []) : this.data.tableCards,
+      tableCards: gameData.tableCards || [],
       rawScores: gameData.rawScores || [0, 0, 0, 0],
       displayScores: gameData.rawScores || [0, 0, 0, 0],
       collectedScoreCards: gameData.collectedScoreCards || [[], [], [], []],
@@ -576,10 +567,9 @@ Page({
         newHands[playerIndex] = newHands[playerIndex].filter(c => c.id !== card.id);
       }
       
-      // 关键修复：使用本地 tableCards 累加，而不是云端的
-      // 这样可以确保桌上的牌不会被覆盖
-      const newTableCards = [...this.data.tableCards, { player: playerIndex, card }];
-      const newLeadSuit = newTableCards.length === 1 ? card.suit : this.data.leadSuit;
+      // 使用云端桌牌 + 当前出牌
+      const newTableCards = [...(gameData.tableCards || []), { player: playerIndex, card }];
+      const newLeadSuit = newTableCards.length === 1 ? card.suit : (gameData.leadSuit || card.suit);
       
       // 更新玩家本地手牌显示
       const newPlayerHand = playerIndex === this.data.myIndex 
