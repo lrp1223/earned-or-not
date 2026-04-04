@@ -242,20 +242,30 @@ Page({
   
   // 同步游戏状态
   syncGameState(gameData) {
+    // 如果是自己刚出的牌，不同步桌牌（本地已经更新了）
+    const isMyTurn = gameData.currentPlayer === this.data.myIndex;
+    
     const myHand = gameData.hands[this.data.myIndex];
     
-    // 直接同步云端的桌牌
-    this.setData({
+    // 只同步必要的字段
+    const updateData = {
       currentRound: gameData.currentRound,
       currentPlayer: gameData.currentPlayer,
       playerHand: myHand.sort((a, b) => this.cardSortValue(a) - this.cardSortValue(b)),
       allHands: gameData.hands,
-      tableCards: gameData.tableCards || [],
       rawScores: gameData.rawScores || [0, 0, 0, 0],
       displayScores: gameData.rawScores || [0, 0, 0, 0],
       collectedScoreCards: gameData.collectedScoreCards || [[], [], [], []],
       leadSuit: gameData.leadSuit || null
-    });
+    };
+    
+    // 如果不是自己的回合，同步桌牌（说明其他玩家出牌了）
+    // 如果是自己的回合，不同步桌牌（自己刚出的牌本地已经有了）
+    if (!isMyTurn) {
+      updateData.tableCards = gameData.tableCards || [];
+    }
+    
+    this.setData(updateData);
     
     // 检查 AI 出牌
     setTimeout(() => this.checkAIPlay(), 500);
@@ -537,6 +547,23 @@ Page({
   async playCard(playerIndex, card) {
     this.clearCountdown();
     
+    // 关键修复：先在本地追加桌牌（类似单机版）
+    const newTableCards = [...this.data.tableCards, { player: playerIndex, card }];
+    const newLeadSuit = newTableCards.length === 1 ? card.suit : this.data.leadSuit;
+    
+    // 更新本地手牌
+    const newPlayerHand = playerIndex === this.data.myIndex 
+      ? this.data.playerHand.filter((c, i) => i !== this.data.selectedCard)
+      : this.data.playerHand;
+    
+    // 立即更新本地桌牌显示
+    this.setData({
+      tableCards: newTableCards,
+      playerHand: newPlayerHand,
+      leadSuit: newLeadSuit,
+      selectedCard: null
+    });
+    
     try {
       // 获取当前游戏数据
       const roomRes = await wx.cloud.callFunction({
@@ -549,10 +576,9 @@ Page({
       
       const room = roomRes.result.data;
       
-      // 安全检查：确保 gameData 存在
       if (!room.gameData) {
-        console.error('gameData 不存在，游戏状态异常');
-        wx.showToast({ title: '游戏状态异常，请重新开始', icon: 'none' });
+        console.error('gameData 不存在');
+        wx.showToast({ title: '游戏状态异常', icon: 'none' });
         this.setData({ pageState: 'lobby' });
         return;
       }
@@ -567,23 +593,8 @@ Page({
         newHands[playerIndex] = newHands[playerIndex].filter(c => c.id !== card.id);
       }
       
-      // 使用云端桌牌 + 当前出牌
-      const newTableCards = [...(gameData.tableCards || []), { player: playerIndex, card }];
-      const newLeadSuit = newTableCards.length === 1 ? card.suit : (gameData.leadSuit || card.suit);
-      
-      // 更新玩家本地手牌显示
-      const newPlayerHand = playerIndex === this.data.myIndex 
-        ? this.data.playerHand.filter((c, i) => i !== this.data.selectedCard)
-        : this.data.playerHand;
-      
-      // 更新本地状态
-      this.setData({
-        tableCards: newTableCards,
-        playerHand: newPlayerHand,
-        leadSuit: newLeadSuit,
-        selectedCard: null,
-        allHands: newHands
-      });
+      // 更新本地 allHands
+      this.setData({ allHands: newHands });
       
       // 检查是否一轮结束
       if (newTableCards.length === 4) {
@@ -614,12 +625,10 @@ Page({
         
         this.setData({ currentPlayer: nextPlayer });
         
-        // 如果下一个是当前玩家，开始倒计时
         if (nextPlayer === this.data.myIndex) {
           this.startCountdown();
         }
         
-        // AI 自动出牌
         setTimeout(() => this.checkAIPlay(), 500);
       }
       
