@@ -105,7 +105,8 @@
       <view class="hand-cards">
         <view class="hand-card {{selectedCard === index ? 'selected' : ''}} {{!isValidPlay(item) ? 'disabled' : ''}}"
               wx:for="{{playerHand}}" wx:key="index"
-              bindtap="selectCard" data-index="{{index}}">
+              bindtap="selectCard" data-index="{{index}}"
+              binddbltap="confirmPlay">
           <text class="card-suit {{item.suit === 'H' || item.suit === 'D' ? 'red' : ''}}">{{suitMap[item.suit]}}</text>
           <text class="card-rank">{{item.rank}}</text>
         </view>

@@ -249,22 +249,16 @@ Page({
     // 只在不是自己回合时同步（避免重复更新）
     if (gameData.currentPlayer === this.data.myIndex) return;
     
-    // 如果本地桌牌数量 >= 云端，说明本地已更新，不同步桌牌（防止覆盖已出的牌）
-    const localTableCount = this.data.tableCards.length;
-    const remoteTableCount = (gameData.tableCards || []).length;
-    if (localTableCount > remoteTableCount) {
-      console.log('本地桌牌更新，跳过同步');
-      return;
-    }
-    
     const myHand = gameData.hands[this.data.myIndex];
     
+    // 只更新必要的字段，桌牌保持本地状态（防止覆盖）
     this.setData({
       currentRound: gameData.currentRound,
       currentPlayer: gameData.currentPlayer,
       playerHand: myHand.sort((a, b) => this.cardSortValue(a) - this.cardSortValue(b)),
       allHands: gameData.hands,
-      tableCards: gameData.tableCards || [],
+      // 不同步桌牌，避免覆盖已显示的牌
+      // tableCards: gameData.tableCards || [],
       rawScores: gameData.rawScores || [0, 0, 0, 0],
       displayScores: gameData.rawScores || [0, 0, 0, 0],
       collectedScoreCards: gameData.collectedScoreCards || [[], [], [], []],
@@ -531,6 +525,13 @@ Page({
       wx.showToast({ title: '请跟花色', icon: 'none' });
       return;
     }
+    
+    // 如果已经选中这张牌，双击直接出牌
+    if (this.data.selectedCard === index) {
+      this.confirmPlay();
+      return;
+    }
+    
     this.setData({ selectedCard: index });
   },
 
