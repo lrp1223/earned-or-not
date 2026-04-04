@@ -266,7 +266,10 @@ Page({
   // ========== 大厅操作 ==========
   
   async addAI() {
-    if (this.data.playerCount >= 4) return;
+    if (this.data.playerCount >= 4) {
+      wx.showToast({ title: '房间已满', icon: 'none' });
+      return;
+    }
     
     const aiId = 'ai_' + Date.now();
     const nickname = '机器人' + (this.data.playerCount);
@@ -305,7 +308,11 @@ Page({
         }
       });
       
-      if (!res.result.success) {
+      if (res.result.success) {
+        // 立即本地更新状态，不依赖监听
+        const newCount = this.data.playerCount + 1;
+        this.setData({ playerCount: newCount });
+      } else {
         wx.showToast({ title: res.result.error || '添加失败', icon: 'none' });
       }
     } catch (err) {
