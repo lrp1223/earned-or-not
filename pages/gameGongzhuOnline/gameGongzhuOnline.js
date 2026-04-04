@@ -308,11 +308,7 @@ Page({
         }
       });
       
-      if (res.result.success) {
-        // 立即本地更新状态，不依赖监听
-        const newCount = this.data.playerCount + 1;
-        this.setData({ playerCount: newCount });
-      } else {
+      if (!res.result.success) {
         wx.showToast({ title: res.result.error || '添加失败', icon: 'none' });
       }
     } catch (err) {
