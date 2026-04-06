@@ -242,9 +242,6 @@ Page({
   
   // 同步游戏状态
   syncGameState(gameData) {
-    // 如果是自己刚出的牌，不同步桌牌（本地已经更新了）
-    const isMyTurn = gameData.currentPlayer === this.data.myIndex;
-    
     const myHand = gameData.hands[this.data.myIndex];
     
     // 只同步必要的字段
@@ -259,10 +256,16 @@ Page({
       leadSuit: gameData.leadSuit || null
     };
     
-    // 如果不是自己的回合，同步桌牌（说明其他玩家出牌了）
-    // 如果是自己的回合，不同步桌牌（自己刚出的牌本地已经有了）
-    if (!isMyTurn) {
+    // 桌牌同步逻辑：
+    // 1. 如果云端桌牌数量 >= 本地，说明有新牌出，同步
+    // 2. 如果云端桌牌数量 < 本地，说明本地已经更新过，不同步（防止覆盖）
+    const remoteTableCount = (gameData.tableCards || []).length;
+    const localTableCount = this.data.tableCards.length;
+    
+    if (remoteTableCount >= localTableCount) {
       updateData.tableCards = gameData.tableCards || [];
+    } else {
+      console.log('本地桌牌更新，跳过同步');
     }
     
     this.setData(updateData);
