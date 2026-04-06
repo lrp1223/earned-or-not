@@ -243,6 +243,8 @@ Page({
   // 同步游戏状态
   syncGameState(gameData) {
     const myHand = gameData.hands[this.data.myIndex];
+    const remoteTable = gameData.tableCards || [];
+    const localTable = this.data.tableCards;
     
     // 只同步必要的字段
     const updateData = {
@@ -256,16 +258,22 @@ Page({
       leadSuit: gameData.leadSuit || null
     };
     
-    // 桌牌同步逻辑：
-    // 1. 如果云端桌牌数量 >= 本地，说明有新牌出，同步
-    // 2. 如果云端桌牌数量 < 本地，说明本地已经更新过，不同步（防止覆盖）
-    const remoteTableCount = (gameData.tableCards || []).length;
-    const localTableCount = this.data.tableCards.length;
+    // 桌牌同步逻辑（关键修复）：
+    // 1. 如果云端桌牌数量 > 本地，说明有新牌出，同步
+    // 2. 如果云端桌牌数量 == 0 且本地有牌，说明一轮结束，清空
+    // 3. 其他情况（云端 < 本地），说明本地已更新，不同步
+    const remoteCount = remoteTable.length;
+    const localCount = localTable.length;
     
-    if (remoteTableCount >= localTableCount) {
-      updateData.tableCards = gameData.tableCards || [];
+    if (remoteCount > localCount) {
+      // 云端有新牌，同步
+      updateData.tableCards = remoteTable;
+    } else if (remoteCount === 0 && localCount > 0) {
+      // 一轮结束，云端已清空，本地也清空
+      updateData.tableCards = [];
     } else {
-      console.log('本地桌牌更新，跳过同步');
+      // 本地更新中或已更新，不同步
+      console.log('本地桌牌更新，跳过同步', { remoteCount, localCount });
     }
     
     this.setData(updateData);
