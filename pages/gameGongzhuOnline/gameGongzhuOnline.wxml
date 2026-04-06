@@ -32,23 +32,28 @@
   <!-- 2. 等待大厅 -->
   <view class="lobby-screen" wx:if="{{pageState === 'lobby'}}">
     <view class="lobby-header">
-      <text class="room-id">房间号: {{roomId}}</text>
-      <text class="room-status">{{playerCount}}/4 人</text>
+      <text class="room-label">房间号</text>
+      <text class="room-id">{{roomId}}</text>
     </view>
     
     <view class="player-list">
       <view class="player-slot {{item.isEmpty ? 'empty' : ''}}" wx:for="{{players}}" wx:key="index">
-        <image wx:if="{{!item.isEmpty && !item.isAI}}" class="player-avatar" src="{{item.avatar}}" />
-        <text wx:else class="player-avatar-placeholder">{{item.isAI ? '🤖' : '+'}}</text>
-        <text class="player-name">{{item.isEmpty ? '等待加入' : (item.isAI ? item.nickname : item.nickname)}}</text>
+        <image wx:if="{{!item.isEmpty && !item.isAI}}" class="player-avatar" src="{{item.avatar}}" mode="aspectFill" />
+        <image wx:elif="{{!item.isEmpty && item.isAI}}" class="player-avatar" src="/images/avatar2.png" mode="aspectFill" />
+        <view wx:else class="player-avatar-placeholder">+</view>
+        <text class="player-name">{{item.isEmpty ? '等待加入' : item.nickname}}</text>
         <text class="player-tag" wx:if="{{item.isHost}}">房主</text>
         <text class="player-tag ai" wx:if="{{item.isAI}}">AI</text>
       </view>
     </view>
     
     <view class="lobby-actions" wx:if="{{isHost}}">
-      <view class="btn-add-ai {{playerCount >= 4 ? 'disabled' : ''}}" bindtap="addAI">添加AI机器人</view>
-      <view class="btn-start-game {{playerCount < 4 ? 'disabled' : ''}}" bindtap="startGame">开始游戏</view>
+      <view class="btn-add-ai {{playerCount >= 4 ? 'disabled' : ''}}" bindtap="addAI">
+        {{playerCount >= 4 ? '房间已满' : '添加AI机器人'}}
+      </view>
+      <view class="btn-start-game {{playerCount < 4 ? 'disabled' : ''}}" bindtap="startGame">
+        {{playerCount < 4 ? '等待玩家 (' + playerCount + '/4)' : '开始游戏'}}
+      </view>
     </view>
     
     <view class="lobby-actions" wx:else>
