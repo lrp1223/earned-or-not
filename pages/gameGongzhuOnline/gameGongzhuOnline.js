@@ -240,13 +240,13 @@ Page({
     }
   },
   
-  // 同步游戏状态
+  // 同步游戏状态 - 全新设计
   syncGameState(gameData) {
     const myHand = gameData.hands[this.data.myIndex];
     const remoteTable = gameData.tableCards || [];
     const localTable = this.data.tableCards;
     
-    // 只同步必要的字段
+    // 基础数据同步
     const updateData = {
       currentRound: gameData.currentRound,
       currentPlayer: gameData.currentPlayer,
@@ -258,22 +258,38 @@ Page({
       leadSuit: gameData.leadSuit || null
     };
     
-    // 桌牌同步逻辑（关键修复）：
-    // 1. 如果云端桌牌数量 > 本地，说明有新牌出，同步
-    // 2. 如果云端桌牌数量 == 0 且本地有牌，说明一轮结束，清空
-    // 3. 其他情况（云端 < 本地），说明本地已更新，不同步
+    // === 桌牌同步核心逻辑 ===
+    // 原则：以云端为准，但避免覆盖本地刚出的牌
+    
     const remoteCount = remoteTable.length;
     const localCount = localTable.length;
+    const isMyTurn = gameData.currentPlayer === this.data.myIndex;
     
-    if (remoteCount > localCount) {
-      // 云端有新牌，同步
+    // 情况1：一轮结束（云端清空）
+    if (remoteCount === 0 && localCount > 0) {
+      // 延迟清空，让玩家看清最后一轮
+      setTimeout(() => {
+        this.setData({ tableCards: [] });
+      }, 1500);
+    }
+    // 情况2：云端有新牌（其他玩家出牌了）
+    else if (remoteCount > localCount) {
       updateData.tableCards = remoteTable;
-    } else if (remoteCount === 0 && localCount > 0) {
-      // 一轮结束，云端已清空，本地也清空
-      updateData.tableCards = [];
-    } else {
-      // 本地更新中或已更新，不同步
-      console.log('本地桌牌更新，跳过同步', { remoteCount, localCount });
+    }
+    // 情况3：云端和本地一致（正常状态）
+    else if (remoteCount === localCount) {
+      // 如果是自己刚出完牌，且轮到自己了，保持本地显示
+      if (isMyTurn && localCount > 0) {
+        // 保持本地，不同步
+        console.log('自己回合，保持本地桌牌');
+      } else {
+        updateData.tableCards = remoteTable;
+      }
+    }
+    // 情况4：云端牌少于本地（异常情况，以云端为准）
+    else {
+      console.log('云端牌数异常，强制同步', { remoteCount, localCount });
+      updateData.tableCards = remoteTable;
     }
     
     this.setData(updateData);
