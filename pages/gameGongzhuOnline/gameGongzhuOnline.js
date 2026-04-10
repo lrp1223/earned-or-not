@@ -181,7 +181,12 @@ Page({
 
   syncGameState(gameData, status) {
     if (status === 'finished') {
-      this.setData({ pageState: 'result', allHands: gameData.hands });
+      const sortedRank = this.calculateRank(gameData.rawScores);
+      this.setData({ 
+        pageState: 'result', 
+        allHands: gameData.hands,
+        sortedRank: sortedRank
+      });
       return;
     }
 
@@ -309,6 +314,19 @@ Page({
     return !playerHand.some(c => c.suit === leadSuit);
   },
 
+  // 计算排名
+  calculateRank(rawScores) {
+    const scores = rawScores.map((score, idx) => ({
+      idx: idx,
+      thisGame: score,
+      total: score,
+      rank: 0
+    }));
+    scores.sort((a, b) => b.thisGame - a.thisGame);
+    scores.forEach((item, i) => { item.rank = i + 1; });
+    return scores;
+  },
+
   startCountdown() {
     this.clearCountdown();
     this.setData({ countdown: 30 });
@@ -336,5 +354,49 @@ Page({
   hideJoinModal() { this.setData({ showJoinInput: false }); },
   onRoomIdInput(e) { this.setData({ inputRoomId: e.detail.value }); },
   selectCard(e) { this.setData({ selectedCard: e.currentTarget.dataset.index }); },
-  confirmPlay() { if (this.data.selectedCard !== null) this.playCard(this.data.myIndex, this.data.playerHand[this.data.selectedCard]); }
+  confirmPlay() { if (this.data.selectedCard !== null) this.playCard(this.data.myIndex, this.data.playerHand[this.data.selectedCard]); },
+  
+  // 离开房间
+  leaveRoom() {
+    wx.cloud.callFunction({
+      name: 'gongzhu',
+      data: { action: 'leaveRoom', data: { roomId: this.data.roomId, playerId: app.globalData.openid } }
+    });
+    this.stopWatching();
+    wx.navigateBack();
+  },
+  
+  // 再来一局
+  async playAgain() {
+    wx.showLoading({ title: '准备中...' });
+    const deck = this.createDeck();
+    const hands = [[], [], [], []];
+    for (let i = 0; i < 52; i++) hands[i % 4].push(deck[i]);
+    const teams = this.determineTeamsInitial(hands);
+    let firstPlayer = 0;
+    for (let i = 0; i < 4; i++) { if (hands[i].some(c => c.id === 'SJ')) firstPlayer = i; }
+
+    const gameData = {
+      currentRound: 1,
+      currentPlayer: firstPlayer,
+      hands: hands,
+      tableCards: [],
+      leadSuit: null,
+      rawScores: [0, 0, 0, 0],
+      collectedScoreCards: [[], [], [], []],
+      teams: teams,
+      status: 'playing'
+    };
+
+    await wx.cloud.callFunction({
+      name: 'gongzhu',
+      data: { action: 'startGame', data: { roomId: this.data.roomId, gameData } }
+    });
+    wx.hideLoading();
+  },
+  
+  // 退出游戏
+  exitGame() {
+    this.leaveRoom();
+  }
 });
