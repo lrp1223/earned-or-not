@@ -2,7 +2,6 @@ package com.earnedornot.service.impl;
 
 import cn.hutool.core.lang.Snowflake;
 import cn.hutool.http.HttpUtil;
-import com.earnedornot.common.JwtUtil;
 import com.earnedornot.config.WeChatConfig;
 import com.earnedornot.dto.*;
 import com.earnedornot.entity.User;
@@ -10,45 +9,56 @@ import com.earnedornot.repository.UserRepository;
 import com.earnedornot.service.UserService;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.UUID;
 
-@Slf4j
 @Service
-@RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
+
+    private static final Logger log = LoggerFactory.getLogger(UserServiceImpl.class);
 
     private final UserRepository userRepository;
     private final Snowflake snowflake;
     private final WeChatConfig weChatConfig;
-    private final JwtUtil jwtUtil;
     private final ObjectMapper objectMapper;
+
+    public UserServiceImpl(UserRepository userRepository, Snowflake snowflake,
+                           WeChatConfig weChatConfig, ObjectMapper objectMapper) {
+        this.userRepository = userRepository;
+        this.snowflake = snowflake;
+        this.weChatConfig = weChatConfig;
+        this.objectMapper = objectMapper;
+    }
 
     @Override
     @Transactional
-    public LoginVO login(LoginRequest request) {
+    public IdentifyVO identify(IdentifyRequest request) {
         String openid = resolveOpenid(request.getCode());
 
         User user = userRepository.findByOpenid(openid)
                 .orElseGet(() -> createUser(openid));
 
-        String token = jwtUtil.generateToken(user.getId());
+        // If no shareKey yet (legacy user or race), generate one
+        if (user.getShareKey() == null || user.getShareKey().isEmpty()) {
+            user.setShareKey(generateShareKey());
+            userRepository.save(user);
+        }
 
-        return LoginVO.builder()
-                .token(token)
+        return IdentifyVO.builder()
                 .userId(user.getId())
+                .shareKey(user.getShareKey())
                 .nickname(user.getNickname())
                 .avatarUrl(user.getCustomAvatarUrl() != null && !user.getCustomAvatarUrl().isEmpty()
                         ? user.getCustomAvatarUrl() : user.getAvatarUrl())
                 .build();
     }
 
-    /** Call WeChat code2session API to get real openid */
     private String resolveOpenid(String code) {
         String url = String.format(
                 "https://api.weixin.qq.com/sns/jscode2session?appid=%s&secret=%s&js_code=%s&grant_type=authorization_code",
@@ -119,10 +129,15 @@ public class UserServiceImpl implements UserService {
                 .nickname("赚了么用户")
                 .winColor("#ff6b6b")
                 .loseColor("#4ecdc4")
+                .shareKey(generateShareKey())
                 .createTime(LocalDateTime.now())
                 .updateTime(LocalDateTime.now())
                 .build();
         return userRepository.save(user);
+    }
+
+    private String generateShareKey() {
+        return UUID.randomUUID().toString().replace("-", "");
     }
 
     private UserProfileVO toVO(User user) {

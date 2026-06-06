@@ -1,25 +1,22 @@
 // ============================================
 // 赚了么 API 工具类（模板）
 // 复制为 api.js，将 BASE_URL 替换为你的后端地址。
-// 收到 401 时自动走 wx.login 重新登录并重试请求。
+// 首次请求自动走 wx.login 换取 shareKey，之后用 X-Share-Key 鉴权。
 // ============================================
 
 const BASE_URL = 'http://YOUR_SERVER_IP:8081';
 
-/** Get token from storage */
-function getToken() {
-  return wx.getStorageSync('token') || '';
+function getShareKey() {
+  var app = getApp();
+  return (app && app.globalData.shareKey) || wx.getStorageSync('shareKey') || '';
 }
 
-/** Save token to storage */
-function saveToken(token) {
-  wx.setStorageSync('token', token);
+function saveIdentity(shareKey) {
+  wx.setStorageSync('shareKey', shareKey);
+  var app = getApp();
+  if (app) app.globalData.shareKey = shareKey;
 }
 
-/**
- * 统一请求封装，自动带 Authorization Bearer token。
- * 收到 401 时自动触发重新登录并重试（最多重试一次）。
- */
 function request(method, path, data, isRetry) {
   return new Promise((resolve, reject) => {
     wx.request({
@@ -27,17 +24,17 @@ function request(method, path, data, isRetry) {
       method: method,
       header: {
         'Content-Type': 'application/json',
-        'Authorization': 'Bearer ' + getToken()
+        'X-Share-Key': getShareKey()
       },
       data: data,
       success: (res) => {
         if (res.statusCode === 401) {
           if (isRetry) {
-            wx.removeStorageSync('token');
-            reject({ message: '登录已过期，请重启小程序', code: 401 });
+            wx.removeStorageSync('shareKey');
+            reject({ message: '身份已过期，请重启小程序', code: 401 });
             return;
           }
-          doRelogin().then(() => {
+          doIdentify().then(() => {
             request(method, path, data, true).then(resolve, reject);
           }).catch(reject);
           return;
@@ -53,56 +50,53 @@ function request(method, path, data, isRetry) {
   });
 }
 
-let reloginPromise = null;
+var identifyPromise = null;
 
-function doRelogin() {
-  if (reloginPromise) return reloginPromise;
+function doIdentify() {
+  if (identifyPromise) return identifyPromise;
 
-  reloginPromise = new Promise((resolve, reject) => {
-    wx.removeStorageSync('token');
+  identifyPromise = new Promise((resolve, reject) => {
+    wx.removeStorageSync('shareKey');
     wx.login({
       success: (loginRes) => {
         if (loginRes.code) {
           wx.request({
-            url: BASE_URL + '/api/user/login',
+            url: BASE_URL + '/api/user/identify',
             method: 'POST',
             header: { 'Content-Type': 'application/json' },
             data: { code: loginRes.code },
             success: (res) => {
               if (res.statusCode === 200 && res.data && res.data.success) {
-                saveToken(res.data.data.token);
-                var app = getApp();
-                app.globalData.userId = res.data.data.userId;
-                app.globalData.token = res.data.data.token;
-                reloginPromise = null;
+                saveIdentity(res.data.data.shareKey);
+                identifyPromise = null;
                 resolve();
               } else {
-                reloginPromise = null;
-                reject(res.data || { message: '自动登录失败' });
+                identifyPromise = null;
+                reject(res.data || { message: '身份建立失败' });
               }
             },
             fail: (err) => {
-              reloginPromise = null;
+              identifyPromise = null;
               reject(err);
             }
           });
         } else {
-          reloginPromise = null;
+          identifyPromise = null;
           reject({ message: 'wx.login 未返回 code' });
         }
       },
       fail: (err) => {
-        reloginPromise = null;
+        identifyPromise = null;
         reject(err);
       }
     });
   });
 
-  return reloginPromise;
+  return identifyPromise;
 }
 
 module.exports = {
-  login(code) { return request('POST', '/api/user/login', { code }); },
+  identify(code) { return request('POST', '/api/user/identify', { code }); },
   getProfile() { return request('GET', '/api/user/profile'); },
   updateProfile(data) { return request('PUT', '/api/user/profile', data); },
   addRecord(data) { return request('POST', '/api/records', data); },
@@ -114,5 +108,5 @@ module.exports = {
   getRecentRecords(limit) { return request('GET', '/api/stats/recent?limit=' + (limit || 5)); },
   getTypeRecords(type, page, pageSize) { return request('GET', '/api/stats/records?type=' + type + '&page=' + (page || 1) + '&pageSize=' + (pageSize || 10)); },
   getRank(type, page, pageSize) { return request('GET', '/api/rank?type=' + (type || 'total') + '&page=' + (page || 1) + '&pageSize=' + (pageSize || 20)); },
-  saveToken
+  saveIdentity
 };

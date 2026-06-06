@@ -1,0 +1,8 @@
+# 运行时 Dockerfile（配合 deploy-to-server.sh 使用）
+# 直接运行已构建的 lottery.jar，不做 Maven 编译
+
+FROM eclipse-temurin:25-jdk-alpine
+WORKDIR /app
+COPY lottery.jar app.jar
+EXPOSE 8081
+ENTRYPOINT ["java", "-jar", "app.jar"]

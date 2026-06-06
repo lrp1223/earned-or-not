@@ -5,19 +5,24 @@ const api = require('./utils/api');
 
 App({
   onLaunch() {
-    // 微信登录 -> 换后端 token
+    const savedShareKey = wx.getStorageSync('shareKey');
+    if (savedShareKey) {
+      this.globalData.shareKey = savedShareKey;
+      this.globalData.loginReady = Promise.resolve();
+      return;
+    }
+
     this.globalData.loginReady = new Promise((resolve, reject) => {
       wx.login({
         success: (loginRes) => {
           if (loginRes.code) {
-            api.login(loginRes.code).then(res => {
-              this.globalData.userId = res.data.userId;
-              this.globalData.token = res.data.token;
-              api.saveToken(res.data.token);
-              console.log('登录成功, userId:', res.data.userId);
+            api.identify(loginRes.code).then(res => {
+              this.globalData.shareKey = res.data.shareKey;
+              wx.setStorageSync('shareKey', res.data.shareKey);
+              console.log('身份建立成功');
               resolve();
             }).catch(err => {
-              console.error('登录失败:', err);
+              console.error('身份建立失败:', err);
               reject(err);
             });
           } else {
@@ -28,5 +33,5 @@ App({
       });
     });
   },
-  globalData: { userId: null, token: null, loginReady: null }
+  globalData: { shareKey: null, loginReady: null }
 });

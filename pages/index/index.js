@@ -20,12 +20,7 @@ Page({
   },
 
   onShow() {
-    const app = getApp();
-    if (!app.globalData.userId) {
-      app.globalData.loginReady.then(() => this.doShow());
-      return;
-    }
-    this.doShow();
+    getApp().globalData.loginReady.then(() => this.doShow());
   },
 
   doShow() {

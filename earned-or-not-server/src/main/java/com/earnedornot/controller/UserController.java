@@ -1,26 +1,25 @@
 package com.earnedornot.controller;
 
 import com.earnedornot.common.Result;
-import com.earnedornot.dto.LoginRequest;
-import com.earnedornot.dto.LoginVO;
-import com.earnedornot.dto.UserProfileRequest;
-import com.earnedornot.dto.UserProfileVO;
+import com.earnedornot.dto.*;
 import com.earnedornot.service.UserService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
-import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/user")
-@RequiredArgsConstructor
 public class UserController {
 
     private final UserService userService;
 
-    @PostMapping("/login")
-    public Result<LoginVO> login(@Valid @RequestBody LoginRequest request) {
-        return Result.ok(userService.login(request));
+    public UserController(UserService userService) {
+        this.userService = userService;
+    }
+
+    @PostMapping("/identify")
+    public Result<IdentifyVO> identify(@Valid @RequestBody IdentifyRequest request) {
+        return Result.ok(userService.identify(request));
     }
 
     @GetMapping("/profile")

@@ -26,5 +26,8 @@ earned-or-not-server/target/
 .DS_Store
 Thumbs.db
 
+
+# 部署脚本
+deploy-to-server.sh
 # 日志
 *.log

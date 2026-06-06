@@ -5,9 +5,9 @@ import com.earnedornot.dto.*;
 public interface UserService {
 
     /**
-     * 微信登录：code换openid，不存在则自动创建用户
+     * 微信 code 换 openid，自动建/查用户，返回 userId + shareKey
      */
-    LoginVO login(LoginRequest request);
+    IdentifyVO identify(IdentifyRequest request);
 
     /**
      * 获取用户信息
