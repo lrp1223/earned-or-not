@@ -1,3 +1,6 @@
+// pages/record/record.js
+const api = require('../../utils/api');
+
 Page({
   data: {
     type: '',
@@ -11,14 +14,12 @@ Page({
     mode: 'add',
     recordId: '',
     submitting: false,
-    // 彩票类型
     lotteryTypes: ['大乐透', '双色球', '快乐8', '七星彩', '排列5', '其他'],
     lotteryTypeIndex: 0,
     lotteryType: '大乐透'
   },
 
   onLoad(options) {
-    // 加载用户颜色设置
     this.loadColorSettings();
     
     const type = options.type || 'lottery';
@@ -30,7 +31,6 @@ Page({
       mahjong: '例如：跟大饼打麻将赢了100'
     };
 
-    // 根据日期智能选择彩票类型
     const defaultLotteryType = this.getDefaultLotteryType();
     const lotteryTypeIndex = this.data.lotteryTypes.indexOf(defaultLotteryType);
 
@@ -44,14 +44,12 @@ Page({
       lotteryType: defaultLotteryType
     });
 
-    // 新增模式，查询上一期中奖金额
     if (mode === 'add' && type === 'lottery') {
       this.loadLastWinAmount(defaultLotteryType);
     }
 
-    // 编辑模式，加载原有数据
     if (mode === 'edit' && options.id) {
-      this.loadRecord(options.id, type);
+      this.loadRecord(options.id);
     }
   },
 
@@ -59,39 +57,30 @@ Page({
     const settings = wx.getStorageSync('userSettings') || {};
     const winColor = settings.winColor || '#52c41a';
     const loseColor = settings.loseColor || '#ff4d4f';
-    // 生成半透明背景色
-    const winBgColor = winColor + '15'; // 添加透明度
+    const winBgColor = winColor + '15';
     const loseBgColor = loseColor + '15';
     this.setData({ winColor, loseColor, winBgColor, loseBgColor });
   },
 
-  // 根据日期获取默认彩票类型
   getDefaultLotteryType() {
-    const day = new Date().getDay(); // 0=周日, 1=周一, ..., 6=周六
-    // 周一(1)、三(3)、五(5) -> 双色球
-    // 其他 -> 大乐透
+    const day = new Date().getDay();
     if (day === 1 || day === 3 || day === 5) {
       return '双色球';
     }
     return '大乐透';
   },
 
-  // 加载上一期同类型的中奖金额
   loadLastWinAmount(lotteryType) {
-    wx.cloud.callFunction({
-      name: 'lottery',
-      data: { action: 'getLastWinAmount', lotteryType }
-    }).then(res => {
-      if (res.result.success && res.result.winAmount > 0) {
+    api.getLastWinAmount(lotteryType).then(res => {
+      if (res.data > 0) {
         this.setData({
-          winAmount: res.result.winAmount.toString()
+          winAmount: res.data.toString()
         });
         this.calc();
       }
     });
   },
 
-  // 切换彩票类型
   onLotteryTypeChange(e) {
     const index = parseInt(e.detail.value);
     const lotteryType = this.data.lotteryTypes[index];
@@ -99,40 +88,36 @@ Page({
       lotteryTypeIndex: index,
       lotteryType
     });
-    // 查询该类型上一期中奖金额
     if (this.data.mode === 'add') {
       this.loadLastWinAmount(lotteryType);
     }
   },
 
-  loadRecord(id, type) {
-    const db = wx.cloud.database();
-    db.collection(type).doc(id).get().then(res => {
+  loadRecord(id) {
+    api.getRecord(id).then(res => {
       const data = res.data;
       if (data) {
-        const cost = Math.abs(data.cost || 0).toString();
-        // 中奖金额为0时显示空
-        const winAmount = data.winAmount === 0 ? '' : (data.winAmount || '').toString();
-        
+        const cost = data.cost ? Math.abs(data.cost).toString() : '';
+        const winAmount = data.winAmount && data.winAmount > 0 ? data.winAmount.toString() : '';
+
         const updateData = {
           cost,
           winAmount,
           remark: data.remark || ''
         };
-        
-        // 彩票类型
-        if (type === 'lottery' && data.lotteryType) {
+
+        if (data.recordType === 'LOTTERY' && data.lotteryType) {
           const index = this.data.lotteryTypes.indexOf(data.lotteryType);
           if (index >= 0) {
             updateData.lotteryTypeIndex = index;
             updateData.lotteryType = data.lotteryType;
           }
         }
-        
-        if (type === 'mahjong') {
+
+        if (data.recordType === 'MAHJONG') {
           updateData.mahjongType = data.amount >= 0 ? 'win' : 'lose';
         }
-        
+
         this.setData(updateData);
         this.calc();
       }
@@ -164,7 +149,6 @@ Page({
     if (type === 'mahjong') {
       net = (parseFloat(cost) || 0) * (mahjongType === 'win' ? 1 : -1);
     } else {
-      // 中奖金额不填默认为0
       net = (parseFloat(winAmount) || 0) - (parseFloat(cost) || 0);
     }
     this.setData({
@@ -175,7 +159,7 @@ Page({
 
   submit() {
     const { type, cost, winAmount, remark, mahjongType, mode, recordId, submitting, lotteryType } = this.data;
-    if (submitting) return; // 防止重复提交
+    if (submitting) return;
     if (!cost) {
       wx.showToast({ title: '请输入金额', icon: 'none' });
       return;
@@ -184,31 +168,36 @@ Page({
     this.setData({ submitting: true });
     wx.showLoading({ title: '保存中...' });
 
-    const action = mode === 'edit' ? 'update' : 'add';
-    const data = { action, cost, winAmount: winAmount || '0', remark, mahjongType };
-    
-    // 彩票类型
-    if (type === 'lottery') {
-      data.lotteryType = lotteryType;
-    }
-    
-    if (mode === 'edit') data.id = recordId;
+    // 构建请求体
+    const recordTypeMap = { lottery: 'LOTTERY', scratch: 'SCRATCH', mahjong: 'MAHJONG' };
+    const body = {
+      recordType: recordTypeMap[type],
+      cost: parseFloat(cost) || 0,
+      winAmount: parseFloat(winAmount) || 0,
+      remark
+    };
 
-    wx.cloud.callFunction({ name: type, data })
-      .then(res => {
-        wx.hideLoading();
-        this.setData({ submitting: false });
-        if (res.result.success) {
-          wx.showToast({ title: mode === 'edit' ? '修改成功' : '保存成功' });
-          setTimeout(() => wx.navigateBack(), 1000);
-        } else {
-          wx.showToast({ title: res.result.message || '保存失败', icon: 'none' });
-        }
-      })
-      .catch(() => {
-        wx.hideLoading();
-        this.setData({ submitting: false });
-        wx.showToast({ title: '保存失败', icon: 'none' });
-      });
+    if (type === 'lottery') {
+      body.lotteryType = lotteryType;
+    }
+    if (type === 'mahjong') {
+      const amt = (parseFloat(cost) || 0) * (mahjongType === 'win' ? 1 : -1);
+      body.amount = amt;
+    }
+
+    const promise = mode === 'edit'
+      ? api.updateRecord(recordId, body)
+      : api.addRecord(body);
+
+    promise.then(() => {
+      wx.hideLoading();
+      this.setData({ submitting: false });
+      wx.showToast({ title: mode === 'edit' ? '修改成功' : '保存成功' });
+      setTimeout(() => wx.navigateBack(), 1000);
+    }).catch(() => {
+      wx.hideLoading();
+      this.setData({ submitting: false });
+      wx.showToast({ title: '保存失败', icon: 'none' });
+    });
   }
 });

@@ -1,22 +1,32 @@
 // app.js 模板
-// 使用前请复制为 app.js 并填入你的环境ID
+// 复制为 app.js 后替换占位符即可使用
+
+const api = require('./utils/api');
 
 App({
   onLaunch() {
-    wx.cloud.init({
-      env: 'YOUR_ENV_ID_HERE', // 替换为你的云开发环境ID
-      traceUser: true
-    });
-    
-    wx.cloud.callFunction({
-      name: 'user',
-      data: { action: 'getOpenid' }
-    }).then(res => {
-      this.globalData.openid = res.result.openid;
+    // 微信登录 -> 换后端 token
+    this.globalData.loginReady = new Promise((resolve, reject) => {
+      wx.login({
+        success: (loginRes) => {
+          if (loginRes.code) {
+            api.login(loginRes.code).then(res => {
+              this.globalData.userId = res.data.userId;
+              this.globalData.token = res.data.token;
+              api.saveToken(res.data.token);
+              console.log('登录成功, userId:', res.data.userId);
+              resolve();
+            }).catch(err => {
+              console.error('登录失败:', err);
+              reject(err);
+            });
+          } else {
+            reject('wx.login 未返回 code');
+          }
+        },
+        fail: reject
+      });
     });
   },
-  
-  globalData: {
-    openid: null
-  }
+  globalData: { userId: null, token: null, loginReady: null }
 });

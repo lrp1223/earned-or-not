@@ -1,4 +1,6 @@
 // pages/index/index.js
+const api = require('../../utils/api');
+
 Page({
   data: {
     totalNet: 0,
@@ -12,10 +14,21 @@ Page({
   },
 
   onLoad() {
-    this.loadUserProfile();
+    getApp().globalData.loginReady.then(() => {
+      this.loadUserProfile();
+    });
   },
 
   onShow() {
+    const app = getApp();
+    if (!app.globalData.userId) {
+      app.globalData.loginReady.then(() => this.doShow());
+      return;
+    }
+    this.doShow();
+  },
+
+  doShow() {
     this.loadSettings();
     this.loadUserProfile();
     this.loadStats();
@@ -31,13 +44,10 @@ Page({
   },
 
   loadUserProfile() {
-    wx.cloud.callFunction({
-      name: 'user',
-      data: { action: 'getProfile' }
-    }).then(res => {
-      if (res.result && res.result.success && res.result.data) {
-        const nickname = res.result.data.nickname || '赚了么用户';
-        const avatarUrl = res.result.data.avatarUrl || '';
+    api.getProfile().then(res => {
+      if (res.data) {
+        const nickname = res.data.nickname || '赚了么用户';
+        const avatarUrl = res.data.avatarUrl || '';
         this.setData({ nickname, avatarUrl });
       }
     }).catch(err => {
@@ -46,18 +56,13 @@ Page({
   },
 
   loadStats() {
-    wx.cloud.callFunction({
-      name: 'stats',
-      data: { action: 'getPersonalStats' }
-    }).then(res => {
-      if (res.result && res.result.success) {
-        const totalNet = parseFloat(res.result.data.totalNet) || 0;
-        this.setData({
-          totalNet: totalNet,
-          totalNetStr: (totalNet >= 0 ? '+' : '') + totalNet.toFixed(2),
-          loading: false
-        });
-      }
+    api.getPersonalStats().then(res => {
+      const totalNet = parseFloat(res.data.totalNet) || 0;
+      this.setData({
+        totalNet: totalNet,
+        totalNetStr: (totalNet >= 0 ? '+' : '') + totalNet.toFixed(2),
+        loading: false
+      });
     }).catch(err => {
       console.error('加载统计失败:', err);
       this.setData({ loading: false });
@@ -65,23 +70,18 @@ Page({
   },
 
   loadRecords() {
-    wx.cloud.callFunction({
-      name: 'stats',
-      data: { action: 'getRecentRecords', limit: 5 }
-    }).then(res => {
-      console.log('首页加载记录:', res.result);
-      if (res.result && res.result.success) {
-        const records = res.result.data.map(item => {
-          const net = parseFloat(item.net) || 0;
-          return {
-            ...item,
-            net: net,
-            netStr: (net >= 0 ? '+' : '') + net.toFixed(2),
-            timeStr: this.formatTime(item.createTime)
-          };
-        });
-        this.setData({ recentRecords: records });
-      }
+    api.getRecentRecords(5).then(res => {
+      console.log('首页加载记录:', res);
+      const records = res.data.map(item => {
+        const net = parseFloat(item.net) || 0;
+        return {
+          ...item,
+          net: net,
+          netStr: (net >= 0 ? '+' : '') + net.toFixed(2),
+          timeStr: this.formatTime(item.createTime)
+        };
+      });
+      this.setData({ recentRecords: records });
     }).catch(err => {
       console.error('加载记录失败:', err);
     });
@@ -125,10 +125,10 @@ Page({
   onDelete() {
     const { id, type } = this.data.currentRecord;
     this.hideActionMenu();
-    this.deleteRecord(id, type);
+    this.deleteRecord(id);
   },
 
-  deleteRecord(id, type) {
+  deleteRecord(id) {
     wx.showModal({
       title: '确认删除',
       content: '删除后无法恢复，是否继续？',
@@ -136,21 +136,13 @@ Page({
       success: (res) => {
         if (res.confirm) {
           wx.showLoading({ title: '删除中...' });
-          wx.cloud.callFunction({
-            name: type,
-            data: { action: 'delete', id }
-          }).then((res) => {
+          api.deleteRecord(id).then(() => {
             wx.hideLoading();
-            if (res.result && res.result.success) {
-              wx.showToast({ title: '删除成功', icon: 'success' });
-              // 延迟刷新，让用户看到提示
-              setTimeout(() => {
-                this.loadRecords();
-                this.loadStats();
-              }, 500);
-            } else {
-              wx.showToast({ title: '删除失败', icon: 'none' });
-            }
+            wx.showToast({ title: '删除成功', icon: 'success' });
+            setTimeout(() => {
+              this.loadRecords();
+              this.loadStats();
+            }, 500);
           }).catch(err => {
             wx.hideLoading();
             console.error('删除失败', err);
@@ -169,7 +161,6 @@ Page({
     wx.navigateTo({ url: '/pages/fortune/fortune' });
   },
 
-  // 分享给朋友
   onShareAppMessage() {
     return {
       title: `我在赚了么记录了${this.data.totalNet >= 0 ? '赚' : '亏'}了${Math.abs(this.data.totalNet).toFixed(2)}元，快来一起记账吧！`,
@@ -178,7 +169,6 @@ Page({
     };
   },
 
-  // 分享到朋友圈
   onShareTimeline() {
     return {
       title: '赚了么 - 记录你的彩、刮、麻盈亏',

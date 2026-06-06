@@ -1,4 +1,6 @@
 // pages/profile/profile.js
+const api = require('../../utils/api');
+
 Page({
   data: {
     nickname: '',
@@ -15,6 +17,15 @@ Page({
   },
 
   onShow() {
+    const app = getApp();
+    if (!app.globalData.userId) {
+      app.globalData.loginReady.then(() => this.doShow());
+      return;
+    }
+    this.doShow();
+  },
+
+  doShow() {
     this.loadSettings();
     this.loadUserProfile();
     this.loadStats();
@@ -29,53 +40,27 @@ Page({
   },
 
   loadUserProfile() {
-    wx.cloud.callFunction({
-      name: 'user',
-      data: { action: 'getProfile' }
-    }).then(res => {
-      if (res.result && res.result.success && res.result.data) {
+    api.getProfile().then(res => {
+      if (res.data) {
         this.setData({
-          nickname: res.result.data.nickname || '',
-          // 兼容新旧字段
-          avatarUrl: res.result.data.customAvatarUrl || res.result.data.avatarUrl || ''
+          nickname: res.data.nickname || '',
+          avatarUrl: res.data.avatarUrl || ''
         });
       }
     });
   },
 
   loadStats() {
-    // 获取总统计
-    wx.cloud.callFunction({
-      name: 'stats',
-      data: { action: 'getPersonalStats' }
-    }).then(res => {
-      if (res.result && res.result.success) {
-        const totalNet = parseFloat(res.result.data.totalNet) || 0;
+    api.getProfile().then(res => {
+      if (res.data) {
+        const totalNet = parseFloat(res.data.totalNet) || 0;
+        const lotteryNet = parseFloat(res.data.lotteryNet) || 0;
+        const scratchNet = parseFloat(res.data.scratchNet) || 0;
+        const mahjongNet = parseFloat(res.data.mahjongNet) || 0;
+
         this.setData({
           totalNet: totalNet,
-          totalNetStr: (totalNet >= 0 ? '+' : '') + totalNet.toFixed(2)
-        });
-      }
-    });
-
-    // 获取分类统计和记录数
-    wx.cloud.callFunction({
-      name: 'stats',
-      data: { action: 'getRecentRecords', limit: 1000 }
-    }).then(res => {
-      if (res.result && res.result.success) {
-        const records = res.result.data;
-        let lotteryNet = 0, scratchNet = 0, mahjongNet = 0;
-
-        records.forEach(item => {
-          const net = parseFloat(item.net) || 0;
-          if (item.type === 'lottery') lotteryNet += net;
-          else if (item.type === 'scratch') scratchNet += net;
-          else if (item.type === 'mahjong') mahjongNet += net;
-        });
-
-        this.setData({
-          recordCount: records.length,
+          totalNetStr: (totalNet >= 0 ? '+' : '') + totalNet.toFixed(2),
           lotteryNet: lotteryNet,
           lotteryNetStr: (lotteryNet >= 0 ? '+' : '') + lotteryNet.toFixed(2),
           scratchNet: scratchNet,
@@ -84,6 +69,10 @@ Page({
           mahjongNetStr: (mahjongNet >= 0 ? '+' : '') + mahjongNet.toFixed(2)
         });
       }
+    });
+
+    api.getRecentRecords(1000).then(res => {
+      this.setData({ recordCount: (res.data || []).length });
     });
   },
 
@@ -100,19 +89,7 @@ Page({
   },
 
   uploadAvatar(filePath) {
-    wx.cloud.uploadFile({
-      cloudPath: `avatars/${Date.now()}.jpg`,
-      filePath: filePath
-    }).then(res => {
-      const avatarUrl = res.fileID;
-      return wx.cloud.callFunction({
-        name: 'user',
-        data: { action: 'setProfile', avatarUrl }
-      });
-    }).then(() => {
-      this.loadUserProfile();
-      wx.showToast({ title: '头像更新成功' });
-    });
+    wx.showToast({ title: '头像上传功能待对接文件服务', icon: 'none' });
   },
 
   goSettings() {
@@ -126,10 +103,7 @@ Page({
       placeholderText: '请输入昵称',
       success: (res) => {
         if (res.confirm && res.content) {
-          wx.cloud.callFunction({
-            name: 'user',
-            data: { action: 'setProfile', nickname: res.content }
-          }).then(() => {
+          api.updateProfile({ nickname: res.content }).then(() => {
             this.loadUserProfile();
             wx.showToast({ title: '昵称修改成功' });
           });

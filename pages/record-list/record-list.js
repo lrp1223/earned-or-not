@@ -1,5 +1,5 @@
 // pages/record-list/record-list.js
-const app = getApp();
+const api = require('../../utils/api');
 
 Page({
   data: {
@@ -40,31 +40,21 @@ Page({
     
     wx.showLoading({ title: '加载中...' });
     
-    wx.cloud.callFunction({
-      name: 'stats',
-      data: {
-        action: 'getTypeRecords',
-        type: this.data.type,
-        page: this.data.page,
-        pageSize: this.data.pageSize
-      }
-    }).then(res => {
+    api.getTypeRecords(this.data.type, this.data.page, this.data.pageSize).then(res => {
       wx.hideLoading();
       this.setData({ loading: false });
       
-      if (res.result && res.result.success) {
-        const newRecords = res.result.data.map(item => ({
-          ...item,
-          netStr: item.net.toFixed(2),
-          timeStr: this.formatTime(item.createTime)
-        }));
-        
-        this.setData({
-          records: this.data.page === 1 ? newRecords : [...this.data.records, ...newRecords],
-          total: res.result.pagination.total,
-          hasMore: res.result.pagination.hasMore
-        });
-      }
+      const newRecords = res.data.list.map(item => ({
+        ...item,
+        netStr: item.net ? item.net.toFixed(2) : '0.00',
+        timeStr: this.formatTime(item.createTime)
+      }));
+      
+      this.setData({
+        records: this.data.page === 1 ? newRecords : [...this.data.records, ...newRecords],
+        total: res.data.total,
+        hasMore: res.data.hasMore
+      });
     }).catch(err => {
       wx.hideLoading();
       this.setData({ loading: false });

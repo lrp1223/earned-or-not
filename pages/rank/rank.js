@@ -1,4 +1,6 @@
 // pages/rank/rank.js
+const api = require('../../utils/api');
+
 Page({
   data: { 
     currentTab: 'total', 
@@ -11,10 +13,19 @@ Page({
     loading: false
   },
   
-  onShow() { 
+  onShow() {
+    const app = getApp();
+    if (!app.globalData.userId) {
+      app.globalData.loginReady.then(() => this.doShow());
+      return;
+    }
+    this.doShow();
+  },
+
+  doShow() {
     this.loadSettings();
     this.setData({ page: 1, rankList: [] });
-    this.loadRank(this.data.currentTab, 1); 
+    this.loadRank(this.data.currentTab, 1);
   },
 
   loadSettings() {
@@ -34,41 +45,25 @@ Page({
   loadRank(type, page = 1) {
     if (this.data.loading) return;
     this.setData({ loading: true });
-    
-    const actionMap = {
-      'total': 'getTotalRank',
-      'lottery': 'getLotteryRank',
-      'scratch': 'getScratchRank',
-      'mahjong': 'getMahjongRank'
-    };
 
-    wx.cloud.callFunction({
-      name: 'rank',
-      data: { 
-        action: actionMap[type] || 'getTotalRank',
-        page: page,
-        pageSize: this.data.pageSize
-      }
-    }).then(res => {
+    api.getRank(type, page, this.data.pageSize).then(res => {
       this.setData({ loading: false });
-      if (res.result.success) {
-        const list = res.result.data.map(item => {
-          const net = parseFloat(item.net) || 0;
-          return {
-            ...item,
-            net: net,
-            netStr: net.toFixed(2),
-            avatarError: false,
-            avatarUrl: this.getCachedAvatar(item.userId, item.avatarUrl)
-          };
-        });
-        
-        this.setData({ 
-          rankList: page === 1 ? list : [...this.data.rankList, ...list],
-          page: page,
-          hasMore: res.result.pagination.hasMore
-        });
-      }
+      const list = res.data.list.map(item => {
+        const net = parseFloat(item.net) || 0;
+        return {
+          ...item,
+          net: net,
+          netStr: net.toFixed(2),
+          avatarError: false,
+          avatarUrl: this.getCachedAvatar(item.userId, item.avatarUrl)
+        };
+      });
+      
+      this.setData({ 
+        rankList: page === 1 ? list : [...this.data.rankList, ...list],
+        page: page,
+        hasMore: res.data.hasMore
+      });
     }).catch(() => {
       this.setData({ loading: false });
     });
@@ -79,7 +74,6 @@ Page({
     this.loadRank(this.data.currentTab, this.data.page + 1);
   },
 
-  // 获取缓存的头像URL
   getCachedAvatar(userId, serverUrl) {
     if (!serverUrl) return '';
     

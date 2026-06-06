@@ -1,4 +1,6 @@
 // pages/stats/stats.js
+const api = require('../../utils/api');
+
 Page({
   data: {
     stats: {
@@ -12,23 +14,31 @@ Page({
   },
 
   onShow() {
+    const app = getApp();
+    if (!app.globalData.userId) {
+      app.globalData.loginReady.then(() => this.doShow());
+      return;
+    }
+    this.doShow();
+  },
+
+  doShow() {
     this.loadSettings();
     wx.showLoading({ title: '加载中...' });
     
-    wx.cloud.callFunction({
-      name: 'stats',
-      data: { action: 'getPersonalStats' }
-    }).then(res => {
+    api.getPersonalStats().then(res => {
       wx.hideLoading();
-      console.log('stats返回:', res.result);
-      
-      if (res.result && res.result.success) {
-        this.setData({
-          stats: res.result.data
-        });
-      } else {
-        wx.showToast({ title: '加载失败', icon: 'none' });
-      }
+      console.log('stats返回:', res);
+
+      const data = res.data;
+      this.setData({
+        stats: {
+          lottery: { net: data.lotteryNet },
+          scratch: { net: data.scratchNet },
+          mahjong: { net: data.mahjongNet },
+          totalNet: data.totalNet
+        }
+      });
     }).catch(err => {
       wx.hideLoading();
       console.error('stats错误:', err);
