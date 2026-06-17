@@ -42,8 +42,12 @@ Page({
     api.getProfile().then(res => {
       if (res.data) {
         const nickname = res.data.nickname || '赚了么用户';
-        const avatarUrl = res.data.avatarUrl || '';
-        this.setData({ nickname, avatarUrl });
+        const cached = wx.getStorageSync('avatarCache') || '';
+        const avatar = res.data.avatarBase64 || cached || res.data.avatarUrl || '';
+        if (res.data.avatarBase64) {
+          wx.setStorageSync('avatarCache', res.data.avatarBase64);
+        }
+        this.setData({ nickname, avatarUrl: avatar });
       }
     }).catch(err => {
       console.log('获取用户信息失败', err);

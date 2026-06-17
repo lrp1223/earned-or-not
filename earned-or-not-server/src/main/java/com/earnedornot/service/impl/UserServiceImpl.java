@@ -44,7 +44,6 @@ public class UserServiceImpl implements UserService {
         User user = userRepository.findByOpenid(openid)
                 .orElseGet(() -> createUser(openid));
 
-        // If no shareKey yet (legacy user or race), generate one
         if (user.getShareKey() == null || user.getShareKey().isEmpty()) {
             user.setShareKey(generateShareKey());
             userRepository.save(user);
@@ -87,6 +86,15 @@ public class UserServiceImpl implements UserService {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new IllegalArgumentException("用户不存在"));
         return toVO(user);
+    }
+
+    @Override
+    @Transactional
+    public void uploadAvatar(Long userId, String avatarBase64) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new IllegalArgumentException("用户不存在"));
+        user.setAvatarBase64(avatarBase64);
+        userRepository.save(user);
     }
 
     @Override
@@ -146,6 +154,7 @@ public class UserServiceImpl implements UserService {
                 .nickname(user.getNickname())
                 .avatarUrl(user.getCustomAvatarUrl() != null && !user.getCustomAvatarUrl().isEmpty()
                         ? user.getCustomAvatarUrl() : user.getAvatarUrl())
+                .avatarBase64(user.getAvatarBase64())
                 .birthday(user.getBirthday())
                 .winColor(user.getWinColor())
                 .loseColor(user.getLoseColor())

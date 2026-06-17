@@ -17,7 +17,7 @@
 - **前端**：微信小程序原生开发
 - **后端**：Spring Boot 3.4.5 + JPA + Flyway（REST API）
 - **数据库**：MySQL 8.0
-- **认证**：微信 code2session + JWT Bearer Token
+- **认证**：微信 code2session → shareKey（X-Share-Key Header）
 - **部署**：Docker + 阿里云 ECS
 
 ## 项目结构
@@ -76,10 +76,10 @@ earned-or-not/
 
 ### utils/api.js
 
-复制 `utils/api.js.template` 为 `api.js`，将 `BASE_URL` 替换为你的后端服务地址。
+复制 `utils/api.js.template` 为 `api.js`，将 `BASE_URL` 替换为你的后端域名。
 
 ```js
-const BASE_URL = 'http://YOUR_SERVER_IP:8081';
+const BASE_URL = 'https://你的域名';
 ```
 
 ### project.config.json
@@ -92,7 +92,6 @@ const BASE_URL = 'http://YOUR_SERVER_IP:8081';
   "compileType": "miniprogram",
   "appid": "你的小程序AppID",
   "projectname": "earned-or-not",
-  "cloudfunctionRoot": "cloud/functions/",
   "setting": { "urlCheck": false, "es6": true },
   "libVersion": "2.30.0"
 }
@@ -148,34 +147,39 @@ logging:
 
 ### 1. 后端
 
-```bash
-# 构建 Docker 镜像
-cd earned-or-not-server
-docker build -t lottery .
+服务端提供两个 Dockerfile：
+- `Dockerfile`：多阶段构建，含 Maven 编译
+- `Dockerfile.runtime`：仅运行已构建的 jar，适合快速部署
 
-# 启动容器
-docker run -d --name lottery -p 8081:8081 \
+```bash
+# 方式一：本地编译 + 运行时镜像部署
+cd earned-or-not-server
+mvn package -DskipTests
+# 将 target/*.jar 上传到服务器，配合 Dockerfile.runtime 构建运行
+
+# 方式二：多阶段构建（服务器上一步到位）
+docker build -t earned-or-not-server .
+docker run -d --name earned-or-not-server -p 8081:8081 --restart=always \
   -e WECHAT_APP_ID=你的AppID \
   -e WECHAT_APP_SECRET=你的AppSecret \
-  -e JWT_SECRET=你的JWT密钥 \
-  lottery
+  earned-or-not-server
 ```
 
-数据库表由 Flyway 在启动时自动创建。
+数据库表由 Flyway 在启动时自动创建。`application.yml` 中的数据库连接信息可通过环境变量覆盖。
 
 ### 2. 前端
 
 1. 根据上方配置文件说明创建 `app.js`、`utils/api.js`、`project.config.json`
-2. 微信开发者工具打开项目
-3. 上传云函数（如使用拱猪等云功能）
-4. 预览/上传小程序
+2. 微信开发者工具打开项目，编译预览
+3. 在微信公众平台配置服务器域名白名单后即可提交审核
 
 ## REST API 概览
 
 | 方法 | 路径 | 说明 | 认证 |
 |---|---|---|---|
-| POST | `/api/user/login` | 微信登录，返回 JWT | 否 |
+| POST | `/api/user/identify` | 微信登录，返回 shareKey | 否 |
 | GET | `/api/user/profile` | 获取用户信息 | 是 |
+| POST | `/api/user/avatar` | 上传头像（Base64） | 是 |
 | PUT | `/api/user/profile` | 更新用户信息 | 是 |
 | POST | `/api/records` | 新增记录 | 是 |
 | GET | `/api/records/{id}` | 获取单条记录 | 是 |
@@ -226,12 +230,16 @@ docker run -d --name lottery -p 8081:8081 \
 ## 更新日志
 
 ### v3.0.0 (2026-06)
+
 - 重构：后端从微信云开发迁移到 Spring Boot + MySQL
-- 新增：REST API 全套接口（12个端点）
-- 新增：JWT 认证 + 微信 code2session 登录
+- 新增：REST API 全套接口（用户、记录 CRUD、统计、排行、头像上传）
+- 新增：微信 code2session + shareKey 认证方案
 - 新增：Flyway 数据库版本管理
 - 新增：Docker 容器化部署
-- 优化：记录增删改时原子更新用户缓存净值
+- 新增：记录增删改时原子更新用户缓存净值
+- 修复：雪花 ID 精度丢失（JavaScript Number → String 序列化）
+- 变更：前端改用 HTTPS 域名访问后端
+- 优化：关闭小程序云开发配置，清理遗留依赖
 
 ### v2.2.0 (2026-03-26)
 - 新增：拱猪游戏（2v2组队版）

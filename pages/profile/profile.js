@@ -37,9 +37,14 @@ Page({
   loadUserProfile() {
     api.getProfile().then(res => {
       if (res.data) {
+        const cached = wx.getStorageSync('avatarCache') || '';
+        const avatar = res.data.avatarBase64 || cached || res.data.avatarUrl || '';
+        if (res.data.avatarBase64) {
+          wx.setStorageSync('avatarCache', res.data.avatarBase64);
+        }
         this.setData({
           nickname: res.data.nickname || '',
-          avatarUrl: res.data.avatarUrl || ''
+          avatarUrl: avatar
         });
       }
     });
@@ -78,13 +83,41 @@ Page({
       sourceType: ['album', 'camera'],
       success: (res) => {
         const tempFilePath = res.tempFiles[0].tempFilePath;
-        this.uploadAvatar(tempFilePath);
+        wx.compressImage({
+          src: tempFilePath,
+          quality: 80,
+          success: (compressed) => {
+            this.uploadAvatar(compressed.tempFilePath);
+          },
+          fail: () => {
+            this.uploadAvatar(tempFilePath);
+          }
+        });
       }
     });
   },
 
   uploadAvatar(filePath) {
-    wx.showToast({ title: '头像上传功能待对接文件服务', icon: 'none' });
+    const that = this;
+    wx.getFileSystemManager().readFile({
+      filePath: filePath,
+      encoding: 'base64',
+      success: (res) => {
+        const base64 = 'data:image/jpeg;base64,' + res.data;
+        api.uploadAvatar(base64).then(() => {
+          wx.setStorageSync('avatarCache', base64);
+          that.setData({ avatarUrl: base64 });
+          wx.showToast({ title: '头像更新成功', icon: 'success' });
+        }).catch(err => {
+          console.error('头像上传失败:', err);
+          wx.showToast({ title: '上传失败', icon: 'none' });
+        });
+      },
+      fail: (err) => {
+        console.error('读取文件失败:', err);
+        wx.showToast({ title: '读取图片失败', icon: 'none' });
+      }
+    });
   },
 
   goSettings() {

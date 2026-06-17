@@ -51,6 +51,9 @@ public class User {
     @Column(name = "share_key", length = 64)
     private String shareKey;
 
+    @Column(name = "avatar_base64", columnDefinition = "MEDIUMTEXT")
+    private String avatarBase64;
+
     @Column(name = "create_time", nullable = false)
     private LocalDateTime createTime;
 
@@ -62,7 +65,7 @@ public class User {
     public User(Long id, String openid, String nickname, String avatarUrl, String customAvatarUrl,
                 LocalDate birthday, String winColor, String loseColor, BigDecimal totalNet,
                 BigDecimal lotteryNet, BigDecimal scratchNet, BigDecimal mahjongNet,
-                String shareKey, LocalDateTime createTime, LocalDateTime updateTime) {
+                String shareKey, String avatarBase64, LocalDateTime createTime, LocalDateTime updateTime) {
         this.id = id;
         this.openid = openid;
         this.nickname = nickname;
@@ -106,6 +109,7 @@ public class User {
     public BigDecimal getScratchNet() { return scratchNet; }
     public BigDecimal getMahjongNet() { return mahjongNet; }
     public String getShareKey() { return shareKey; }
+    public String getAvatarBase64() { return avatarBase64; }
     public LocalDateTime getCreateTime() { return createTime; }
     public LocalDateTime getUpdateTime() { return updateTime; }
 
@@ -123,6 +127,7 @@ public class User {
     public void setScratchNet(BigDecimal scratchNet) { this.scratchNet = scratchNet; }
     public void setMahjongNet(BigDecimal mahjongNet) { this.mahjongNet = mahjongNet; }
     public void setShareKey(String shareKey) { this.shareKey = shareKey; }
+    public void setAvatarBase64(String avatarBase64) { this.avatarBase64 = avatarBase64; }
     public void setCreateTime(LocalDateTime createTime) { this.createTime = createTime; }
     public void setUpdateTime(LocalDateTime updateTime) { this.updateTime = updateTime; }
 
@@ -143,6 +148,7 @@ public class User {
         private BigDecimal scratchNet = BigDecimal.ZERO;
         private BigDecimal mahjongNet = BigDecimal.ZERO;
         private String shareKey;
+        private String avatarBase64;
         private LocalDateTime createTime;
         private LocalDateTime updateTime;
 
@@ -165,7 +171,7 @@ public class User {
         public User build() {
             return new User(id, openid, nickname, avatarUrl, customAvatarUrl, birthday,
                     winColor, loseColor, totalNet, lotteryNet, scratchNet, mahjongNet,
-                    shareKey, createTime, updateTime);
+                    shareKey, avatarBase64, createTime, updateTime);
         }
     }
 }

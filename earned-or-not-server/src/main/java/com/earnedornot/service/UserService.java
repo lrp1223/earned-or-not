@@ -22,5 +22,10 @@ public interface UserService {
     /**
      * 确保用户存在（记账时兜底），返回用户ID
      */
+
+    /**
+     * 上传头像（Base64）
+     */
+    void uploadAvatar(Long userId, String avatarBase64);
     Long ensureUser(String openid);
 }

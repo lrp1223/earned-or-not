@@ -35,4 +35,12 @@ public class UserController {
         userService.updateProfile(userId, req);
         return Result.ok();
     }
+
+    @PostMapping("/avatar")
+    public Result<Void> uploadAvatar(HttpServletRequest request,
+                                      @Valid @RequestBody AvatarUploadRequest req) {
+        Long userId = (Long) request.getAttribute("userId");
+        userService.uploadAvatar(userId, req.getAvatarBase64());
+        return Result.ok();
+    }
 }
