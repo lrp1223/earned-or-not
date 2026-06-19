@@ -6,7 +6,7 @@
   </view>
   
   <view class="record-list">
-    <view class="record-item" wx:for="{{records}}" wx:key="_id">
+    <view class="record-item" wx:for="{{records}}" wx:key="id">
       <view class="record-left">
         <text class="record-icon">{{type === 'lottery' ? '🎰' : type === 'scratch' ? '🎫' : '🀄'}}</text>
         <view class="record-info">

@@ -75,6 +75,7 @@ Page({
         const net = parseFloat(item.net) || 0;
         return {
           ...item,
+          type: (item.recordType || '').toLowerCase(),
           net: net,
           netStr: (net >= 0 ? '+' : '') + net.toFixed(2),
           timeStr: this.formatTime(item.createTime)
@@ -105,7 +106,7 @@ Page({
     const { id, type } = e.currentTarget.dataset;
     this.setData({
       showActionMenu: true,
-      currentRecord: { id, type }
+      currentRecord: { id, type: (type || '').toLowerCase() }
     });
   },
 

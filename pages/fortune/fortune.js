@@ -129,12 +129,12 @@ Page({
       // 大乐透：前区 1-35 选5个，后区 1-12 选2个
       const redBalls = this.generateUniqueNumbers(seed, 5, 1, 35);
       const blueBalls = this.generateUniqueNumbers(seed + 100, 2, 1, 12);
-      return { type: '大乐透', redBalls, blueBalls };
+      return { type: '18M', redBalls, blueBalls };
     } else {
       // 双色球：红球 1-33 选6个，蓝球 1-16 选1个
       const redBalls = this.generateUniqueNumbers(seed, 6, 1, 33);
       const blueBalls = this.generateUniqueNumbers(seed + 100, 1, 1, 16);
-      return { type: '双色球', redBalls, blueBalls };
+      return { type: '10M', redBalls, blueBalls };
     }
   },
 

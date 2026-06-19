@@ -14,9 +14,9 @@ Page({
     mode: 'add',
     recordId: '',
     submitting: false,
-    lotteryTypes: ['大乐透', '双色球', '快乐8', '七星彩', '排列5', '其他'],
+    lotteryTypes: ['18M', '10M', '8K', '7S', 'P5', '其他'],
     lotteryTypeIndex: 0,
-    lotteryType: '大乐透'
+    lotteryType: '18M'
   },
 
   onLoad(options) {
@@ -65,9 +65,9 @@ Page({
   getDefaultLotteryType() {
     const day = new Date().getDay();
     if (day === 1 || day === 3 || day === 5) {
-      return '双色球';
+      return '10M';
     }
-    return '大乐透';
+    return '18M';
   },
 
   loadLastWinAmount(lotteryType) {
