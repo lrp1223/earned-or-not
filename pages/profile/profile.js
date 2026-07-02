@@ -22,8 +22,13 @@ Page({
 
   doShow() {
     this.loadSettings();
+    if (!api.hasIdentity()) {
+      return;
+    }
     this.loadUserProfile();
-    this.loadStats();
+    api.getRecentRecords(1000).then(res => {
+      this.setData({ recordCount: (res.data || []).length });
+    });
   },
 
   loadSettings() {
@@ -46,35 +51,22 @@ Page({
           nickname: res.data.nickname || '',
           avatarUrl: avatar
         });
-      }
-    });
-  },
 
-  loadStats() {
-    api.getProfile().then(res => {
-      if (res.data) {
+        // 合并 stats 数据，避免重复调 getProfile
         const totalNet = parseFloat(res.data.totalNet) || 0;
         const lotteryNet = parseFloat(res.data.lotteryNet) || 0;
         const scratchNet = parseFloat(res.data.scratchNet) || 0;
         const mahjongNet = parseFloat(res.data.mahjongNet) || 0;
-
         this.setData({
-          totalNet: totalNet,
-          totalNetStr: (totalNet >= 0 ? '+' : '') + totalNet.toFixed(2),
-          lotteryNet: lotteryNet,
-          lotteryNetStr: (lotteryNet >= 0 ? '+' : '') + lotteryNet.toFixed(2),
-          scratchNet: scratchNet,
-          scratchNetStr: (scratchNet >= 0 ? '+' : '') + scratchNet.toFixed(2),
-          mahjongNet: mahjongNet,
-          mahjongNetStr: (mahjongNet >= 0 ? '+' : '') + mahjongNet.toFixed(2)
+          totalNet, totalNetStr: (totalNet >= 0 ? '+' : '') + totalNet.toFixed(2),
+          lotteryNet, lotteryNetStr: (lotteryNet >= 0 ? '+' : '') + lotteryNet.toFixed(2),
+          scratchNet, scratchNetStr: (scratchNet >= 0 ? '+' : '') + scratchNet.toFixed(2),
+          mahjongNet, mahjongNetStr: (mahjongNet >= 0 ? '+' : '') + mahjongNet.toFixed(2)
         });
       }
     });
-
-    api.getRecentRecords(1000).then(res => {
-      this.setData({ recordCount: (res.data || []).length });
-    });
   },
+
 
   chooseAvatar() {
     wx.chooseMedia({

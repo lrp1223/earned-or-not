@@ -104,7 +104,11 @@ public class UserServiceImpl implements UserService {
                 .orElseThrow(() -> new IllegalArgumentException("用户不存在"));
 
         if (request.getNickname() != null) {
-            user.setNickname(request.getNickname());
+            String nickname = request.getNickname().trim();
+            if (nickname.isEmpty()) {
+                throw new IllegalArgumentException("昵称不能为空");
+            }
+            user.setNickname(nickname);
         }
         if (request.getAvatarUrl() != null) {
             user.setCustomAvatarUrl(request.getAvatarUrl());
