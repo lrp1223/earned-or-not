@@ -33,20 +33,22 @@ public interface UserRepository extends JpaRepository<User, Long> {
     void updateNet(@Param("userId") Long userId, @Param("type") String type, @Param("delta") BigDecimal delta);
 
     /**
-     * 分页排行查询：按指定净值字段降序
+     * 分页排行查询：按指定净值字段降序，仅包含有记录的用户
      */
     @Query(value = "SELECT * FROM users WHERE " +
             "CASE :type WHEN 'LOTTERY' THEN lottery_net WHEN 'SCRATCH' THEN scratch_net " +
             "WHEN 'MAHJONG' THEN mahjong_net ELSE total_net END IS NOT NULL " +
+            "AND id IN (SELECT DISTINCT user_id FROM records) " +
             "ORDER BY CASE :type WHEN 'LOTTERY' THEN lottery_net WHEN 'SCRATCH' THEN scratch_net " +
             "WHEN 'MAHJONG' THEN mahjong_net ELSE total_net END DESC", nativeQuery = true)
     List<User> findForTypeRank(@Param("type") String type, PageRequest pageable);
 
     /**
-     * 排行总数：统计指定净值字段非空的用户数
+     * 排行总数：统计指定净值字段非空且有记录的用户数
      */
     @Query(value = "SELECT COUNT(*) FROM users WHERE " +
             "CASE :type WHEN 'LOTTERY' THEN lottery_net WHEN 'SCRATCH' THEN scratch_net " +
-            "WHEN 'MAHJONG' THEN mahjong_net ELSE total_net END IS NOT NULL", nativeQuery = true)
+            "WHEN 'MAHJONG' THEN mahjong_net ELSE total_net END IS NOT NULL " +
+            "AND id IN (SELECT DISTINCT user_id FROM records)", nativeQuery = true)
     long countForRank(@Param("type") String type);
 }

@@ -15,7 +15,11 @@ Page({
 
   onLoad() {
     getApp().globalData.loginReady.then(() => {
-      this.loadUserProfile();
+      if (api.hasIdentity()) {
+        this.loadUserProfile();
+      } else {
+        this.setData({ loading: false });
+      }
     });
   },
 
@@ -25,9 +29,13 @@ Page({
 
   doShow() {
     this.loadSettings();
-    this.loadUserProfile();
-    this.loadStats();
-    this.loadRecords();
+    if (api.hasIdentity()) {
+      this.loadUserProfile();
+      this.loadStats();
+      this.loadRecords();
+    } else {
+      this.setData({ loading: false });
+    }
   },
 
   loadSettings() {

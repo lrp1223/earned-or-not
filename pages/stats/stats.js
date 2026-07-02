@@ -19,6 +19,10 @@ Page({
 
   doShow() {
     this.loadSettings();
+    if (!api.hasIdentity()) {
+      wx.hideLoading();
+      return;
+    }
     wx.showLoading({ title: '加载中...' });
     
     api.getPersonalStats().then(res => {

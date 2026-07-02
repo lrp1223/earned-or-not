@@ -19,6 +19,10 @@ Page({
 
   doShow() {
     this.loadSettings();
+    if (!api.hasIdentity()) {
+      this.setData({ rankList: [], hasMore: false });
+      return;
+    }
     this.setData({ page: 1, rankList: [] });
     this.loadRank(this.data.currentTab, 1);
   },
