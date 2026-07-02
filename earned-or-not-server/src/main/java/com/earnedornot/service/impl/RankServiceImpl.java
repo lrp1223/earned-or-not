@@ -35,10 +35,14 @@ public class RankServiceImpl implements RankService {
                         case "MAHJONG" -> user.getMahjongNet();
                         default -> user.getTotalNet();
                     };
-
-                    String avatar = user.getCustomAvatarUrl() != null && !user.getCustomAvatarUrl().isEmpty()
-                            ? user.getCustomAvatarUrl() : user.getAvatarUrl();
-
+                    String avatar;
+                    if (user.getAvatarBase64() != null && !user.getAvatarBase64().isEmpty()) {
+                        avatar = user.getAvatarBase64();
+                    } else if (user.getCustomAvatarUrl() != null && !user.getCustomAvatarUrl().isEmpty()) {
+                        avatar = user.getCustomAvatarUrl();
+                    } else {
+                        avatar = user.getAvatarUrl();
+                    }
                     return RankVO.RankItem.builder()
                             .userId(user.getId())
                             .nickname(user.getNickname())
