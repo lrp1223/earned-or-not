@@ -32,7 +32,6 @@
       {"pagePath": "pages/index/index", "text": "首页"},
       {"pagePath": "pages/stats/stats", "text": "统计"},
       {"pagePath": "pages/rank/rank", "text": "排行"},
-      {"pagePath": "pages/fun/fun", "text": "趣玩"},
       {"pagePath": "pages/profile/profile", "text": "我的"}
     ]
   },

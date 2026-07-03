@@ -67,7 +67,6 @@ Page({
     });
   },
 
-
   chooseAvatar() {
     wx.chooseMedia({
       count: 1,
@@ -79,12 +78,44 @@ Page({
           src: tempFilePath,
           quality: 80,
           success: (compressed) => {
-            this.uploadAvatar(compressed.tempFilePath);
+            this.checkImageThenUpload(compressed.tempFilePath);
           },
           fail: () => {
-            this.uploadAvatar(tempFilePath);
+            this.checkImageThenUpload(tempFilePath);
           }
         });
+      }
+    });
+  },
+
+  // 内容安全检测：图片，微信审核要求
+  checkImageThenUpload(filePath) {
+    var that = this;
+    wx.showLoading({ title: '安全检测中...' });
+    wx.getFileSystemManager().readFile({
+      filePath: filePath,
+      success: function(readRes) {
+        if (!wx.security || !wx.security.imgSecCheck) {
+          wx.hideLoading();
+          that.uploadAvatar(filePath);
+          return;
+        }
+        wx.security.imgSecCheck({
+          media: readRes.data,
+          success: function() {
+            wx.hideLoading();
+            that.uploadAvatar(filePath);
+          },
+          fail: function(err) {
+            wx.hideLoading();
+            console.error('图片安全检测失败:', err);
+            wx.showToast({ title: '图片含有违规内容，请重新选择', icon: 'none' });
+          }
+        });
+      },
+      fail: function() {
+        wx.hideLoading();
+        wx.showToast({ title: '读取图片失败', icon: 'none' });
       }
     });
   },
@@ -117,18 +148,49 @@ Page({
   },
 
   editNickname() {
+    var that = this;
     wx.showModal({
       title: '修改昵称',
       editable: true,
       placeholderText: '请输入昵称',
       success: (res) => {
         if (res.confirm && res.content) {
-          api.updateProfile({ nickname: res.content }).then(() => {
-            this.loadUserProfile();
-            wx.showToast({ title: '昵称修改成功' });
-          });
+          var nickname = res.content.trim();
+          if (!nickname) {
+            wx.showToast({ title: '昵称不能为空', icon: 'none' });
+            return;
+          }
+          // 内容安全检测：文本
+          if (wx.security && wx.security.msgSecCheck) {
+            wx.showLoading({ title: '安全检测中...' });
+            wx.security.msgSecCheck({
+              content: nickname,
+              success: function() {
+                wx.hideLoading();
+                that.doUpdateNickname(nickname);
+              },
+              fail: function(err) {
+                wx.hideLoading();
+                console.error('文本安全检测失败:', err);
+                wx.showToast({ title: '昵称含有违规内容，请重新输入', icon: 'none' });
+              }
+            });
+          } else {
+            that.doUpdateNickname(nickname);
+          }
         }
       }
+    });
+  },
+
+  doUpdateNickname(nickname) {
+    var that = this;
+    api.updateProfile({ nickname: nickname }).then(() => {
+      that.loadUserProfile();
+      wx.showToast({ title: '昵称修改成功' });
+    }).catch(err => {
+      console.error('昵称更新失败:', err);
+      wx.showToast({ title: '修改失败', icon: 'none' });
     });
   }
 });
