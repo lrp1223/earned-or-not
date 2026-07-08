@@ -44,10 +44,7 @@ Page({
       lotteryType: defaultLotteryType
     });
 
-    if (mode === 'add' && type === 'lottery') {
-      this.loadLastWinAmount(defaultLotteryType);
-    }
-
+    // 不再自动填充上次中奖金额
     if (mode === 'edit' && options.id) {
       this.loadRecord(options.id);
     }
@@ -70,17 +67,6 @@ Page({
     return '18M';
   },
 
-  loadLastWinAmount(lotteryType) {
-    api.getLastWinAmount(lotteryType).then(res => {
-      if (res.data > 0) {
-        this.setData({
-          winAmount: res.data.toString()
-        });
-        this.calc();
-      }
-    });
-  },
-
   onLotteryTypeChange(e) {
     const index = parseInt(e.detail.value);
     const lotteryType = this.data.lotteryTypes[index];
@@ -88,9 +74,7 @@ Page({
       lotteryTypeIndex: index,
       lotteryType
     });
-    if (this.data.mode === 'add') {
-      this.loadLastWinAmount(lotteryType);
-    }
+    this.calc();
   },
 
   loadRecord(id) {
