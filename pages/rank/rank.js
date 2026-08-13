@@ -54,7 +54,11 @@ Page({
           net: net,
           netStr: net.toFixed(2),
           avatarError: false,
-          avatarUrl: this.getCachedAvatar(item.userId, item.avatarUrl, item.isMe)
+          avatarUrl: this.getCachedAvatar(
+            item.userId,
+            item.hasAvatar && !item.isMe ? '' : item.avatarUrl,
+            item.isMe
+          )
         };
       });
       
@@ -88,12 +92,13 @@ Page({
       const avatar = res.data;
       if (!avatar) return;
       wx.setStorageSync('avatar_' + userId, avatar);
-      const list = this.data.rankList;
-      const idx = list.findIndex(item => item.userId === userId);
+
+      const idx = this.data.rankList.findIndex(item => item.userId === userId);
       if (idx !== -1) {
-        list[idx].avatarUrl = avatar;
-        list[idx].avatarError = false;
-        this.setData({ rankList: list });
+        this.setData({
+          ['rankList[' + idx + '].avatarUrl']: avatar,
+          ['rankList[' + idx + '].avatarError']: false
+        });
       }
     }).catch(() => {});
   },
@@ -104,14 +109,13 @@ Page({
       const mine = wx.getStorageSync('avatarCache') || '';
       if (mine) return mine;
     }
-    if (!serverUrl) return '';
 
     const cacheKey = `avatar_${userId}`;
     const cached = wx.getStorageSync(cacheKey);
     
     if (cached) {
       if (typeof cached === 'string' && cached) return cached;
-      if (cached.url && Date.now() - cached.time < 7 * 24 * 60 * 60 * 1000) {
+      if (serverUrl && cached.url && Date.now() - cached.time < 7 * 24 * 60 * 60 * 1000) {
         return cached.url;
       }
     }
