@@ -74,21 +74,42 @@ Page({
       sourceType: ['album', 'camera'],
       success: (res) => {
         const tempFilePath = res.tempFiles[0].tempFilePath;
-        wx.compressImage({
-          src: tempFilePath,
-          quality: 80,
-          success: (compressed) => {
-            this.checkImageThenUpload(compressed.tempFilePath);
-          },
-          fail: () => {
-            this.checkImageThenUpload(tempFilePath);
-          }
-        });
+        this.compressToTarget(tempFilePath, 0);
       }
     });
   },
 
   // 内容安全检测：图片，微信审核要求
+  // 递归压缩到 10KB 以内
+  compressToTarget(srcPath, attempt) {
+    const maxBytes = 10 * 1024;
+    const that = this;
+    const quality = Math.max(10, 80 - attempt * 10);
+
+    wx.getFileSystemManager().getFileInfo({
+      filePath: srcPath,
+      success: function(info) {
+        if (info.size <= maxBytes || attempt >= 7) {
+          that.checkImageThenUpload(srcPath);
+          return;
+        }
+        wx.compressImage({
+          src: srcPath,
+          quality: quality,
+          success: function(compressed) {
+            that.compressToTarget(compressed.tempFilePath, attempt + 1);
+          },
+          fail: function() {
+            that.checkImageThenUpload(srcPath);
+          }
+        });
+      },
+      fail: function() {
+        that.checkImageThenUpload(srcPath);
+      }
+    });
+  },
+
   checkImageThenUpload(filePath) {
     var that = this;
     wx.showLoading({ title: '安全检测中...' });
