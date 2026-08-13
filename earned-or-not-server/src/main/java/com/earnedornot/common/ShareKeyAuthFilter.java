@@ -31,6 +31,10 @@ public class ShareKeyAuthFilter extends OncePerRequestFilter {
             return;
         }
 
+        if (path.startsWith("/api/public/avatar/")) {
+            chain.doFilter(request, response);
+            return;
+        }
         if (path.startsWith("/api/")) {
             String shareKey = request.getHeader("X-Share-Key");
 

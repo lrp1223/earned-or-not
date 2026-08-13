@@ -5,6 +5,7 @@ import com.earnedornot.repository.UserRepository;
 import com.earnedornot.service.RankService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
@@ -17,6 +18,9 @@ import java.util.List;
 public class RankServiceImpl implements RankService {
 
     private final UserRepository userRepository;
+
+    @Value("${app.public-base-url:https://earned.menghanyu.cn}")
+    private String publicBaseUrl;
 
     @Override
     public RankVO getRank(String type, int page, int pageSize, Long currentUserId) {
@@ -46,10 +50,13 @@ public class RankServiceImpl implements RankService {
                         default -> totalNet;
                     };
 
-                    // 列表接口只返回 URL，不返回 avatarBase64（MEDIUMTEXT），避免响应体积过大拖慢排行页。
-                    // 当前用户自己的上传头像由前端从本地 avatarCache 读取。
-                    String avatar = customAvatarUrl != null && !customAvatarUrl.isEmpty()
-                            ? customAvatarUrl : avatarUrl;
+                    String avatar;
+                    if (hasAvatar) {
+                        avatar = publicBaseUrl + "/api/public/avatar/" + userId;
+                    } else {
+                        avatar = customAvatarUrl != null && !customAvatarUrl.isEmpty()
+                                ? customAvatarUrl : avatarUrl;
+                    }
 
                     return RankVO.RankItem.builder()
                             .userId(String.valueOf(userId))

@@ -54,11 +54,7 @@ Page({
           net: net,
           netStr: net.toFixed(2),
           avatarError: false,
-          avatarUrl: this.getCachedAvatar(
-            item.userId,
-            item.hasAvatar && !item.isMe ? '' : item.avatarUrl,
-            item.isMe
-          )
+          avatarUrl: this.getCachedAvatar(item.userId, item.avatarUrl, item.isMe)
         };
       });
       
@@ -67,7 +63,6 @@ Page({
         page: page,
         hasMore: res.data.hasMore
       });
-      this.loadMissingAvatars(list);
     }).catch(() => {
       this.setData({ loading: false });
     });
@@ -76,31 +71,6 @@ Page({
   loadMore() {
     if (!this.data.hasMore || this.data.loading) return;
     this.loadRank(this.data.currentTab, this.data.page + 1);
-  },
-
-  // 有上传头像但列表接口未返回 base64 的用户，按需单独拉取
-  loadMissingAvatars(list) {
-    list.forEach(item => {
-      if (item.hasAvatar && !item.avatarUrl) {
-        this.fetchAvatar(item.userId);
-      }
-    });
-  },
-
-  fetchAvatar(userId) {
-    api.getAvatar(userId).then(res => {
-      const avatar = res.data;
-      if (!avatar) return;
-      wx.setStorageSync('avatar_' + userId, avatar);
-
-      const idx = this.data.rankList.findIndex(item => item.userId === userId);
-      if (idx !== -1) {
-        this.setData({
-          ['rankList[' + idx + '].avatarUrl']: avatar,
-          ['rankList[' + idx + '].avatarError']: false
-        });
-      }
-    }).catch(() => {});
   },
 
   getCachedAvatar(userId, serverUrl, isMe) {
@@ -115,7 +85,7 @@ Page({
     
     if (cached) {
       if (typeof cached === 'string' && cached) return cached;
-      if (serverUrl && cached.url && Date.now() - cached.time < 7 * 24 * 60 * 60 * 1000) {
+      if (cached.url && Date.now() - cached.time < 7 * 24 * 60 * 60 * 1000) {
         return cached.url;
       }
     }
