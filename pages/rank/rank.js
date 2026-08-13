@@ -73,7 +73,6 @@ Page({
     this.loadRank(this.data.currentTab, this.data.page + 1);
   },
 
-  getCachedAvatar(userId, serverUrl) {
   getCachedAvatar(userId, serverUrl, isMe) {
     // 当前用户的上传头像不在列表接口返回，直接读本地缓存
     if (isMe) {
