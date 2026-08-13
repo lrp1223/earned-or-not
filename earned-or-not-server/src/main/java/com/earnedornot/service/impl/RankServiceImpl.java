@@ -52,7 +52,7 @@ public class RankServiceImpl implements RankService {
                             ? customAvatarUrl : avatarUrl;
 
                     return RankVO.RankItem.builder()
-                            .userId(userId)
+                            .userId(String.valueOf(userId))
                             .nickname(nickname)
                             .avatarUrl(avatar)
                             .hasAvatar(hasAvatar)

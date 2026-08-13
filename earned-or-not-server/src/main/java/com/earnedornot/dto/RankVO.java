@@ -27,7 +27,7 @@ public class RankVO {
     @AllArgsConstructor
     @Builder
     public static class RankItem {
-        private Long userId;
+        private String userId;
         private String nickname;
         private String avatarUrl;
         private boolean hasAvatar;
