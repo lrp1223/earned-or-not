@@ -33,7 +33,7 @@
   <view class="lobby-screen" wx:if="{{pageState === 'lobby'}}">
     <view class="lobby-header">
       <text class="room-label">房间号</text>
-      <text class="room-id">{{roomId}}</text>
+      <text class="room-id">{{roomCode}}</text>
     </view>
     
     <view class="player-list">
@@ -108,7 +108,7 @@
     <!-- 底部手牌 -->
     <view class="hand-area">
       <view class="hand-cards">
-        <view class="hand-card {{selectedCard === index ? 'selected' : ''}} {{!isValidPlay(item) ? 'disabled' : ''}}"
+        <view class="hand-card {{selectedCard === index ? 'selected' : ''}}"
               wx:for="{{playerHand}}" wx:key="index"
               bindtap="selectCard" data-index="{{index}}"
               binddbltap="confirmPlay">

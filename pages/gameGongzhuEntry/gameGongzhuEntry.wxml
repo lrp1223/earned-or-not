@@ -17,7 +17,6 @@
     </view>
 
     <view class="game-card online" bindtap="goOnline">
-      <view class="card-tag new">🆕 新</view>
       <view class="card-icon">👥</view>
       <view class="card-info">
         <text class="card-title">在线版</text>

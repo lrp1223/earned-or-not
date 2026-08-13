@@ -1,9 +1,8 @@
 // pages/gameGongzhuOnline/gameGongzhuOnline.js
-const app = getApp();
-const db = wx.cloud.database();
+// 拱猪在线对战 - REST API 版本
 
 const SUITS = ['C', 'D', 'S', 'H'];
-const RANKS = ['2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K', 'A'];
+const RANKS = ['2','3','4','5','6','7','8','9','10','J','Q','K','A'];
 const SUIT_MAP = { 'S': '♠', 'H': '♥', 'C': '♣', 'D': '♦' };
 const SCORE_CARDS = {
   'SQ': -100, 'DJ': 100,
@@ -13,390 +12,341 @@ const SCORE_CARDS = {
 
 Page({
   data: {
-    pageState: 'home', // home | lobby | playing | result
-    roomId: '',
+    pageState: 'home',   // home | lobby | playing | result
+    roomCode: '',
     isHost: false,
     myIndex: 0,
     playerCount: 0,
     players: [{ isEmpty: true }, { isEmpty: true }, { isEmpty: true }, { isEmpty: true }],
-    
+
     currentRound: 1,
-    currentPlayer: 0,
+    currentPlayer: -1,
     countdown: 0,
     tableCards: [],
     playerHand: [],
-    allHands: [[], [], [], []],
     rawScores: [0, 0, 0, 0],
     displayScores: [0, 0, 0, 0],
-    collectedScoreCards: [[], [], [], []],
     selectedCard: null,
     leadSuit: null,
     suitMap: SUIT_MAP,
-    roomWatcher: null,
-    countdownTimer: null
+    pollTimer: null,
+    countdownTimer: null,
+
+    showJoinInput: false,
+    inputRoomId: ''
   },
 
   onLoad() {
     this.userInfo = wx.getStorageSync('userInfo') || { nickName: '玩家', avatarUrl: '' };
   },
 
-  onUnload() { this.stopWatching(); this.clearCountdown(); },
+  onUnload() {
+    this.stopPolling();
+    this.clearCountdown();
+  },
 
-  generateRoomId() { return Math.floor(100000 + Math.random() * 900000).toString(); },
+  // ==================== Home ====================
 
   async createRoom() {
-    const roomId = this.generateRoomId();
-    const hostId = app.globalData.openid || 'host_' + Date.now();
-    try {
-      wx.showLoading({ title: '创建中...' });
-      const res = await wx.cloud.callFunction({
-        name: 'gongzhu',
-        data: {
-          action: 'createRoom',
-          data: { roomId, hostId, nickname: this.userInfo.nickName, avatar: this.userInfo.avatarUrl || '/images/avatar.png' }
-        }
-      });
+    wx.showLoading({ title: '创建中...' });
+    this.request('POST', '/api/game/rooms', {
+      nickname: this.userInfo.nickName,
+      avatar: this.userInfo.avatarUrl || ''
+    }).then(res => {
       wx.hideLoading();
-      if (res.result.success) {
-        this.setData({ roomId, isHost: true, myIndex: 0, pageState: 'lobby', playerCount: 1, players: this.formatPlayers([{ id: hostId, nickname: this.userInfo.nickName, avatar: this.userInfo.avatarUrl || '/images/avatar.png', isHost: true, isAI: false }]) });
-        this.startWatching(roomId);
-      }
-    } catch (err) { wx.hideLoading(); }
+      const d = res.data;
+      this.setData({
+        roomCode: d.roomCode, isHost: true, myIndex: d.myIndex,
+        pageState: 'lobby', playerCount: d.playerCount,
+        players: this.formatPlayers(d.players)
+      });
+      this.startPolling(d.roomCode);
+    }).catch(err => {
+      wx.hideLoading();
+      wx.showToast({ title: '创建失败', icon: 'none' });
+    });
   },
 
   async joinRoom() {
-    if (this.data.inputRoomId.length !== 6) return;
-    const roomId = this.data.inputRoomId;
-    const playerId = app.globalData.openid || 'player_' + Date.now();
-    try {
-      wx.showLoading({ title: '加入中...' });
-      const res = await wx.cloud.callFunction({
-        name: 'gongzhu',
-        data: { action: 'joinRoom', data: { roomId, playerId, nickname: this.userInfo.nickName, avatar: this.userInfo.avatarUrl || '/images/avatar.png' } }
-      });
-      wx.hideLoading();
-      if (res.result.success) {
-        this.setData({ roomId, isHost: false, myIndex: res.result.playerIndex, pageState: 'lobby' });
-        this.startWatching(roomId);
-      }
-    } catch (err) { wx.hideLoading(); }
-  },
-
-  async addAI() {
-    if (this.data.playerCount >= 4) return;
-    const aiId = 'ai_' + Date.now();
-    const nickname = '机器人' + (this.data.playerCount);
-    try {
-      await wx.cloud.callFunction({
-        name: 'gongzhu',
-        data: { action: 'addAI', data: { roomId: this.data.roomId, aiId, nickname, avatar: '/images/avatar2.png' } }
-      });
-    } catch (err) {}
-  },
-
-  async startGame() {
-    if (this.data.playerCount < 4) return;
-    try {
-      wx.showLoading({ title: '开始游戏...' });
-      const deck = this.createDeck();
-      const hands = [[], [], [], []];
-      for (let i = 0; i < 52; i++) hands[i % 4].push(deck[i]);
-      const teams = this.determineTeamsInitial(hands);
-      let firstPlayer = 0;
-      for (let i = 0; i < 4; i++) { if (hands[i].some(c => c.id === 'SJ')) firstPlayer = i; }
-
-      const gameData = {
-        currentRound: 1,
-        currentPlayer: firstPlayer,
-        hands: hands,
-        tableCards: [],
-        leadSuit: null,
-        rawScores: [0, 0, 0, 0],
-        collectedScoreCards: [[], [], [], []],
-        teams: teams,
-        status: 'playing'
-      };
-
-      await wx.cloud.callFunction({
-        name: 'gongzhu',
-        data: { action: 'startGame', data: { roomId: this.data.roomId, gameData } }
-      });
-      wx.hideLoading();
-    } catch (err) { wx.hideLoading(); }
-  },
-
-  createDeck() {
-    const deck = [];
-    for (const suit of SUITS) { for (const rank of RANKS) { deck.push({ suit, rank, id: `${suit}${rank}` }); } }
-    for (let i = deck.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      [deck[i], deck[j]] = [deck[j], deck[i]];
-    }
-    return deck;
-  },
-
-  determineTeamsInitial(hands) {
-    let pO = -1, sO = -1;
-    for (let i = 0; i < 4; i++) {
-      if (hands[i].some(c => c.id === 'SQ')) pO = i;
-      if (hands[i].some(c => c.id === 'DJ')) sO = i;
-    }
-    const teams = {};
-    if (pO === sO) {
-      teams[pO] = (pO + 2) % 4; teams[(pO + 2) % 4] = pO;
-      const o1 = (pO + 1) % 4, o2 = (pO + 3) % 4; teams[o1] = o2; teams[o2] = o1;
-    } else {
-      teams[pO] = sO; teams[sO] = pO;
-      const others = [0,1,2,3].filter(i => i !== pO && i !== sO);
-      teams[others[0]] = others[1]; teams[others[1]] = others[0];
-    }
-    return teams;
-  },
-
-  formatPlayers(players) {
-    const result = [];
-    for (let i = 0; i < 4; i++) {
-      if (players[i]) result.push({ ...players[i], isEmpty: false });
-      else result.push({ isEmpty: true });
-    }
-    return result;
-  },
-
-  startWatching(roomId) {
-    this.roomWatcher = db.collection('gongzhu_rooms').doc(roomId).watch({
-      onChange: (snapshot) => {
-        const room = snapshot.docs[0];
-        if (!room) return;
-        if (room.status === 'playing' || room.status === 'finished') {
-          if (room.gameData) this.syncGameState(room.gameData, room.status);
-        } else {
-          this.setData({ playerCount: room.players.length, players: this.formatPlayers(room.players), pageState: 'lobby' });
-        }
-      },
-      onError: (err) => console.error(err)
-    });
-  },
-
-  stopWatching() { if (this.roomWatcher) this.roomWatcher.close(); },
-
-  syncGameState(gameData, status) {
-    if (status === 'finished') {
-      const sortedRank = this.calculateRank(gameData.rawScores);
-      this.setData({ 
-        pageState: 'result', 
-        allHands: gameData.hands,
-        sortedRank: sortedRank
-      });
+    var code = this.data.inputRoomId;
+    if (!code || code.length !== 6) {
+      wx.showToast({ title: '请输入6位房间号', icon: 'none' });
       return;
     }
-
-    const myHand = gameData.hands[this.data.myIndex];
-    this.setData({
-      pageState: 'playing',
-      currentRound: gameData.currentRound,
-      currentPlayer: gameData.currentPlayer,
-      playerHand: myHand ? myHand.sort((a, b) => this.cardSortValue(a) - this.cardSortValue(b)) : [],
-      allHands: gameData.hands,
-      tableCards: gameData.tableCards || [],
-      rawScores: gameData.rawScores || [0, 0, 0, 0],
-      displayScores: gameData.rawScores || [0, 0, 0, 0],
-      collectedScoreCards: gameData.collectedScoreCards || [[], [], [], []],
-      leadSuit: gameData.leadSuit || null
+    wx.showLoading({ title: '加入中...' });
+    this.request('POST', '/api/game/rooms/' + code + '/join', {
+      nickname: this.userInfo.nickName,
+      avatar: this.userInfo.avatarUrl || ''
+    }).then(res => {
+      wx.hideLoading();
+      var d = res.data;
+      this.setData({
+        roomCode: code, isHost: false, myIndex: d.myIndex,
+        pageState: 'lobby', playerCount: d.playerCount,
+        players: this.formatPlayers(d.players)
+      });
+      this.startPolling(code);
+    }).catch(err => {
+      wx.hideLoading();
+      var msg = (err && err.message) || '加入失败';
+      wx.showToast({ title: msg, icon: 'none' });
     });
-    
-    if (gameData.currentPlayer === this.data.myIndex) this.startCountdown();
-    else this.checkAIPlay();
-  },
-
-  async playCard(playerIndex, card) {
-    this.clearCountdown();
-    const newTableCards = [...this.data.tableCards, { player: playerIndex, card }];
-    const newHands = this.data.allHands.map((h, i) => i === playerIndex ? h.filter(c => c.id !== card.id) : h);
-    const newLeadSuit = newTableCards.length === 1 ? card.suit : this.data.leadSuit;
-
-    if (newTableCards.length === 4) {
-      await this.endRound(newHands, newTableCards, newLeadSuit);
-    } else {
-      await wx.cloud.callFunction({
-        name: 'gongzhu',
-        data: {
-          action: 'playCard',
-          data: {
-            roomId: this.data.roomId,
-            gameData: { ...this.data, tableCards: newTableCards, currentPlayer: (playerIndex + 1) % 4, hands: newHands, leadSuit: newLeadSuit }
-          }
-        }
-      });
-    }
-  },
-
-  async endRound(hands, tableCards, leadSuit) {
-    let winner = tableCards[0].player;
-    let maxRank = this.cardRankValue(tableCards[0].card.rank);
-    for (let i = 1; i < 4; i++) {
-      if (tableCards[i].card.suit === leadSuit) {
-        const val = this.cardRankValue(tableCards[i].card.rank);
-        if (val > maxRank) { maxRank = val; winner = tableCards[i].player; }
-      }
-    }
-    
-    const roundScoreCards = tableCards.filter(tc => SCORE_CARDS[tc.card.id] || tc.card.id === 'C10' || tc.card.suit === 'H').map(tc => tc.card);
-    const newCollected = [...this.data.collectedScoreCards];
-    newCollected[winner] = [...newCollected[winner], ...roundScoreCards];
-    
-    let roundRaw = 0;
-    tableCards.forEach(tc => { if (SCORE_CARDS[tc.card.id]) roundRaw += SCORE_CARDS[tc.card.id]; });
-    const newRawScores = [...this.data.rawScores];
-    newRawScores[winner] += roundRaw;
-
-    const isOver = this.data.currentRound >= 13;
-    const gameData = {
-      ...this.data,
-      hands,
-      tableCards: [],
-      currentPlayer: winner,
-      currentRound: isOver ? this.data.currentRound : this.data.currentRound + 1,
-      collectedScoreCards: newCollected,
-      rawScores: newRawScores,
-      leadSuit: null,
-      status: isOver ? 'finished' : 'playing'
-    };
-
-    setTimeout(async () => {
-      await wx.cloud.callFunction({
-        name: 'gongzhu',
-        data: { action: 'playCard', data: { roomId: this.data.roomId, gameData } }
-      });
-    }, 1500);
-  },
-
-  cardSortValue(card) {
-    const sO = { 'S': 0, 'C': 1, 'D': 2, 'H': 3 };
-    const rO = { 'A': 12, 'K': 11, 'Q': 10, 'J': 9, '10': 8, '9': 7, '8': 6, '7': 5, '6': 4, '5': 3, '4': 2, '3': 1, '2': 0 };
-    return sO[card.suit] * 13 + rO[card.rank];
-  },
-
-  cardRankValue(rank) {
-    const v = { '2': 2, '3': 3, '4': 4, '5': 5, '6': 6, '7': 7, '8': 8, '9': 9, '10': 10, 'J': 11, 'Q': 12, 'K': 13, 'A': 14 };
-    return v[rank];
-  },
-
-  getPlayerPosition(playerIndex) {
-    const relative = (playerIndex - this.data.myIndex + 4) % 4;
-    return ['pos-bottom', 'pos-right', 'pos-top', 'pos-left'][relative];
-  },
-
-  checkAIPlay() {
-    const p = this.data.players[this.data.currentPlayer];
-    if (p && p.isAI) setTimeout(() => this.aiPlay(), 1000);
-  },
-
-  aiPlay() {
-    const idx = this.data.currentPlayer;
-    const hand = this.data.allHands[idx];
-    if (!hand || hand.length === 0) return;
-    const valid = hand.filter(c => this.isValidPlayAI(c, hand));
-    const card = valid[Math.floor(Math.random() * valid.length)];
-    if (card) this.playCard(idx, card);
-  },
-
-  isValidPlayAI(card, hand) {
-    const { tableCards, leadSuit } = this.data;
-    if (tableCards.length === 0) return true;
-    if (card.suit === leadSuit) return true;
-    return !hand.some(c => c.suit === leadSuit);
-  },
-
-  isValidPlay(card) {
-    const { tableCards, leadSuit, playerHand } = this.data;
-    if (tableCards.length === 0) return true;
-    if (card.suit === leadSuit) return true;
-    return !playerHand.some(c => c.suit === leadSuit);
-  },
-
-  // 计算排名
-  calculateRank(rawScores) {
-    const scores = rawScores.map((score, idx) => ({
-      idx: idx,
-      thisGame: score,
-      total: score,
-      rank: 0
-    }));
-    scores.sort((a, b) => b.thisGame - a.thisGame);
-    scores.forEach((item, i) => { item.rank = i + 1; });
-    return scores;
-  },
-
-  startCountdown() {
-    this.clearCountdown();
-    this.setData({ countdown: 30 });
-    this.countdownTimer = setInterval(() => {
-      const n = this.data.countdown - 1;
-      this.setData({ countdown: n });
-      if (n <= 0) { this.clearCountdown(); this.autoPlay(); }
-    }, 1000);
-  },
-
-  clearCountdown() { if (this.countdownTimer) clearInterval(this.countdownTimer); this.setData({ countdown: 0 }); },
-
-  autoPlay() {
-    const hand = this.data.playerHand;
-    const valid = hand.filter(c => this.isValidPlay(c));
-    if (valid.length > 0) {
-      const card = valid[Math.floor(Math.random() * valid.length)];
-      const idx = hand.findIndex(c => c.id === card.id);
-      this.setData({ selectedCard: idx });
-      this.confirmPlay();
-    }
   },
 
   showJoinModal() { this.setData({ showJoinInput: true, inputRoomId: '' }); },
   hideJoinModal() { this.setData({ showJoinInput: false }); },
   onRoomIdInput(e) { this.setData({ inputRoomId: e.detail.value }); },
-  selectCard(e) { this.setData({ selectedCard: e.currentTarget.dataset.index }); },
-  confirmPlay() { if (this.data.selectedCard !== null) this.playCard(this.data.myIndex, this.data.playerHand[this.data.selectedCard]); },
-  
-  // 离开房间
-  leaveRoom() {
-    wx.cloud.callFunction({
-      name: 'gongzhu',
-      data: { action: 'leaveRoom', data: { roomId: this.data.roomId, playerId: app.globalData.openid } }
-    });
-    this.stopWatching();
-    wx.navigateBack();
-  },
-  
-  // 再来一局
-  async playAgain() {
-    wx.showLoading({ title: '准备中...' });
-    const deck = this.createDeck();
-    const hands = [[], [], [], []];
-    for (let i = 0; i < 52; i++) hands[i % 4].push(deck[i]);
-    const teams = this.determineTeamsInitial(hands);
-    let firstPlayer = 0;
-    for (let i = 0; i < 4; i++) { if (hands[i].some(c => c.id === 'SJ')) firstPlayer = i; }
 
-    const gameData = {
-      currentRound: 1,
-      currentPlayer: firstPlayer,
-      hands: hands,
-      tableCards: [],
-      leadSuit: null,
-      rawScores: [0, 0, 0, 0],
-      collectedScoreCards: [[], [], [], []],
-      teams: teams,
-      status: 'playing'
-    };
+  // ==================== Lobby ====================
 
-    await wx.cloud.callFunction({
-      name: 'gongzhu',
-      data: { action: 'startGame', data: { roomId: this.data.roomId, gameData } }
+  addAI() {
+    if (this.data.playerCount >= 4) return;
+    this.request('POST', '/api/game/rooms/' + this.data.roomCode + '/add-ai').then(res => {
+      var d = res.data;
+      this.setData({ playerCount: d.playerCount, players: this.formatPlayers(d.players) });
     });
-    wx.hideLoading();
   },
-  
-  // 退出游戏
+
+  startGame() {
+    if (this.data.playerCount < 2) {
+      wx.showToast({ title: '至少需要2人', icon: 'none' });
+      return;
+    }
+    wx.showLoading({ title: '发牌中...' });
+    this.request('POST', '/api/game/rooms/' + this.data.roomCode + '/start').then(res => {
+      wx.hideLoading();
+    }).catch(err => {
+      wx.hideLoading();
+      wx.showToast({ title: '开始失败', icon: 'none' });
+    });
+  },
+
+  addAIAuto() {
+    if (this.data.playerCount < 4) {
+      this.addAI();
+      setTimeout(() => this.addAIAuto(), 500);
+    }
+  },
+
+  // ==================== Playing ====================
+
+  selectCard(e) {
+    if (this.data.currentPlayer !== this.data.myIndex) return;
+    var index = e.currentTarget.dataset.index;
+    var card = this.data.playerHand[index];
+    var lead = this.data.leadSuit;
+    var table = this.data.tableCards;
+    if (table.length > 0 && card.suit !== lead) {
+      var hasSuit = this.data.playerHand.some(function(c) { return c.suit === lead; });
+      if (hasSuit) {
+        wx.showToast({ title: '请跟花色', icon: 'none' });
+        return;
+      }
+    }
+    if (this.data.currentRound === 1 && table.length === 0 && card.id !== 'SJ') {
+      wx.showToast({ title: '第一轮必须先出♠J', icon: 'none' });
+      return;
+    }
+    this.setData({ selectedCard: index });
+  },
+
+  confirmPlay() {
+    if (this.data.selectedCard === null) return;
+    var card = this.data.playerHand[this.data.selectedCard];
+    this.clearCountdown();
+    this.request('POST', '/api/game/rooms/' + this.data.roomCode + '/play', {
+      card: { suit: card.suit, rank: card.rank }
+    }).then(res => {
+      this.setData({ selectedCard: null });
+    }).catch(err => {
+      wx.showToast({ title: '出牌失败', icon: 'none' });
+    });
+  },
+
+  // ==================== Polling ====================
+
+  startPolling(roomCode) {
+    this.stopPolling();
+    this.pollTimer = setInterval(() => {
+      this.request('GET', '/api/game/rooms/' + roomCode).then(res => {
+        var d = res.data;
+        if (d.status === 'WAITING') {
+          if (this.data.pageState !== 'lobby') {
+            this.setData({ pageState: 'lobby' });
+          }
+          this.setData({
+            playerCount: d.playerCount,
+            players: this.formatPlayers(d.players)
+          });
+        } else if (d.status === 'PLAYING' || d.status === 'FINISHED') {
+          this.syncGameState(d.gameData, d.status);
+        }
+      });
+    }, 2000);
+  },
+
+  stopPolling() {
+    if (this.pollTimer) clearInterval(this.pollTimer);
+    this.pollTimer = null;
+  },
+
+  syncGameState(gameData, status) {
+    if (!gameData) return;
+
+    if (status === 'FINISHED') {
+      this.setData({ pageState: 'result' });
+      // Calculate rankings
+      var totalScores = gameData.totalScores || [0,0,0,0];
+      var finalScores = gameData.finalScores || [0,0,0,0];
+      var sorted = [0,1,2,3].map(function(i) {
+        return { idx: i, thisGame: finalScores[i], total: totalScores[i] };
+      }).sort(function(a, b) { return b.total - a.total; });
+
+      var sortedRank = [];
+      for (var i = 0; i < sorted.length; i++) {
+        var rank = i + 1;
+        if (i > 0 && sorted[i].total === sorted[i-1].total) {
+          rank = sortedRank[i-1].rank;
+        }
+        sortedRank.push({
+          idx: sorted[i].idx, thisGame: sorted[i].thisGame,
+          total: sorted[i].total, rank: rank, isLast: i === 3
+        });
+      }
+
+      this.setData({
+        sortedRank: sortedRank,
+        finalScores: finalScores,
+        totalScores: totalScores,
+        rawScores: gameData.rawScores || [0,0,0,0]
+      });
+      return;
+    }
+
+    // PLAYING
+    var myHand = (gameData.hands && gameData.hands[this.data.myIndex]) || [];
+    myHand.sort(function(a, b) {
+      return cardSortValue(a) - cardSortValue(b);
+    });
+
+    this.setData({
+      pageState: 'playing',
+      currentRound: gameData.currentRound || 1,
+      currentPlayer: gameData.currentPlayer != null ? gameData.currentPlayer : -1,
+      playerHand: myHand,
+      tableCards: gameData.tableCards || [],
+      rawScores: gameData.rawScores || [0,0,0,0],
+      displayScores: gameData.rawScores || [0,0,0,0],
+      leadSuit: gameData.leadSuit || null,
+      collectedScoreCards: gameData.collectedScoreCards || [[],[],[],[]],
+      pigPlayer: gameData.pigPlayer != null ? gameData.pigPlayer : -1,
+      sheepPlayer: gameData.sheepPlayer != null ? gameData.sheepPlayer : -1
+    });
+
+    // Countdown for my turn
+    if (gameData.currentPlayer === this.data.myIndex) {
+      this.startCountdown();
+    } else {
+      this.clearCountdown();
+    }
+  },
+
+  // ==================== Countdown ====================
+
+  startCountdown() {
+    this.clearCountdown();
+    this.setData({ countdown: 30 });
+    var that = this;
+    this.countdownTimer = setInterval(function() {
+      var n = that.data.countdown - 1;
+      that.setData({ countdown: n });
+      if (n <= 0) {
+        that.clearCountdown();
+        that.autoPlay();
+      }
+    }, 1000);
+  },
+
+  clearCountdown() {
+    if (this.countdownTimer) clearInterval(this.countdownTimer);
+    this.setData({ countdown: 0 });
+  },
+
+  autoPlay() {
+    var hand = this.data.playerHand;
+    var lead = this.data.leadSuit;
+    var table = this.data.tableCards;
+    var valid = hand.filter(function(c) {
+      if (table.length === 0) return true;
+      if (c.suit === lead) return true;
+      return !hand.some(function(h) { return h.suit === lead; });
+    });
+    if (valid.length > 0) {
+      var card = valid[0];
+      var idx = hand.findIndex(function(c) { return c.id === card.id; });
+      this.setData({ selectedCard: idx });
+      this.confirmPlay();
+    }
+  },
+
+  // ==================== Result ====================
+
+  getPlayerPosition(playerIndex) {
+    var rel = (playerIndex - this.data.myIndex + 4) % 4;
+    return ['pos-bottom', 'pos-right', 'pos-top', 'pos-left'][rel];
+  },
+
+  playAgain() {
+    this.startGame();
+  },
+
   exitGame() {
-    this.leaveRoom();
+    this.request('POST', '/api/game/rooms/' + this.data.roomCode + '/leave').finally(() => {
+      this.stopPolling();
+      wx.navigateBack();
+    });
+  },
+
+  // ==================== Helpers ====================
+
+  formatPlayers(players) {
+    var result = [null, null, null, null];
+    (players || []).forEach(function(p) {
+      if (p && p.seat != null) result[p.seat] = p;
+    });
+    for (var i = 0; i < 4; i++) {
+      result[i] = result[i] || { isEmpty: true };
+    }
+    return result;
+  },
+
+  request(method, path, data) {
+    var shareKey = wx.getStorageSync('shareKey') || '';
+    return new Promise(function(resolve, reject) {
+      wx.request({
+        url: 'https://earned.menghanyu.cn' + path,
+        method: method,
+        header: {
+          'Content-Type': 'application/json',
+          'X-Share-Key': shareKey
+        },
+        data: data,
+        success: function(res) {
+          if (res.statusCode === 200 && res.data && res.data.success) {
+            resolve(res.data);
+          } else {
+            reject(res.data || { message: '请求失败' });
+          }
+        },
+        fail: reject
+      });
+    });
   }
 });
+
+// Global helpers (outside Page, used in sort callback)
+function cardSortValue(card) {
+  var sO = { 'S': 0, 'C': 1, 'D': 2, 'H': 3 };
+  var rO = { 'A': 12, 'K': 11, 'Q': 10, 'J': 9, '10': 8, '9': 7, '8': 6, '7': 5, '6': 4, '5': 3, '4': 2, '3': 1, '2': 0 };
+  return sO[card.suit] * 13 + rO[card.rank];
+}

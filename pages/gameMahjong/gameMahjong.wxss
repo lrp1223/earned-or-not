@@ -1,0 +1,208 @@
+/* pages/gameMahjong/gameMahjong.wxss */
+page {
+  height: 100vh;
+  overflow: hidden;
+}
+
+.container {
+  position: relative;
+  width: 100%;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  overflow: hidden;
+}
+
+/* 背景层 */
+.bg-sky {
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 45%;
+  background: linear-gradient(180deg, #87CEEB 0%, #B0E0FF 100%);
+  z-index: 0;
+}
+.bg-grass {
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  height: 55%;
+  background: linear-gradient(180deg, #5a8f3c 0%, #3d6b28 100%);
+  z-index: 0;
+}
+.bg-trees {
+  position: absolute;
+  top: 30%; left: 0; right: 0;
+  height: 120rpx;
+  z-index: 1;
+  display: flex;
+  justify-content: space-around;
+  align-items: flex-end;
+  padding: 0 20rpx;
+}
+.tree {
+  font-size: 60rpx;
+}
+
+/* 顶部栏 */
+.top-bar {
+  position: relative;
+  z-index: 10;
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20rpx 24rpx;
+  padding-top: calc(env(safe-area-inset-top) + 20rpx);
+  box-sizing: border-box;
+}
+.btn-back {
+  color: #fff;
+  font-size: 28rpx;
+  background: rgba(0,0,0,0.3);
+  padding: 8rpx 20rpx;
+  border-radius: 20rpx;
+}
+.level-panel {
+  display: flex;
+  align-items: center;
+  gap: 16rpx;
+  background: rgba(255,200,50,0.9);
+  padding: 8rpx 24rpx;
+  border-radius: 24rpx;
+  box-shadow: 0 2rpx 8rpx rgba(0,0,0,0.2);
+}
+.level-text {
+  font-size: 30rpx;
+  font-weight: bold;
+  color: #5a3000;
+}
+.progress-text {
+  font-size: 26rpx;
+  color: #6b4000;
+}
+.score-text {
+  font-size: 26rpx;
+  color: #6b4000;
+  font-weight: bold;
+}
+.top-placeholder {
+  width: 120rpx;
+}
+
+/* 棋盘框架 */
+.board-frame {
+  position: relative;
+  z-index: 5;
+  margin-top: 10rpx;
+  background: linear-gradient(135deg, #8B6914 0%, #A08030 50%, #8B6914 100%);
+  border-radius: 16rpx;
+  padding: 12rpx;
+  box-shadow: 0 4rpx 20rpx rgba(0,0,0,0.4), inset 0 1rpx 4rpx rgba(255,255,200,0.3);
+}
+.board {
+  display: flex;
+  flex-direction: column;
+  gap: 2rpx;
+}
+.board-row {
+  display: flex;
+  gap: 2rpx;
+}
+
+/* 格子 */
+.tile {
+  width: 48rpx;
+  height: 48rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(145deg, #FFF8DC 0%, #F5E6A8 100%);
+  border-radius: 6rpx;
+  box-shadow: 0 1rpx 3rpx rgba(0,0,0,0.2), inset 0 1rpx 2rpx rgba(255,255,255,0.6);
+  transition: transform 0.15s, box-shadow 0.15s;
+}
+.tile.empty {
+  background: rgba(0,0,0,0.15);
+  box-shadow: none;
+}
+.tile.selected {
+  transform: scale(1.15);
+  box-shadow: 0 0 12rpx 4rpx rgba(255,200,0,0.8);
+  z-index: 20;
+}
+.cell-bg {
+  width: 100%;
+  height: 100%;
+}
+.tile-char {
+  font-size: 28rpx;
+  line-height: 1;
+}
+
+/* 方向选择浮层 */
+.direction-overlay {
+  position: absolute;
+  width: 0;
+  height: 0;
+  z-index: 30;
+  pointer-events: none;
+}
+.dir-btn {
+  position: absolute;
+  width: 52rpx;
+  height: 52rpx;
+  background: rgba(255,200,50,0.95);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 32rpx;
+  color: #5a3000;
+  box-shadow: 0 2rpx 8rpx rgba(0,0,0,0.3);
+  pointer-events: auto;
+  transform: translate(-50%, -50%);
+  border: 3rpx solid #fff;
+}
+.dir-up    { top: -56rpx; left: 0; }
+.dir-right { top: 0; left: 56rpx; }
+.dir-down  { top: 56rpx; left: 0; }
+.dir-left  { top: 0; left: -56rpx; }
+.dir-btn:active {
+  transform: translate(-50%, -50%) scale(0.9);
+  background: rgba(255,150,0,1);
+}
+
+/* 底部栏 */
+.bottom-bar {
+  position: relative;
+  z-index: 10;
+  margin-top: 16rpx;
+  display: flex;
+  align-items: center;
+  gap: 32rpx;
+}
+.action-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background: rgba(255,255,255,0.9);
+  padding: 12rpx 24rpx;
+  border-radius: 16rpx;
+  box-shadow: 0 2rpx 8rpx rgba(0,0,0,0.15);
+}
+.action-btn.disabled {
+  opacity: 0.5;
+}
+.action-icon {
+  font-size: 40rpx;
+}
+.action-label {
+  font-size: 22rpx;
+  color: #5a3000;
+  margin-top: 4rpx;
+}
+.moves-info {
+  background: rgba(255,255,255,0.9);
+  padding: 12rpx 24rpx;
+  border-radius: 16rpx;
+}

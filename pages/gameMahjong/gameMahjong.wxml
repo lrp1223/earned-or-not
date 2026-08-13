@@ -1,0 +1,63 @@
+<!--pages/gameMahjong/gameMahjong.wxml-->
+<view class="container">
+  <!-- 天空 + 草地背景层 -->
+  <view class="bg-sky"></view>
+  <view class="bg-grass"></view>
+  <view class="bg-trees">
+    <text class="tree tree-1">🌲</text>
+    <text class="tree tree-2">🌳</text>
+    <text class="tree tree-3">🌲</text>
+    <text class="tree tree-4">🌳</text>
+    <text class="tree tree-5">🌲</text>
+  </view>
+
+  <!-- 顶部信息栏 -->
+  <view class="top-bar">
+    <view class="btn-back" bindtap="backToFun">← 返回</view>
+    <view class="level-panel">
+      <text class="level-text">第{{level}}关</text>
+      <text class="progress-text">{{remaining}}/{{total}}</text>
+      <text class="score-text">{{score}}分</text>
+    </view>
+    <view class="top-placeholder"></view>
+  </view>
+
+  <!-- 牌面网格 -->
+  <view class="board-frame">
+    <view class="board">
+      <block wx:for="{{grid}}" wx:for-item="row" wx:for-index="ri" wx:key="ri">
+        <view class="board-row">
+          <block wx:for="{{row}}" wx:for-item="cell" wx:for-index="ci" wx:key="ci">
+            <view
+              class="tile {{cell === 0 ? 'empty' : ''}} {{selected.row === ri && selected.col === ci ? 'selected' : ''}}"
+              data-row="{{ri}}"
+              data-col="{{ci}}"
+              bindtap="onTileTap">
+              <text class="tile-char" wx:if="{{cell > 0}}">{{gridChars[ri][ci]}}</text>
+              <view wx:if="{{cell === 0}}" class="cell-bg"></view>
+            </view>
+          </block>
+        </view>
+      </block>
+    </view>
+
+    <!-- 方向选择浮层，定位到选中格子中心 -->
+    <view class="direction-overlay" wx:if="{{selected !== null}}" style="left:{{selected.col * 50 + 36}}rpx;top:{{selected.row * 50 + 36}}rpx;">
+      <view class="dir-btn dir-up" data-dir="0" bindtap="onDirectionTap">↑</view>
+      <view class="dir-btn dir-right" data-dir="1" bindtap="onDirectionTap">→</view>
+      <view class="dir-btn dir-down" data-dir="2" bindtap="onDirectionTap">↓</view>
+      <view class="dir-btn dir-left" data-dir="3" bindtap="onDirectionTap">←</view>
+    </view>
+  </view>
+
+  <!-- 底部操作栏 -->
+  <view class="bottom-bar">
+    <view class="action-btn shuffle-btn {{shufflesLeft <= 0 ? 'disabled' : ''}}" bindtap="onShuffle">
+      <text class="action-icon">🔀</text>
+      <text class="action-label">重排({{shufflesLeft}})</text>
+    </view>
+    <view class="moves-info">
+      <text class="action-label">步数: {{moves}}</text>
+    </view>
+  </view>
+</view>
