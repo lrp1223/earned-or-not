@@ -1,7 +1,6 @@
 package com.earnedornot.service.impl;
 
 import com.earnedornot.dto.RankVO;
-import com.earnedornot.entity.User;
 import com.earnedornot.repository.UserRepository;
 import com.earnedornot.service.RankService;
 import lombok.RequiredArgsConstructor;
@@ -24,31 +23,39 @@ public class RankServiceImpl implements RankService {
         String rankType = mapType(type);
         PageRequest pageable = PageRequest.of(page - 1, pageSize);
 
-        List<User> users = userRepository.findForTypeRank(rankType, pageable);
         long total = userRepository.countForRank(rankType);
 
-        List<RankVO.RankItem> items = users.stream()
-                .map(user -> {
+        List<Object[]> rows = userRepository.findForTypeRank(rankType, pageable);
+
+        List<RankVO.RankItem> items = rows.stream()
+                .map(row -> {
+                    Long userId = ((Number) row[0]).longValue();
+                    String nickname = (String) row[1];
+                    String customAvatarUrl = (String) row[2];
+                    String avatarUrl = (String) row[3];
+                    BigDecimal totalNet = (BigDecimal) row[4];
+                    BigDecimal lotteryNet = (BigDecimal) row[5];
+                    BigDecimal scratchNet = (BigDecimal) row[6];
+                    BigDecimal mahjongNet = (BigDecimal) row[7];
+
                     BigDecimal net = switch (rankType) {
-                        case "LOTTERY" -> user.getLotteryNet();
-                        case "SCRATCH" -> user.getScratchNet();
-                        case "MAHJONG" -> user.getMahjongNet();
-                        default -> user.getTotalNet();
+                        case "LOTTERY" -> lotteryNet;
+                        case "SCRATCH" -> scratchNet;
+                        case "MAHJONG" -> mahjongNet;
+                        default -> totalNet;
                     };
-                    String avatar;
-                    if (user.getAvatarBase64() != null && !user.getAvatarBase64().isEmpty()) {
-                        avatar = user.getAvatarBase64();
-                    } else if (user.getCustomAvatarUrl() != null && !user.getCustomAvatarUrl().isEmpty()) {
-                        avatar = user.getCustomAvatarUrl();
-                    } else {
-                        avatar = user.getAvatarUrl();
-                    }
+
+                    // 列表接口只返回 URL，不返回 avatarBase64（MEDIUMTEXT），避免响应体积过大拖慢排行页。
+                    // 当前用户自己的上传头像由前端从本地 avatarCache 读取。
+                    String avatar = customAvatarUrl != null && !customAvatarUrl.isEmpty()
+                            ? customAvatarUrl : avatarUrl;
+
                     return RankVO.RankItem.builder()
-                            .userId(user.getId())
-                            .nickname(user.getNickname())
+                            .userId(userId)
+                            .nickname(nickname)
                             .avatarUrl(avatar)
                             .net(net)
-                            .isMe(user.getId().equals(currentUserId))
+                            .isMe(userId.equals(currentUserId))
                             .build();
                 })
                 .toList();

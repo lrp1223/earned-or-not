@@ -54,7 +54,7 @@ Page({
           net: net,
           netStr: net.toFixed(2),
           avatarError: false,
-          avatarUrl: this.getCachedAvatar(item.userId, item.avatarUrl)
+          avatarUrl: this.getCachedAvatar(item.userId, item.avatarUrl, item.isMe)
         };
       });
       
@@ -74,8 +74,14 @@ Page({
   },
 
   getCachedAvatar(userId, serverUrl) {
+  getCachedAvatar(userId, serverUrl, isMe) {
+    // 当前用户的上传头像不在列表接口返回，直接读本地缓存
+    if (isMe) {
+      const mine = wx.getStorageSync('avatarCache') || '';
+      if (mine) return mine;
+    }
     if (!serverUrl) return '';
-    
+
     const cacheKey = `avatar_${userId}`;
     const cached = wx.getStorageSync(cacheKey);
     
