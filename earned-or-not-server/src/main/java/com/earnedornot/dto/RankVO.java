@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -29,7 +30,9 @@ public class RankVO {
         private Long userId;
         private String nickname;
         private String avatarUrl;
+        private boolean hasAvatar;
         private BigDecimal net;
+        @JsonProperty("isMe")
         private boolean isMe;
     }
 }

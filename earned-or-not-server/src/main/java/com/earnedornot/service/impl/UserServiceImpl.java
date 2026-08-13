@@ -89,6 +89,13 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public String getAvatarBase64(Long userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new IllegalArgumentException("用户不存在"));
+        return user.getAvatarBase64();
+    }
+
+    @Override
     @Transactional
     public void uploadAvatar(Long userId, String avatarBase64) {
         User user = userRepository.findById(userId)

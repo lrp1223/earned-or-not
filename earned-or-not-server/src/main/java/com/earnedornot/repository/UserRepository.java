@@ -36,7 +36,9 @@ public interface UserRepository extends JpaRepository<User, Long> {
      * 分页排行查询：按指定净值字段降序，仅包含有记录的用户
      */
     @Query(value = "SELECT id, nickname, custom_avatar_url, avatar_url, " +
-            "total_net, lottery_net, scratch_net, mahjong_net FROM users WHERE " +
+            "total_net, lottery_net, scratch_net, mahjong_net, " +
+            "CASE WHEN avatar_base64 IS NOT NULL AND LENGTH(avatar_base64) > 0 THEN 1 ELSE 0 END AS has_avatar " +
+            "FROM users WHERE " +
             "CASE :type WHEN 'LOTTERY' THEN lottery_net WHEN 'SCRATCH' THEN scratch_net " +
             "WHEN 'MAHJONG' THEN mahjong_net ELSE total_net END IS NOT NULL " +
             "AND id IN (SELECT DISTINCT user_id FROM records) " +

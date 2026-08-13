@@ -28,6 +28,11 @@ public class UserController {
         return Result.ok(userService.getProfile(userId));
     }
 
+    @GetMapping("/{userId}/avatar")
+    public Result<String> getAvatar(@PathVariable Long userId) {
+        return Result.ok(userService.getAvatarBase64(userId));
+    }
+
     @PutMapping("/profile")
     public Result<Void> updateProfile(HttpServletRequest request,
                                        @Valid @RequestBody UserProfileRequest req) {

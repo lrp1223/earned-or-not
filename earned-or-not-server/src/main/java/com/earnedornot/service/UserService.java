@@ -15,6 +15,11 @@ public interface UserService {
     UserProfileVO getProfile(Long userId);
 
     /**
+     * 获取用户上传头像 Base64（懒加载用）
+     */
+    String getAvatarBase64(Long userId);
+
+    /**
      * 更新用户信息
      */
     void updateProfile(Long userId, UserProfileRequest request);

@@ -37,6 +37,7 @@ public class RankServiceImpl implements RankService {
                     BigDecimal lotteryNet = (BigDecimal) row[5];
                     BigDecimal scratchNet = (BigDecimal) row[6];
                     BigDecimal mahjongNet = (BigDecimal) row[7];
+                    boolean hasAvatar = ((Number) row[8]).intValue() != 0;
 
                     BigDecimal net = switch (rankType) {
                         case "LOTTERY" -> lotteryNet;
@@ -54,6 +55,7 @@ public class RankServiceImpl implements RankService {
                             .userId(userId)
                             .nickname(nickname)
                             .avatarUrl(avatar)
+                            .hasAvatar(hasAvatar)
                             .net(net)
                             .isMe(userId.equals(currentUserId))
                             .build();

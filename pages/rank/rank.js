@@ -63,6 +63,7 @@ Page({
         page: page,
         hasMore: res.data.hasMore
       });
+      this.loadMissingAvatars(list);
     }).catch(() => {
       this.setData({ loading: false });
     });
@@ -71,6 +72,30 @@ Page({
   loadMore() {
     if (!this.data.hasMore || this.data.loading) return;
     this.loadRank(this.data.currentTab, this.data.page + 1);
+  },
+
+  // 有上传头像但列表接口未返回 base64 的用户，按需单独拉取
+  loadMissingAvatars(list) {
+    list.forEach(item => {
+      if (item.hasAvatar && !item.avatarUrl) {
+        this.fetchAvatar(item.userId);
+      }
+    });
+  },
+
+  fetchAvatar(userId) {
+    api.getAvatar(userId).then(res => {
+      const avatar = res.data;
+      if (!avatar) return;
+      wx.setStorageSync('avatar_' + userId, avatar);
+      const list = this.data.rankList;
+      const idx = list.findIndex(item => item.userId === userId);
+      if (idx !== -1) {
+        list[idx].avatarUrl = avatar;
+        list[idx].avatarError = false;
+        this.setData({ rankList: list });
+      }
+    }).catch(() => {});
   },
 
   getCachedAvatar(userId, serverUrl, isMe) {
@@ -84,10 +109,14 @@ Page({
     const cacheKey = `avatar_${userId}`;
     const cached = wx.getStorageSync(cacheKey);
     
-    if (cached && cached.url && Date.now() - cached.time < 7 * 24 * 60 * 60 * 1000) {
-      return cached.url;
+    if (cached) {
+      if (typeof cached === 'string' && cached) return cached;
+      if (cached.url && Date.now() - cached.time < 7 * 24 * 60 * 60 * 1000) {
+        return cached.url;
+      }
     }
-    
+    if (!serverUrl) return '';
+
     wx.setStorageSync(cacheKey, {
       url: serverUrl,
       time: Date.now()
