@@ -33,7 +33,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
     void updateNet(@Param("userId") Long userId, @Param("type") String type, @Param("delta") BigDecimal delta);
 
     /**
-     * 分页排行查询：按指定净值字段降序，仅包含有记录的用户
+     * 分页排行查询：按指定净值字段升序（从小到大），仅包含有记录的用户
      */
     @Query(value = "SELECT id, nickname, custom_avatar_url, avatar_url, " +
             "total_net, lottery_net, scratch_net, mahjong_net, " +
@@ -43,7 +43,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
             "WHEN 'MAHJONG' THEN mahjong_net ELSE total_net END IS NOT NULL " +
             "AND id IN (SELECT DISTINCT user_id FROM records) " +
             "ORDER BY CASE :type WHEN 'LOTTERY' THEN lottery_net WHEN 'SCRATCH' THEN scratch_net " +
-            "WHEN 'MAHJONG' THEN mahjong_net ELSE total_net END DESC", nativeQuery = true)
+            "WHEN 'MAHJONG' THEN mahjong_net ELSE total_net END ASC", nativeQuery = true)
     List<Object[]> findForTypeRank(@Param("type") String type, PageRequest pageable);
 
     /**
