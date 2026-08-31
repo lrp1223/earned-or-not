@@ -13,7 +13,7 @@
           <text class="birthday-arrow">›</text>
         </view>
       </picker>
-      <text class="birthday-hint" wx:if="{{!constellation}}">设置生日可查看每日运势</text>
+      <text class="birthday-hint" wx:if="{{!constellation}}">设置生日展示星座</text>
     </view>
   </view>
   

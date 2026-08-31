@@ -165,10 +165,6 @@ Page({
     wx.switchTab({ url: '/pages/stats/stats' });
   },
 
-  goFortune() {
-    wx.navigateTo({ url: '/pages/fortune/fortune' });
-  },
-
   onShareAppMessage() {
     return {
       title: `我在赚了么记录了${this.data.totalNet >= 0 ? '赚' : '亏'}了${Math.abs(this.data.totalNet).toFixed(2)}元，快来一起记账吧！`,
