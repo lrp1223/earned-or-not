@@ -13,6 +13,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.Optional;
 
 @Slf4j
@@ -34,6 +37,7 @@ public class RecordServiceImpl implements RecordService {
                 .amount(request.getAmount() != null ? request.getAmount() : BigDecimal.ZERO)
                 .lotteryType(request.getLotteryType())
                 .remark(request.getRemark())
+                .createTime(resolveCreateTime(request.getRecordDate(), LocalDateTime.now()))
                 .build();
 
         recordRepository.save(record);
@@ -66,6 +70,7 @@ public class RecordServiceImpl implements RecordService {
         record.setAmount(request.getAmount() != null ? request.getAmount() : BigDecimal.ZERO);
         record.setLotteryType(request.getLotteryType());
         record.setRemark(request.getRemark());
+        record.setCreateTime(resolveCreateTime(request.getRecordDate(), record.getCreateTime()));
 
         recordRepository.save(record);
 
@@ -123,6 +128,29 @@ public class RecordServiceImpl implements RecordService {
             throw new IllegalArgumentException("无权查看");
         }
         return toVO(record);
+    }
+
+    /**
+     * 把用户选择的日期和当前时间组合为 createTime。
+     * 不传日期时使用 fallback，例如新增默认今天，编辑保留原时间。
+     */
+    private LocalDateTime resolveCreateTime(String recordDate, LocalDateTime fallback) {
+        if (recordDate == null || recordDate.trim().isEmpty()) {
+            return fallback;
+        }
+
+        LocalDate date;
+        try {
+            date = LocalDate.parse(recordDate.trim());
+        } catch (Exception e) {
+            throw new IllegalArgumentException("日期格式不正确");
+        }
+
+        if (date.isAfter(LocalDate.now())) {
+            throw new IllegalArgumentException("记账日期不能晚于今天");
+        }
+
+        return LocalDateTime.of(date, LocalTime.now());
     }
 
     private RecordVO toVO(Record record) {

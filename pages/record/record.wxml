@@ -18,7 +18,6 @@
       <view class="form-item">
         <text class="label">中奖金额（元）</text>
         <input type="digit" value="{{winAmount}}" bindinput="onWinInput" placeholder="未中奖填0"/>
-        <text class="hint" wx:if="{{!isEdit}}">默认使用上一期{{lotteryTypes[lotteryTypeIndex]}}的中奖金额</text>
       </view>
     </block>
     
@@ -55,6 +54,14 @@
       </view>
     </block>
     
+    <!-- 日期 -->
+    <view class="form-item">
+      <text class="label">记账日期</text>
+      <picker mode="date" value="{{recordDate}}" end="{{today}}" bindchange="onDateChange">
+        <view class="picker">{{recordDate}}</view>
+      </picker>
+    </view>
+
     <!-- 备注 -->
     <view class="form-item">
       <text class="label">备注（选填）</text>

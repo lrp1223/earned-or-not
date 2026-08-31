@@ -8,6 +8,8 @@ Page({
     cost: '',
     winAmount: '',
     remark: '',
+    recordDate: '',
+    today: '',
     mahjongType: 'win',
     previewNet: 0,
     previewNetStr: '+0.00',
@@ -21,7 +23,7 @@ Page({
 
   onLoad(options) {
     this.loadColorSettings();
-    
+
     const type = options.type || 'lottery';
     const mode = options.mode || 'add';
     const map = { lottery: '彩', scratch: '刮', mahjong: '麻' };
@@ -41,7 +43,9 @@ Page({
       mode,
       recordId: options.id || '',
       lotteryTypeIndex: lotteryTypeIndex >= 0 ? lotteryTypeIndex : 0,
-      lotteryType: defaultLotteryType
+      lotteryType: defaultLotteryType,
+      recordDate: this.formatDate(new Date()),
+      today: this.formatDate(new Date())
     });
 
     // 不再自动填充上次中奖金额
@@ -67,6 +71,17 @@ Page({
     return '18M';
   },
 
+  formatDate(date) {
+    const year = date.getFullYear();
+    const month = (date.getMonth() + 1).toString().padStart(2, '0');
+    const day = date.getDate().toString().padStart(2, '0');
+    return `${year}-${month}-${day}`;
+  },
+
+  onDateChange(e) {
+    this.setData({ recordDate: e.detail.value });
+  },
+
   onLotteryTypeChange(e) {
     const index = parseInt(e.detail.value);
     const lotteryType = this.data.lotteryTypes[index];
@@ -89,6 +104,10 @@ Page({
           winAmount,
           remark: data.remark || ''
         };
+
+        if (data.createTime) {
+          updateData.recordDate = this.formatDate(new Date(data.createTime));
+        }
 
         if (data.recordType === 'LOTTERY' && data.lotteryType) {
           const index = this.data.lotteryTypes.indexOf(data.lotteryType);
@@ -142,7 +161,7 @@ Page({
   },
 
   submit() {
-    const { type, cost, winAmount, remark, mahjongType, mode, recordId, submitting, lotteryType } = this.data;
+    const { type, cost, winAmount, remark, recordDate, mahjongType, mode, recordId, submitting, lotteryType } = this.data;
     if (submitting) return;
     if (!cost) {
       wx.showToast({ title: '请输入金额', icon: 'none' });
@@ -158,7 +177,8 @@ Page({
       recordType: recordTypeMap[type],
       cost: parseFloat(cost) || 0,
       winAmount: parseFloat(winAmount) || 0,
-      remark
+      remark,
+      recordDate
     };
 
     if (type === 'lottery') {

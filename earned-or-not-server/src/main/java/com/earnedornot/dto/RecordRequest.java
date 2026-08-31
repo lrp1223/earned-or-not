@@ -26,5 +26,10 @@ public class RecordRequest {
 
     private String lotteryType;
 
+    /**
+     * 用户选择的记账日期，格式 yyyy-MM-dd；不传则默认当天。
+     */
+    private String recordDate;
+
     private String remark;
 }
