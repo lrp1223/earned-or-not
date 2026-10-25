@@ -19,20 +19,21 @@
   ],
   "window": {
     "backgroundTextStyle": "light",
-    "navigationBarBackgroundColor": "#ff6b6b",
+    "backgroundColor": "#fafafa",
+    "navigationBarBackgroundColor": "#ffffff",
     "navigationBarTitleText": "赚了么",
-    "navigationBarTextStyle": "white"
+    "navigationBarTextStyle": "black"
   },
   "tabBar": {
-    "color": "#999",
+    "color": "#9a9a9a",
     "selectedColor": "#ff6b6b",
-    "backgroundColor": "#fff",
-    "borderStyle": "black",
+    "backgroundColor": "#ffffff",
+    "borderStyle": "white",
     "list": [
-      {"pagePath": "pages/index/index", "text": "首页"},
-      {"pagePath": "pages/stats/stats", "text": "统计"},
-      {"pagePath": "pages/rank/rank", "text": "排行"},
-      {"pagePath": "pages/profile/profile", "text": "我的"}
+      {"pagePath": "pages/index/index", "text": "首页", "iconPath": "images/tabbar/home.png", "selectedIconPath": "images/tabbar/home-active.png"},
+      {"pagePath": "pages/stats/stats", "text": "统计", "iconPath": "images/tabbar/stats.png", "selectedIconPath": "images/tabbar/stats-active.png"},
+      {"pagePath": "pages/rank/rank", "text": "排行", "iconPath": "images/tabbar/rank.png", "selectedIconPath": "images/tabbar/rank-active.png"},
+      {"pagePath": "pages/profile/profile", "text": "我的", "iconPath": "images/tabbar/profile.png", "selectedIconPath": "images/tabbar/profile-active.png"}
     ]
   },
   "cloud": true,

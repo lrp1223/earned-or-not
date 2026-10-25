@@ -1,23 +1,23 @@
 <!--pages/index/index.wxml-->
 <view class="container">
-  <view class="card user-card">
-    <block wx:if="{{avatarUrl}}">
-      <image class="avatar" src="{{avatarUrl}}" mode="aspectFill" style="width: 140rpx; height: 140rpx; border-radius: 50%; margin-bottom: 20rpx; border: 4rpx solid #ff6b6b;"></image>
-    </block>
-    <block wx:else>
-      <view class="avatar" style="background: linear-gradient(135deg, #ff6b6b, #ffd93d); display: flex; align-items: center; justify-content: center; font-size: 80rpx; color: white; width: 140rpx; height: 140rpx; border-radius: 50%; margin-bottom: 20rpx;">🎰</view>
-    </block>
-    <text class="nickname">{{nickname}}</text>
-    <view class="total-net" style="color: {{totalNet >= 0 ? winColor : loseColor}}">
-      年度盈亏：{{totalNetStr}} 元
+  <view class="greet">
+    <view class="greet-user">
+      <image wx:if="{{avatarUrl}}" class="greet-avatar" src="{{avatarUrl}}" mode="aspectFill"></image>
+      <view wx:else class="greet-avatar greet-avatar-fallback">{{nickname[0]}}</view>
+      <view class="greet-info">
+        <view class="greet-name">{{nickname}}</view>
+        <view class="greet-date">{{todayText}}</view>
+      </view>
     </view>
+    <view class="greet-label">年度盈亏</view>
+    <view class="greet-num" style="color: {{totalNet >= 0 ? winColor : loseColor}}">{{totalNetStr}}<text class="greet-unit">元</text></view>
   </view>
 
   <view class="card">
     <view class="title">快速记账</view>
     <view class="quick-actions">
       <view class="action-item" bindtap="goRecord" data-type="lottery">
-        <view class="action-icon lottery">🎰</view><text>彩</text>
+        <view class="action-icon lottery">🎟️</view><text>彩</text>
       </view>
       <view class="action-item" bindtap="goRecord" data-type="scratch">
         <view class="action-icon scratch">🎫</view><text>刮</text>
@@ -27,13 +27,13 @@
       </view>
     </view>
   </view>
-  
+
   <view class="card">
     <view class="title">最近记录 <text class="subtitle" bindtap="viewAll">查看全部 ›</text></view>
     <view wx:if="{{recentRecords.length === 0}}" class="empty">暂无记录</view>
     <view class="record-list" wx:else>
       <view class="record-item" wx:for="{{recentRecords}}" wx:key="id" bindtap="editRecord" data-id="{{item.id}}" data-type="{{item.recordType}}">
-        <view class="record-icon {{item.type}}">{{item.type === 'lottery' ? '🎰' : item.type === 'scratch' ? '🎫' : '🀄'}}</view>
+        <view class="record-icon {{item.type}}">{{item.type === 'lottery' ? '🎟️' : item.type === 'scratch' ? '🎫' : '🀄'}}</view>
         <view class="record-info">
           <view class="record-top">
             <text class="record-type">{{item.typeText}}</text>
@@ -54,11 +54,11 @@
   <view class="action-menu" wx:if="{{showActionMenu}}">
     <view class="action-menu-title">操作</view>
     <view class="action-menu-item" bindtap="onEdit">
-      <text class="action-icon">✏️</text>
+      <text class="menu-icon">✏️</text>
       <text>编辑</text>
     </view>
     <view class="action-menu-item delete" bindtap="onDelete">
-      <text class="action-icon">🗑️</text>
+      <text class="menu-icon">🗑️</text>
       <text>删除</text>
     </view>
     <view class="action-menu-cancel" bindtap="hideActionMenu">取消</view>

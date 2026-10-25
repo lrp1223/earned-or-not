@@ -4,7 +4,7 @@
   <view class="profile-card">
     <view class="avatar-section" bindtap="chooseAvatar">
       <image wx:if="{{avatarUrl}}" class="avatar" src="{{avatarUrl}}" mode="aspectFill"></image>
-      <view wx:else class="avatar avatar-default">🎰</view>
+      <view wx:else class="avatar avatar-default">🎟️</view>
       <text class="avatar-hint">点击更换头像</text>
     </view>
     

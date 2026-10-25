@@ -1,9 +1,33 @@
 /**app.wxss**/
-page { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background-color: #f5f5f5; }
+page {
+  /* 设计变量：全站颜色/圆角统一引用，改主题只动这里 */
+  --primary: #ff6b6b;
+  --primary-tint: #fdeeee;
+  --win: #52c41a;
+  --lose: #ff4d4f;
+  --bg: #fafafa;
+  --card-border: #efefef;
+  --radius: 24rpx;
+  --gap: 20rpx;
+
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  background-color: var(--bg);
+  color: #222;
+}
+
 .container { padding: 20rpx; }
-.card { background: white; border-radius: 16rpx; padding: 30rpx; margin-bottom: 20rpx; box-shadow: 0 2rpx 10rpx rgba(0,0,0,0.05); }
-.btn-primary { background: linear-gradient(135deg, #ff6b6b, #ff8e8e); color: white; border-radius: 40rpx; font-size: 32rpx; font-weight: bold; }
+
+.card {
+  background: #fff;
+  border: 1rpx solid var(--card-border);
+  border-radius: var(--radius);
+  padding: 30rpx;
+  margin-bottom: var(--gap);
+}
+
+.btn-primary { background: var(--primary); color: white; border-radius: 44rpx; font-size: 32rpx; font-weight: bold; }
 .btn-primary::after { border: none; }
-.title { font-size: 36rpx; font-weight: bold; color: #333; margin-bottom: 20rpx; }
+
+.title { font-size: 34rpx; font-weight: bold; color: #222; margin-bottom: 20rpx; }
 .amount-positive { font-weight: bold; }
 .amount-negative { font-weight: bold; }

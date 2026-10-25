@@ -8,7 +8,7 @@
   <view class="record-list">
     <view class="record-item" wx:for="{{records}}" wx:key="id">
       <view class="record-left">
-        <text class="record-icon">{{type === 'lottery' ? '🎰' : type === 'scratch' ? '🎫' : '🀄'}}</text>
+        <text class="record-icon">{{type === 'lottery' ? '🎟️' : type === 'scratch' ? '🎫' : '🀄'}}</text>
         <view class="record-info">
           <text class="record-type">{{item.lotteryType || typeText}}</text>
           <text class="record-date">{{item.timeStr}}</text>

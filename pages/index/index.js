@@ -14,6 +14,11 @@ Page({
   },
 
   onLoad() {
+    const now = new Date();
+    const weekNames = ['周日', '周一', '周二', '周三', '周四', '周五', '周六'];
+    this.setData({
+      todayText: `${now.getMonth() + 1}月${now.getDate()}日 · ${weekNames[now.getDay()]}`
+    });
     getApp().globalData.loginReady.then(() => {
       if (api.hasIdentity()) {
         this.loadUserProfile();

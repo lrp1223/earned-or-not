@@ -11,7 +11,7 @@
   <!-- 彩 -->
   <view class="card" bindtap="goRecordList" data-type="lottery">
     <view class="stat-row">
-      <text class="stat-title">🎰 彩</text>
+      <text class="stat-title">🎟️ 彩</text>
       <text class="stat-net" style="color: {{stats.lottery.net >= 0 ? winColor : loseColor}}">
         {{stats.lottery.net >= 0 ? '+' : ''}}{{stats.lottery.net}} 元
       </text>
